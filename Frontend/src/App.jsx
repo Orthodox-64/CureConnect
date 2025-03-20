@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import "./i18";
 import Navbar from "./components/Navbar";
-import Footer from "./components/Foooter"
+import Footer from "./components/Footer"
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Layout from "./components/Layout";
 import Appointment from "./components/Appointment/Appointment";
@@ -20,6 +20,7 @@ import AnalysisBotECG from "./pages/AnalysisBotECG.jsx";
 import AnalysisBotXRAY from "./pages/AnalysisBotXRAY.jsx";
 import HealthTips from "./components/HealthTips.jsx"
 import Chat from "./components/Chat/Chat.jsx"
+import Landing from "./pages/Landing.jsx";
 
 function App() {
 
@@ -31,10 +32,10 @@ function App() {
 
   return (
     <div className="flex items-center flex-col">
-      <Navbar />
-      <div className="pt-20 w-full">
+      {/* <Navbar /> */}
+      <div className="w-full">
         <Routes>
-          <Route path='/' element={<Layout />}></Route>
+          <Route path='/' element={<Landing />}></Route>
           <Route path='/analysis' element={<AnalysisBot />}></Route>
           <Route path='/analysis/ecg' element={<AnalysisBotECG />}></Route>
           <Route path='/analysis/xray' element={<AnalysisBotXRAY />}></Route>

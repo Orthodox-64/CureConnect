@@ -1,1 +1,9 @@
 @import "tailwindcss";
+
+*{
+    font-family: Georgia, 'Times New Roman', Times, serif;
+}
+
+body{
+    width: 100%;
+}

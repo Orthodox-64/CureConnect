@@ -1,0 +1,383 @@
+import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import "./Hero.css";
+
+function Card({ icon, title, description, route, role }) {
+  const navigate = useNavigate();
+  const { user } = useSelector((state) => state.user);
+
+  const handleClick = (e) => {
+    e.preventDefault();
+
+    if (route === "telemedicine") {
+      // Redirect ONLY telemedicine to the external site
+      window.open(
+        "https://video-call-final-git-main-orthodox-64s-projects.vercel.app/",
+        "_blank",
+        "noopener,noreferrer"
+      );
+    } else if (route.startsWith("/")) {
+      // Navigate for internal routes
+      navigate(route);
+    } else {
+      navigate(route);
+    }
+  };
+
+  return (
+    <a onClick={handleClick} className="card" style={{ cursor: "pointer" }}>
+      <div className="card-icon">{icon}</div>
+      <h3 className="card-title">{title}</h3>
+      <p className="card-description">{description}</p>
+    </a>
+  );
+}
+
+function Cards() {
+  const navigate = useNavigate();
+  const { t } = useTranslation();
+  const { user } = useSelector((state) => state.user);
+  const [recognition, setRecognition] = useState(null);
+  const [isListening, setIsListening] = useState(false);
+
+  const cards = [
+    {
+      icon: "📞",
+      title: t("navbar.telemedicine"),
+      description: t("cards.telemedicine"),
+      route: "telemedicine", // Route updated to match second file
+      role: "doctor",
+    },
+    {
+      icon: "🏥",
+      title: t("navbar.analysis"),
+      description: t("cards.medical_analysis"),
+      route: "/analysis",
+      role: "doctor",
+    },
+    {
+      icon: "😷",
+      title: t("navbar.health_tips"),
+      description: t("cards.health_tips"),
+      route: "/health",
+      role: "patient",
+    },
+    {
+      icon: "🩺",
+      title: t("navbar.consult"),
+      description: t("cards.consulting"),
+      route: "/chat", // Route updated to match second file
+      role: "doctor",
+    },
+    {
+      icon: "🚑",
+      title: t("navbar.emergency"),
+      description: t("cards.emergency"),
+      route: "/emergency",
+      role: "patient",
+    },
+    {
+      icon: "🧑🏻‍⚕️",
+      title: t("navbar.appointment"),
+      description: t("cards.appointment"),
+      route: "/appointment",
+      role: "doctor",
+    },
+  ];
+
+  const filteredCards = cards.filter((card) => {
+    if (user && user.role === "doctor") {
+      return card.role === "doctor";
+    }
+    return true; // Patients can access all cards
+  });
+
+  useEffect(() => {
+    if (!("webkitSpeechRecognition" in window)) {
+      console.error("Speech Recognition not supported in this browser.");
+      return;
+    }
+
+    const speechRecognition = new window.webkitSpeechRecognition();
+    speechRecognition.continuous = true;
+    speechRecognition.interimResults = false;
+    speechRecognition.lang = "en-US";
+
+    speechRecognition.onstart = () => setIsListening(true);
+    speechRecognition.onend = () => setIsListening(false);
+
+    speechRecognition.onresult = (event) => {
+      const transcript =
+        event.results[event.results.length - 1][0].transcript.toLowerCase();
+      console.log("Recognized:", transcript);
+
+      if (transcript.includes("open telemedicine")) {
+        // Open external telemedicine site
+        window.open(
+          "https://video-call-final-git-main-orthodox-64s-projects.vercel.app/",
+          "_blank",
+          "noopener,noreferrer"
+        );
+      } else {
+        const matchedCard = cards.find((card) =>
+          transcript.includes(card.title.toLowerCase())
+        );
+        if (matchedCard) {
+          if (matchedCard.route === "telemedicine") {
+            window.open(
+              "https://video-call-final-git-main-orthodox-64s-projects.vercel.app/",
+              "_blank",
+              "noopener,noreferrer"
+            );
+          } else {
+            navigate(matchedCard.route);
+          }
+        }
+      }
+    };
+
+    setRecognition(speechRecognition);
+  }, [navigate, cards]);
+
+  const toggleListening = () => {
+    if (!recognition) return;
+    if (isListening) {
+      recognition.stop();
+    } else {
+      recognition.start();
+    }
+  };
+
+  return (
+    <div className="hero-section">
+      <button 
+        className="listen-button rounded-full shadow-lg flex items-center justify-center px-6 py-3 transition-all duration-300 hover:scale-105" 
+        onClick={toggleListening}
+        style={{
+          background: isListening ? "linear-gradient(to right, #f87171, #ef4444)" : "linear-gradient(to right, #60a5fa, #3b82f6)",
+          color: "white",
+          border: "none",
+          maxWidth: "200px",
+          margin: "0 auto 2rem"
+        }}
+      >
+        <span className="mr-2 text-xl">{isListening ? "🛑" : "🎙️"}</span>
+        <span>{isListening ? "Stop Listening" : "Start Listening"}</span>
+      </button>
+
+      <div className={user && user.role === "doctor" ? "cards-grid-doctor" : "cards-grid-patient"}>
+        {filteredCards.map((card, index) => (
+          <Card
+            key={index}
+            icon={card.icon}
+            title={card.title}
+            description={card.description}
+            role={card.role}
+            route={card.route}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+const HealthcareCards = () => {
+  const navigate = useNavigate();
+  const { t } = useTranslation();
+  const { user } = useSelector((state) => state.user);
+  const [recognition, setRecognition] = useState(null);
+  const [isListening, setIsListening] = useState(false);
+  
+  // Speech recognition setup for the Tailwind version
+  useEffect(() => {
+    if (!("webkitSpeechRecognition" in window)) {
+      console.error("Speech Recognition not supported in this browser.");
+      return;
+    }
+
+    const speechRecognition = new window.webkitSpeechRecognition();
+    speechRecognition.continuous = true;
+    speechRecognition.interimResults = false;
+    speechRecognition.lang = "en-US";
+
+    speechRecognition.onstart = () => setIsListening(true);
+    speechRecognition.onend = () => setIsListening(false);
+
+    speechRecognition.onresult = (event) => {
+      const transcript =
+        event.results[event.results.length - 1][0].transcript.toLowerCase();
+      console.log("Recognized:", transcript);
+
+      if (transcript.includes("telemedicine")) {
+        // Open external telemedicine site
+        window.open(
+          "https://video-call-final-git-main-orthodox-64s-projects.vercel.app/",
+          "_blank",
+          "noopener,noreferrer"
+        );
+      } else if (transcript.includes("analysis")) {
+        navigate("/analysis");
+      } else if (transcript.includes("health tips")) {
+        navigate("/health");
+      } else if (transcript.includes("consult")) {
+        navigate("/chat");
+      } else if (transcript.includes("emergency")) {
+        navigate("/emergency");
+      } else if (transcript.includes("appointment")) {
+        navigate("/appointment");
+      }
+    };
+
+    setRecognition(speechRecognition);
+  }, [navigate]);
+
+  const toggleListening = () => {
+    if (!recognition) return;
+    if (isListening) {
+      recognition.stop();
+    } else {
+      recognition.start();
+    }
+  };
+
+  const handleCardClick = (route) => {
+    if (route === "telemedicine") {
+      window.open(
+        "https://video-call-final-git-main-orthodox-64s-projects.vercel.app/",
+        "_blank",
+        "noopener,noreferrer"
+      );
+    } else {
+      navigate(route);
+    }
+  };
+
+  // Add CSS for responsive design
+  const responsiveStyles = {
+    container: {
+      width: "100%",
+      padding: "1rem",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center"
+    },
+    cardsContainer: {
+      display: "grid",
+      gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+      gap: "1.5rem",
+      width: "100%",
+      maxWidth: "1200px",
+      margin: "0 auto"
+    },
+    card: {
+      height: "100%",
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "center",
+      transition: "transform 0.3s ease, box-shadow 0.3s ease",
+    }
+  };
+
+  return (
+    <div style={responsiveStyles.container}>
+      <button 
+        className="mb-6 px-6 py-3 rounded-full text-white font-medium shadow-lg transition-all duration-300 hover:shadow-xl flex items-center justify-center"
+        style={{
+          background: isListening ? "linear-gradient(to right, #f87171, #ef4444)" : "linear-gradient(to right, #60a5fa, #3b82f6)",
+          width: "auto",
+          minWidth: "180px",
+          maxWidth: "220px"
+        }}
+        onClick={toggleListening}
+      >
+        <span className="mr-2 text-xl">{isListening ? "🛑" : "🎙️"}</span>
+        <span>{isListening ? "Stop Listening" : "Start Listening"}</span>
+      </button>
+
+      <div style={responsiveStyles.cardsContainer}>
+        {/* Card 1 */}
+        <div 
+          className="bg-blue-100 shadow-lg rounded-xl text-center p-8 hover:shadow-xl transform transition-all duration-300 hover:-translate-y-1"
+          onClick={() => handleCardClick("telemedicine")}
+          style={responsiveStyles.card}
+        >
+          <div className="mb-6 text-blue-600 text-5xl">📞</div>
+          <h2 className="text-2xl font-bold mb-3">Telemedicine</h2>
+          <p className="text-gray-600">
+            Smart Telemedicine for Smarter Health
+          </p>
+        </div>
+
+        {/* Card 2 */}
+        <div
+          className="bg-blue-100 shadow-lg rounded-xl text-center p-8 hover:shadow-xl transform transition-all duration-300 hover:-translate-y-1"
+          onClick={() => handleCardClick("/analysis")}
+          style={responsiveStyles.card}
+        >
+          <div className="mb-6 text-blue-600 text-5xl">🏥</div>
+          <h2 className="text-2xl font-bold mb-3">Analysis</h2>
+          <p className="text-gray-600">
+            Get Expert Medical Insights Instantly
+          </p>
+        </div>
+
+        {/* Card 3 */}
+        <div
+          className="bg-blue-100 shadow-lg rounded-xl text-center p-8 hover:shadow-xl transform transition-all duration-300 hover:-translate-y-1"
+          onClick={() => handleCardClick("/health")}
+          style={responsiveStyles.card}
+        >
+          <div className="mb-6 text-blue-600 text-5xl">😷</div>
+          <h2 className="text-2xl font-bold mb-3">Health Tips</h2>
+          <p className="text-gray-600">
+            Daily Wellness Tips for a Healthier You
+          </p>
+        </div>
+
+        {/* Card 4 */}
+        <div 
+          className="bg-blue-100 shadow-lg rounded-xl text-center p-8 hover:shadow-xl transform transition-all duration-300 hover:-translate-y-1"
+          onClick={() => handleCardClick("/chat")}
+          style={responsiveStyles.card}
+        >
+          <div className="mb-6 text-blue-600 text-5xl">🩺</div>
+          <h2 className="text-2xl font-bold mb-3">Consult</h2>
+          <p className="text-gray-600">
+            Instant Healthcare, Anytime, Anywhere
+          </p>
+        </div>
+
+        {/* Card 5 */}
+        <div
+          className="bg-blue-100 shadow-lg rounded-xl text-center p-8 hover:shadow-xl transform transition-all duration-300 hover:-translate-y-1"
+          onClick={() => handleCardClick("/emergency")}
+          style={responsiveStyles.card}
+        >
+          <div className="mb-6 text-blue-600 text-5xl">🚑</div>
+          <h2 className="text-2xl font-bold mb-3">Emergency</h2>
+          <p className="text-gray-600">
+            Your Health, Our Priority - 24/7
+          </p>
+        </div>
+
+        {/* Card 6 */}
+        <div
+          className="bg-blue-100 shadow-lg rounded-xl text-center p-8 hover:shadow-xl transform transition-all duration-300 hover:-translate-y-1"
+          onClick={() => handleCardClick("/appointment")}
+          style={responsiveStyles.card}
+        >
+          <div className="mb-6 text-blue-600 text-5xl">🧑🏻‍⚕️</div>
+          <h2 className="text-2xl font-bold mb-3">Appointment</h2>
+          <p className="text-gray-600">
+            Personalized Health Tips, Just For You
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export { Cards };
+export default HealthcareCards;

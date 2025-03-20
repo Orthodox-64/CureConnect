@@ -8,7 +8,7 @@ import Layout from "./components/Layout";
 import Appointment from "./components/Appointment/Appointment";
 import MyAppointment from "./components/Appointment/MyAppointment";
 import LoginSignup from "./components/User/LoginSignup";
-import FinalEmergency from "./pages/FinalEmergency";
+import HospitalFinal from "./components/HospitalFinal.jsx";
 import Profile from "./components/User/Profile.jsx";
 import VideoCall from "./components/VideoCall.jsx";
 import ChatBotButton from "./components/ChatBotButton.jsx";
@@ -39,7 +39,7 @@ function App() {
           <Route path='/analysis' element={<AnalysisBot />}></Route>
           <Route path='/analysis/ecg' element={<AnalysisBotECG />}></Route>
           <Route path='/analysis/xray' element={<AnalysisBotXRAY />}></Route>
-          <Route path='/emergency' element={<FinalEmergency />}></Route>
+          <Route path='/emergency' element={<HospitalFinal />}></Route>
           <Route path='/health' element={<HealthTips/>}></Route>
           <Route path='/chat' element={<Chat/>}></Route>
           <Route path='/telemedicine' element={<VideoCall />}></Route>

@@ -1,5 +1,5 @@
 import React from 'react';
-import HospitalFinder from '../components/HospitalFinder';
+import HospitalFinder from '../components/HospitalMap';
 import '../App.css';
 
 function Emergency() {

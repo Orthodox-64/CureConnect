@@ -91,8 +91,8 @@ const Landing = () => {
       {/* Appointment Section */}
       <div className="flex flex-col md:flex-row gap-12 md:justify-center md:px-10 mb-16">
         <div className="bg-blue-100 p-4 md:p-9 rounded-md shadow-sm w-full md:max-w-md">
-          <h2 className="text-gray-700 font-medium text-base md:text-lg">Lorem ipsum dolor sit amet,</h2>
-          <p className="text-gray-500 mb-3 md:mb-4 text-sm md:text-base">consectetuer adipiscing elit, sed</p>
+          <h2 className="text-gray-700 font-medium text-base md:text-lg">Book the Best Doctors at your fingertip</h2>
+          <p className="text-gray-500 mb-3 md:mb-4 text-sm md:text-base">appointment made easier</p>
           <button className="bg-blue-800 text-white font-medium py-2 md:py-3 px-3 md:px-4 rounded-md w-full text-sm md:text-base" style={{backgroundColor:"oklch(0.424 0.199 265.638)"}}>MAKE AN APPOINTMENT</button>
         </div>
 

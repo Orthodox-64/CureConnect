@@ -40,6 +40,7 @@ const Landing = () => {
           {/* <a href="/appointment"><li className="hover:text-blue-800 cursor-pointer text-xl font-bold">Appointment</li></a> */}
           <a href="/analysis"><li className="hover:text-blue-800 cursor-pointer text-xl font-bold">Analysis</li></a>
           <a href="/emergency"><li className="hover:text-blue-800 cursor-pointer text-xl font-bold">Emergency</li></a>
+          <div className="" id="google_translate_element"></div>
         </ul>
 
         {/* Desktop buttons */}

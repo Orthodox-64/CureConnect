@@ -65,6 +65,7 @@ def model_predict():
     # Make a prediction
     try:
         result = predict_xray(file_path)
+        # response
         response=generate_llama_response(result,file_path)
         return jsonify({"prediction": response})
     except Exception as e:

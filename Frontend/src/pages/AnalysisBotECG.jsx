@@ -51,7 +51,7 @@ function AnalysisBotECG() {
         setAnalysis(null);
 
         try {
-            const response = await fetch(' http://127.0.0.1:8001/ecg', {
+            const response = await fetch('http://127.0.0.1:8001/ecg', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

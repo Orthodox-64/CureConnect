@@ -9,7 +9,8 @@ const healthTipsData = [
     description: "Drink at least 8 glasses of water daily to maintain proper hydration and support bodily functions.",
     icon: "Droplets",
     color: "bg-blue-500",
-    category: "Daily Habits"
+    category: "Daily Habits",
+    link:"https://youtu.be/F5IuQ3k1ohI?si=HgNNoZmsMX7Uv45l"
   },
   {
     id: 2,
@@ -17,7 +18,8 @@ const healthTipsData = [
     description: "Pay attention to what and when you eat. Avoid distractions like TV during meals to prevent overeating.",
     icon: "Utensils",
     color: "bg-purple-500",
-    category: "Nutrition"
+    category: "Nutrition",
+    link:"https://youtu.be/oJSpQHcJfKs?si=j7L_08T0QlK8uaDh"
   },
   {
     id: 3,
@@ -25,7 +27,8 @@ const healthTipsData = [
     description: "Aim for at least 30 minutes of moderate physical activity most days of the week for heart health.",
     icon: "Dumbbell",
     color: "bg-green-500",
-    category: "Fitness"
+    category: "Fitness",
+    link:"https://youtu.be/oJSpQHcJfKs?si=j7L_08T0QlK8uaDh"
   },
   {
     id: 4,
@@ -33,7 +36,8 @@ const healthTipsData = [
     description: "Adults should get 7-9 hours of quality sleep per night to support mental and physical health.",
     icon: "Moon",
     color: "bg-indigo-500",
-    category: "Rest"
+    category: "Rest",
+    link:"https://youtu.be/oJSpQHcJfKs?si=j7L_08T0QlK8uaDh"
   },
   {
     id: 5,
@@ -41,7 +45,8 @@ const healthTipsData = [
     description: "Practice deep breathing, meditation, or yoga to reduce stress and improve overall wellbeing.",
     icon: "Brain",
     color: "bg-red-500",
-    category: "Mental Health"
+    category: "Mental Health",
+    link:"https://youtu.be/oJSpQHcJfKs?si=j7L_08T0QlK8uaDh"
   },
   {
     id: 6,
@@ -49,7 +54,8 @@ const healthTipsData = [
     description: "Get 10-30 minutes of morning sunlight to regulate your circadian rhythm and boost vitamin D.",
     icon: "Sun",
     color: "bg-yellow-500",
-    category: "Daily Habits"
+    category: "Daily Habits",
+    link:"https://youtu.be/oJSpQHcJfKs?si=j7L_08T0QlK8uaDh"
   },
   {
     id: 7,
@@ -57,7 +63,8 @@ const healthTipsData = [
     description: "Avoid caffeine after 2 PM to prevent sleep disruption and maintain healthy sleep patterns.",
     icon: "Coffee",
     color: "bg-amber-600",
-    category: "Nutrition"
+    category: "Nutrition",
+    link:"https://youtu.be/oJSpQHcJfKs?si=j7L_08T0QlK8uaDh"
   },
   {
     id: 8,
@@ -65,7 +72,8 @@ const healthTipsData = [
     description: "Include resistance training 2-3 times per week to build muscle and maintain bone density.",
     icon: "Award",
     color: "bg-emerald-500",
-    category: "Fitness"
+    category: "Fitness",
+    link:"https://youtu.be/oJSpQHcJfKs?si=j7L_08T0QlK8uaDh"
   },
   {
     id: 9,
@@ -73,7 +81,8 @@ const healthTipsData = [
     description: "Take regular breaks from screens to reduce eye strain and improve mental focus.",
     icon: "Zap",
     color: "bg-cyan-500",
-    category: "Mental Health"
+    category: "Mental Health",
+    link:"https://youtu.be/oJSpQHcJfKs?si=j7L_08T0QlK8uaDh"
   },
   {
     id: 10,
@@ -81,7 +90,8 @@ const healthTipsData = [
     description: "Eat a variety of fruits, vegetables, lean proteins, and whole grains for optimal nutrition.",
     icon: "Apple",
     color: "bg-lime-500",
-    category: "Nutrition"
+    category: "Nutrition",
+    link:"https://youtu.be/oJSpQHcJfKs?si=j7L_08T0QlK8uaDh"
   },
   {
     id: 11,
@@ -89,7 +99,8 @@ const healthTipsData = [
     description: "Be mindful of your posture throughout the day, especially when sitting for long periods.",
     icon: "ThumbsUp",
     color: "bg-teal-500",
-    category: "Daily Habits"
+    category: "Daily Habits",
+    link:"https://youtu.be/oJSpQHcJfKs?si=j7L_08T0QlK8uaDh"
   },
   {
     id: 12,
@@ -97,7 +108,8 @@ const healthTipsData = [
     description: "Consider a 16:8 fasting schedule to improve metabolic health and cellular repair.",
     icon: "Clock",
     color: "bg-orange-500",
-    category: "Nutrition"
+    category: "Nutrition",
+    link:"https://youtu.be/oJSpQHcJfKs?si=j7L_08T0QlK8uaDh"
   },
   {
     id: 13,
@@ -105,7 +117,8 @@ const healthTipsData = [
     description: "Spend time in nature regularly to reduce stress and improve mood and cognitive function.",
     icon: "Leaf",
     color: "bg-green-600",
-    category: "Mental Health"
+    category: "Mental Health",
+    link:"https://youtu.be/oJSpQHcJfKs?si=j7L_08T0QlK8uaDh"
   },
   {
     id: 14,
@@ -113,7 +126,8 @@ const healthTipsData = [
     description: "Include both high-intensity and low-intensity cardio exercises in your fitness routine.",
     icon: "Heart",
     color: "bg-pink-500",
-    category: "Fitness"
+    category: "Fitness",
+    link:"https://youtu.be/oJSpQHcJfKs?si=j7L_08T0QlK8uaDh"
   },
   {
     id: 15,
@@ -121,7 +135,8 @@ const healthTipsData = [
     description: "Take time each day to acknowledge things you're grateful for to improve mental wellbeing.",
     icon: "Smile",
     color: "bg-violet-500",
-    category: "Mental Health"
+    category: "Mental Health",
+    link:"https://youtu.be/oJSpQHcJfKs?si=j7L_08T0QlK8uaDh"
   },
   {
     id: 16,
@@ -129,7 +144,8 @@ const healthTipsData = [
     description: "Increase water intake during exercise, hot weather, or when consuming alcohol or caffeine.",
     icon: "Droplets",
     color: "bg-blue-600",
-    category: "Daily Habits"
+    category: "Daily Habits",
+    link:"https://youtu.be/oJSpQHcJfKs?si=j7L_08T0QlK8uaDh"
   },
   {
     id: 17,
@@ -137,7 +153,8 @@ const healthTipsData = [
     description: "Consume 0.8-1g of protein per pound of body weight to support muscle maintenance and growth.",
     icon: "Utensils",
     color: "bg-purple-600",
-    category: "Nutrition"
+    category: "Nutrition",
+    link:"https://youtu.be/oJSpQHcJfKs?si=j7L_08T0QlK8uaDh"
   },
   {
     id: 18,
@@ -145,7 +162,8 @@ const healthTipsData = [
     description: "Include stretching or yoga in your routine to maintain joint mobility and prevent injuries.",
     icon: "Umbrella",
     color: "bg-indigo-600",
-    category: "Fitness"
+    category: "Fitness",
+    link:"https://youtu.be/oJSpQHcJfKs?si=j7L_08T0QlK8uaDh"
   },
   {
     id: 19,
@@ -153,7 +171,8 @@ const healthTipsData = [
     description: "Challenge your brain with new skills or knowledge to maintain cognitive health as you age.",
     icon: "BookOpen",
     color: "bg-amber-500",
-    category: "Mental Health"
+    category: "Mental Health",
+    link:"https://youtu.be/oJSpQHcJfKs?si=j7L_08T0QlK8uaDh"
   },
   {
     id: 20,
@@ -161,7 +180,8 @@ const healthTipsData = [
     description: "Keep your bedroom cool, dark, and quiet for optimal sleep quality and duration.",
     icon: "Moon",
     color: "bg-blue-800",
-    category: "Rest"
+    category: "Rest",
+    link:"https://youtu.be/oJSpQHcJfKs?si=j7L_08T0QlK8uaDh"
   }
 ];
 
@@ -355,7 +375,7 @@ const HealthTips = () => {
                 </div>
                 <div className="px-6 pb-6">
                   <button className="flex items-center text-blue-600 hover:text-blue-800 transition-colors duration-300 group">
-                    <span className="font-medium">Learn more</span>
+                    < button className="font-medium" onClick={()=>window.open(tip.link,"_blank")}>Learn more</button>
                     <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
                   </button>
                 </div>

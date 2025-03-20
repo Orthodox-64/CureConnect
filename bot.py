@@ -34,7 +34,9 @@ def chat():
 
     query = data['prompt']
     user= data['user_data']
-    response=generate_llama_response(user,query)
+    # Response is getting all the data
+    response=generate_llama_response(user,query) 
+
     
 
     return jsonify({"response": response})

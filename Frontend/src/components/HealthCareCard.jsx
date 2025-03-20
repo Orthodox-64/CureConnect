@@ -31,7 +31,7 @@ function Card({ icon, title, description, route, role }) {
       <div className="card-icon">{icon}</div>
       <h3 className="card-title">{title}</h3>
       <p className="card-description">{description}</p>
-    </a>
+    </a>    
   );
 }
 
@@ -296,7 +296,7 @@ const HealthcareCards = () => {
         <span>{isListening ? "Stop Listening" : "Start Listening"}</span>
       </button>
 
-      <div style={responsiveStyles.cardsContainer}>
+      <div style={responsiveStyles.cardsContainer} >
         {/* Card 1 */}
         <div 
           className="bg-blue-100 shadow-lg rounded-xl text-center p-8 hover:shadow-xl transform transition-all duration-300 hover:-translate-y-1"

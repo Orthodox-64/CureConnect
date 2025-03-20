@@ -1,7 +1,7 @@
 import React from 'react';
 import { Facebook, Twitter, Instagram, Linkedin, Mail, Phone, MapPin } from 'lucide-react';
 
-function Footer() {
+function  Footer() {
   const footerStyle = {
     backgroundColor: '#1a202c',
     color: '#e2e8f0'

@@ -1,9 +1,7 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import xd from '../assets/xd.png'
 import { useSelector, useDispatch } from 'react-redux'
 import { logout } from '../actions/userActions';
-
 import React from 'react'
 
 // Constants
@@ -36,8 +34,8 @@ export default function Navbar() {
 
   return (
     <div className="fixed top-0 z-50 w-full">
-      <nav className="flex justify-around items-center p-2 md:p-5 bg-white shadow-lg">
-        <a href="/">
+      <nav className="flex justify-between items-center p-2 md:p-5 bg-white shadow-lg">
+        <a href="/" className="flex items-center">
           <div className="h-10 w-10">
             <img
               src="/src/assets/logo.png"
@@ -60,7 +58,7 @@ export default function Navbar() {
         </div>
 
         {/* Desktop Navigation */}
-        <ul className="hidden md:flex items-center space-x-8">
+        <ul className="hidden md:flex items-center space-x-4 lg:space-x-9">
           {NAV_ITEMS.map((item) => (
             <a
               key={item.path}
@@ -73,19 +71,19 @@ export default function Navbar() {
         </ul>
 
         {/* Desktop buttons */}
-        <div className="hidden md:flex items-center space-x-4 mr-6">
+        <div className="hidden md:flex items-center space-x-4 mr-2 md:mr-6">
           <div id="google_translate_element" className="ml-4" />
           {!isAuthenticated ? (
             <a
               href="/login"
-              className="bg-blue-800 text-white px-6 py-2 rounded-lg text-base font-medium hover:bg-blue-900 transition-colors duration-200 shadow-md"
+              className="bg-blue-800 text-white px-4 py-2 rounded-lg text-base font-medium hover:bg-blue-900 transition-colors duration-200 shadow-md"
             >
               Login
             </a>
           ) : (
             <button
               onClick={logoutUser}
-              className="bg-blue-800 text-white px-6 py-2 rounded-lg text-base font-medium hover:bg-blue-900 transition-colors duration-200 shadow-md"
+              className="bg-blue-800 text-white px-4 py-2 rounded-lg text-base font-medium hover:bg-blue-900 transition-colors duration-200 shadow-md"
             >
               Logout
             </button>

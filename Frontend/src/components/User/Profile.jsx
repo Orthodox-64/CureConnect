@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux'
 
 const Profile = () => {
     const navigate = useNavigate()
-    const { user, loading, isAuthenticated } = useSelector(state => state.user);    
+    const { user, loading, isAuthenticated } = useSelector(state => state.user);
 
     useEffect(() => {
         if (isAuthenticated === false) {
@@ -34,7 +34,7 @@ const Profile = () => {
             <div className="max-w-4xl mx-auto">
                 <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
                     {/* Header Section */}
-                    <div className="relative h-48 bg-gradient-to-r from-blue-600 to-indigo-600">
+                    <div className="relative h-48 bg-gradient-to-r from-blue-900 to-indigo-600">
                         <div className="absolute bottom-0 left-0 right-0 px-8 pb-8 pt-32 bg-gradient-to-t from-black/50">
                             <h1 className="text-3xl font-bold text-white">{user?.name || 'User'}</h1>
                         </div>
@@ -51,7 +51,7 @@ const Profile = () => {
                                     <div className="flex items-start gap-3">
                                         <Mail className="w-5 h-5 text-gray-500 mt-1" />
                                         <div>
-                                            <p className="text-gray-800">{user?.email || 'No email provided'}</p>
+                                            <p className="text-gray-800">{user?.contact || 'No email provided'}</p>
                                             <p className="text-sm text-gray-500">Email</p>
                                         </div>
                                     </div>
@@ -59,7 +59,7 @@ const Profile = () => {
                                     <div className="flex items-start gap-3">
                                         <Phone className="w-5 h-5 text-gray-500 mt-1" />
                                         <div>
-                                            <p className="text-gray-800">{user?.phone || "Not provided"}</p>
+                                            <p className="text-gray-800">{user?.contact || "Not provided"}</p>
                                             <p className="text-sm text-gray-500">Phone</p>
                                         </div>
                                     </div>

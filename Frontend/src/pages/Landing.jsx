@@ -14,62 +14,6 @@ const Landing = () => {
 
   return (
     <div className="bg-white text-gray-900 w-full">
-      {/* Responsive Navigation */}
-      <nav className="flex justify-between  items-center p-4 md:p-5 bg-white shadow-md">
-        <img
-          src="\src\assets\logo.png"
-          alt="Logo"
-          className="w-20 md:w-24 ml-16  cursor-pointer "
-        />
-        
-        {/* Mobile menu button */}
-        <div className="md:hidden">
-          <button onClick={toggleMobileMenu} className="text-gray-700 focus:outline-none">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={mobileMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"} />
-            </svg>
-          </button>
-        </div>
-
-        {/* Desktop Navigation */}
-        <ul className="hidden gap-9 md:flex space-x-6">
-          <a href="/"><li className="hover:text-blue-800 cursor-pointer text-xl font-bold">Home</li></a>
-          <a href="/https://video-call-final-git-main-orthodox-64s-projects.vercel.app/"><li className="hover:text-blue-800 cursor-pointer text-xl font-bold">TeleMedicine</li></a>
-          <a href="/consult"><li className="hover:text-blue-800 cursor-pointer text-xl font-bold">Consult</li></a>
-          {/* <a href="/health"><li className="hover:text-blue-800 cursor-pointer text-xl font-bold">Health</li></a> */}
-          {/* <a href="/appointment"><li className="hover:text-blue-800 cursor-pointer text-xl font-bold">Appointment</li></a> */}
-          <a href="/analysis"><li className="hover:text-blue-800 cursor-pointer text-xl font-bold">Analysis</li></a>
-          <a href="/emergency"><li className="hover:text-blue-800 cursor-pointer text-xl font-bold">Emergency</li></a>
-          <div className="" id="google_translate_element"></div>
-        </ul>
-
-        {/* Desktop buttons */}
-        <div className="hidden md:flex gap-4 items-center space-x-3 md:mr-2">
-          <a href="/login">
-            <button className="bg-blue-950 text-white px-4 py-2 rounded-lg text-base" style={{backgroundColor:"oklch(0.424 0.199 265.638)"}}>Sign Up</button>
-          </a>
-          <a href="/account">
-            <img className="w-8 h-8 rounded-full " src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png" alt="Profile" />
-          </a>
-        </div>
-      </nav>
-
-      {/* Mobile Navigation Menu */}
-      {mobileMenuOpen && (
-        <div className="block md:hidden bg-white shadow-md">
-          <ul className="flex flex-col space-y-3 p-4">
-            <li className="hover:text-blue-800 cursor-pointer font-bold">Home</li>
-            <li className="hover:text-blue-800 cursor-pointer font-bold">About Us</li>
-            <li className="hover:text-blue-800 cursor-pointer font-bold">Doctors</li>
-            <li className="hover:text-blue-800 cursor-pointer font-bold">Services</li>
-            <li className="hover:text-blue-800 cursor-pointer font-bold">Blog</li>
-          </ul>
-          <div className="flex p-4 space-x-2">
-            <button className="bg-blue-950 text-white px-3 py-1 rounded-lg text-sm w-full" style={{backgroundColor:"oklch(0.424 0.199 265.638)"}}>Sign Up</button>
-          </div>
-        </div>
-      )}
-
       {/* Hero Section */}
       <div className="px-4 md:px-10 lg:mt-16 lg:-translate-y-11">
         <header className="flex flex-col md:flex-row items-center justify-between py-6 md:p-10">

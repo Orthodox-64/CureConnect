@@ -4,6 +4,9 @@ const User = require("../models/userModel.js");
 const sendToken = require("../utils/jwtToken");
 const sendEmail = require("../utils/sendEmail");
 const catchAsyncError = require("../middleware/catchAsyncError");
+const validator = require("validator");
+const sendSMS = require("../utils/sendSMS");
+const sendReminder = require("../utils/sendReminder");
 
 const generateRoomId = () => {
     return Math.random().toString(36).substring(2, 12);
@@ -40,10 +43,10 @@ exports.newAppointment = catchAsyncError(async (req, res, next) => {
         time,
         roomId // Add the roomId to the appointment
     });
+    const isEmail = validator.isEmail(req.user.contact);
 
-    const message = `
+    let message = `
     Dear ${req.user.name},
-
     Your appointment has been successfully scheduled with Dr. ${doctorExists.name}.
 
     Appointment Details:
@@ -55,20 +58,64 @@ exports.newAppointment = catchAsyncError(async (req, res, next) => {
     Description: ${description}
     Room ID: ${roomId}
 
-    Please arrive 10 minutes before your scheduled appointment time.
-    If you need to reschedule or cancel your appointment, please do so at least 24 hours in advance.
-
     Best regards,
     TeleConnect Team
     `;
-    try {
-        await sendEmail({
-            email: req.user.email,
-            subject: `Welcome to TeleConnect`,
-            message,
-        });
-    } catch (error) {
-        return next(new ErrorHander(error.message, 500));
+    if (isEmail) {
+        try {
+            await sendEmail({
+                email: req.user.contact,
+                subject: `Welcome to TeleConnect`,
+                message,
+            });
+        } catch (error) {
+            return next(new ErrorHander(error.message, 500));
+        }
+    } else {
+        message = `
+            TeleConnect: Appointment confirmed!
+            Dr. ${doctorExists.name} (${doctorExists.speciality})
+            Date: ${day}
+            Time: ${time}
+            Room ID: ${roomId}
+            Description: ${description}
+        `;
+        try {
+            console.log(req.user);
+            await sendSMS({
+                phone: `+91${req.user.contact}`,
+                message,
+            });
+
+        } catch (error) {
+            return next(new ErrorHander(error.message, 500));
+        }
+    }
+
+    // Schedule reminders 5 minutes before appointment
+    const appointmentDateTime = new Date(`${day}T${time}`);
+    const reminderTime = new Date(appointmentDateTime.getTime() - 5 * 60000); // 5 minutes before
+    const now = new Date();
+
+    if (reminderTime > now) {
+        const timeoutDuration = reminderTime.getTime() - now.getTime();
+        
+        setTimeout(async () => {
+            try {
+                await sendReminder(req.user, {
+                    day,
+                    time,
+                    roomId,
+                });
+                await sendReminder(doctorExists, {
+                    day,
+                    time,
+                    roomId,
+                });
+            } catch (error) {
+                console.error("Failed to send reminder:", error);
+            }
+        }, timeoutDuration);
     }
 
     res.status(201).json({
@@ -81,13 +128,13 @@ exports.allAppointments = catchAsyncError(async (req, res, next) => {
     let appointments;
     if (req.user.role == 'doctor') {
         appointments = await Appointment.find({ doctor: req.user._id })
-            .populate('patient', 'name email')
+            .populate('patient', 'name contact')
             .populate('doctor', 'name speciality availablity')
             .sort({ day: -1, time: -1 }); // Most recent appointments first
     } else {
         appointments = await Appointment.find({ patient: req.user._id })
             .populate('doctor', 'name speciality availablity')
-            .populate('patient', 'name email')
+            .populate('patient', 'name contact')
             .sort({ day: -1, time: -1 }); // Most recent appointments first
     }
 
@@ -105,7 +152,7 @@ exports.allAppointments = catchAsyncError(async (req, res, next) => {
         patient: {
             id: appointment.patient._id,
             name: appointment.patient.name,
-            email: appointment.patient.email
+            contact: appointment.patient.contact
         },
         doctor: {
             id: appointment.doctor._id,

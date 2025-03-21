@@ -13,7 +13,6 @@ const server = http.createServer(app);
 // Socket.IO setup
 const io = new Server(server, {
     cors: {
-        origin: ["http://localhost:5173", "http://localhost:3000", "http://192.168.31.229:5173"],
         methods: ["GET", "POST"],
         credentials: true
     }
@@ -108,10 +107,11 @@ io.of('/chat').on("connection", (socket) => {
 
 // Middleware
 app.use(cors({
-    origin: ['http://localhost:5173', 'http://localhost:3000', 'http://192.168.31.229:5173'],
+    origin: 'http://localhost:5173',
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
+    exposedHeaders: ['set-cookie'],
     optionsSuccessStatus: 200
 }));
 app.use(express.json());
@@ -120,6 +120,53 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // Database connection
 mongoose.connect(process.env.MONGODB_URI);
+
+// Add after database connection and before routes
+const Appointment = require('./models/appointmentModel');
+const User = require('./models/userModel');
+const sendReminder = require('./utils/sendReminder');
+
+// Schedule reminders for existing appointments on server start
+const scheduleReminders = async () => {
+    try {
+        const now = new Date();
+        const appointments = await Appointment.find({
+            status: 'confirmed',
+        }).populate('patient doctor');
+
+        appointments.forEach(appointment => {
+            const appointmentDateTime = new Date(`${appointment.day}T${appointment.time}`);
+            const reminderTime = new Date(appointmentDateTime.getTime() - 5 * 60000);
+
+            if (reminderTime > now) {
+                const timeoutDuration = reminderTime.getTime() - now.getTime();
+                
+                setTimeout(async () => {
+                    try {
+                        await sendReminder(appointment.patient, {
+                            day: appointment.day,
+                            time: appointment.time,
+                            roomId: appointment.roomId,
+                        });
+                        await sendReminder(appointment.doctor, {
+                            day: appointment.day,
+                            time: appointment.time,
+                            roomId: appointment.roomId,
+                        });
+                    } catch (error) {
+                        console.error("Failed to send reminder:", error);
+                    }
+                }, timeoutDuration);
+            }
+        });
+    } catch (error) {
+        console.error("Failed to schedule reminders:", error);
+    }
+};
+
+mongoose.connect(process.env.MONGODB_URI).then(() => {
+    scheduleReminders();
+});
 
 // Routes
 const user = require('./routes/userRoute');

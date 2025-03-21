@@ -18,16 +18,23 @@ img_size = 224
 class_labels = ["Myocardial Infarction", "History of MI", "Abnormal Heartbeat", "Normal Person"]
 
 # Groq API Key (Ensure this is stored securely in an environment variable)
-API_KEY_LLAMA = "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"
+API_KEY_LLAMA = "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"
 
 # Function to generate Llama response
 def generate_llama_response(result, file_path):
     predefined_prompt = f"""
-    You are an ECG Analyzer. You have been provided with an ECG image ({file_path}) 
-    and the result: {result}. Possible results include 'Myocardial Infarction', 
-    'History of MI', 'Abnormal Heartbeat', or 'Normal Person'. 
-    Assist the user with their analysis report.
-    make it short and concise upto 5 lines 
+    You are an expert cardiologist analyzing ECG readings.
+    Keep the response within 5-6 lines
+    
+    Context:
+    - ECG Analysis Result: {result}
+    - Patient ECG: {file_path}
+    
+    Provide a concise analysis including:
+    - Diagnosis summary
+    - Key findings
+    - Immediate actions (if critical)
+    - Follow-up recommendations
     """
     client = Groq(api_key=API_KEY_LLAMA)
     response = client.chat.completions.create(

@@ -32,8 +32,8 @@ function App() {
 
   return (
     <div className="flex items-center flex-col">
-      {/* <Navbar /> */}
-      <div className="w-full">
+      <Navbar />
+      <div className="pt-20 w-full">
         <Routes>
           <Route path='/' element={<Landing />}></Route>
           <Route path='/analysis' element={<AnalysisBot />}></Route>

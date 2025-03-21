@@ -9,7 +9,7 @@ app = Flask(__name__)
 CORS(app)
 
 
-API_KEY_LLAMA = "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"
+API_KEY_LLAMA = "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"
 
 def generate_llama_response(context,prompt):
     pre_defined=f"""answer in the same language as user

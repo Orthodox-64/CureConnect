@@ -38,7 +38,7 @@ def predict_xray(image_source):
 
 
 from groq import Groq
-API_KEY_LLAMA = "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"
+API_KEY_LLAMA = "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"
 
 def generate_llama_response(result,file_path):
     predefined_prompt=f"You are a X-ray Analyzer you are being provided with X-ray image{file_path} and reslut of it {result} like 'normal' or 'penumonia' you have to assis thye user if penumonia detetcted in just 2 lines "

@@ -6,8 +6,14 @@ import { logout } from '../actions/userActions';
 
 import React from 'react'
 
-// Add this after the imports
-const CONSULT_URL = 'http://localhost:3000/';
+// Constants
+const NAV_ITEMS = [
+  { path: '/', label: 'Home' },
+  { path: 'https://video-call-final-git-main-orthodox-64s-projects.vercel.app/', label: 'TeleMedicine' },
+  { path: '/chat', label: 'Consult' },
+  { path: '/analysis', label: 'Analysis' },
+  { path: '/emergency', label: 'Emergency' }
+];
 
 export default function Navbar() {
   const dispatch = useDispatch();
@@ -19,75 +25,110 @@ export default function Navbar() {
     i18n.changeLanguage(e.target.value);
   };
 
+  const toggleMobileMenu = () => {
+    setMobileMenuOpen(!mobileMenuOpen);
+  };
+
   const logoutUser = async (e) => {
     e.preventDefault();
     dispatch(logout());
   };
 
   return (
-    <div className="fixed top-0 z-50 w-full bg-gray-800 shadow-lg">
-      <nav className="container mx-auto px-4 sm:px-6 lg:px-8 py-3 flex justify-between items-center">
-        <div className="flex items-center">
-          <a href="/">
-            <img className="h-8 w-auto" src={xd} alt="Logo" />
-          </a>
-        </div>
-        <div className="hidden md:flex space-x-6">
-          <a href="/" className="text-white hover:text-gray-300">{t('navbar.dashboard')}</a>
-          <a href="/telemedicine" className="text-white hover:text-gray-300">{t('navbar.telemedicine')}</a>
-          <a href="/analysis" className="text-white hover:text-gray-300">{t('navbar.analysis')}</a>
-          <a href="/health" className="text-white hover:text-gray-300">{t('navbar.health_tips')}</a>
-          <a href={CONSULT_URL} className="text-white hover:text-gray-300">{t('navbar.consult')}</a>
-        </div>
-        <div className="hidden md:flex items-center space-x-4">
-          <select
-            onChange={changeLanguage}
-            value={i18n.language}
-            className="p-2 bg-gray-700 text-white rounded-md text-xs"
+    <div className="fixed top-0 z-50 w-full">
+      <nav className="flex justify-around items-center p-2 md:p-5 bg-white shadow-lg">
+        <a href="/">
+          <div className="h-10 w-10">
+            <img
+              src="/src/assets/logo.png"
+              alt="Logo"
+              className="w-auto object-contain ml-4 md:ml-8 cursor-pointer transition-transform duration-300 hover:scale-105"
+            />
+          </div>
+        </a>
+
+        {/* Mobile menu button */}
+        <div className="md:hidden">
+          <button
+            onClick={toggleMobileMenu}
+            className="text-gray-700 hover:text-blue-800 focus:outline-none transition-colors duration-200"
           >
-            <option value="en">English</option>
-            <option value="hi">हिंदी</option>
-            <option value="mr">मराठी</option>
-            <option value="kn">ಕನ್ನಡ</option>
-          </select>
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={mobileMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"} />
+            </svg>
+          </button>
+        </div>
+
+        {/* Desktop Navigation */}
+        <ul className="hidden md:flex items-center space-x-8">
+          {NAV_ITEMS.map((item) => (
+            <a
+              key={item.path}
+              href={item.path}
+              className="text-gray-800 hover:text-blue-800 transition-colors duration-200"
+            >
+              <li className="text-lg font-semibold">{item.label}</li>
+            </a>
+          ))}
+        </ul>
+
+        {/* Desktop buttons */}
+        <div className="hidden md:flex items-center space-x-4 mr-6">
+          <div id="google_translate_element" className="ml-4" />
           {!isAuthenticated ? (
-            <a href="/login" className="bg-white text-gray-800 px-3 py-1 rounded-md text-sm font-medium">Login</a>
+            <a
+              href="/login"
+              className="bg-blue-800 text-white px-6 py-2 rounded-lg text-base font-medium hover:bg-blue-900 transition-colors duration-200 shadow-md"
+            >
+              Login
+            </a>
           ) : (
-            <button onClick={logoutUser} className="bg-white text-gray-800 px-3 py-1 rounded-md text-sm font-medium">Logout</button>
+            <button
+              onClick={logoutUser}
+              className="bg-blue-800 text-white px-6 py-2 rounded-lg text-base font-medium hover:bg-blue-900 transition-colors duration-200 shadow-md"
+            >
+              Logout
+            </button>
           )}
-          <a href="/account">
-            <img className="w-8 h-8 rounded-full" src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png" alt="Profile" />
+          <a href="/account" className="transform hover:scale-110 transition-transform duration-200">
+            <img
+              className="w-10 h-10 rounded-full border-2 border-blue-800"
+              src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png"
+              alt="Profile"
+            />
           </a>
         </div>
-        <button
-          className="md:hidden text-white"
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-        >
-          {mobileMenuOpen ? '✖' : '☰'}
-        </button>
       </nav>
+
+      {/* Mobile Navigation Menu */}
       {mobileMenuOpen && (
-        <div className="md:hidden bg-gray-900 text-white space-y-2 p-4">
-          <a href="/" className="block py-2">{t('navbar.dashboard')}</a>
-          <a href="#" className="block py-2">{t('navbar.telemedicine')}</a>
-          <a href="#" className="block py-2">{t('navbar.analysis')}</a>
-          <a href="#" className="block py-2">{t('navbar.health_tips')}</a>
-          <a href={CONSULT_URL} className="block py-2">{t('navbar.consult')}</a>
-          <div className="flex justify-between items-center py-2">
-            <select
-              onChange={changeLanguage}
-              value={i18n.language}
-              className="p-2 bg-gray-700 text-white rounded-md text-xs"
-            >
-              <option value="en">English</option>
-              <option value="hi">हिंदी</option>
-              <option value="mr">मराठी</option>
-              <option value="kn">ಕನ್ನಡ</option>
-            </select>
+        <div className="block md:hidden bg-white shadow-lg animate-fadeIn">
+          <ul className="flex flex-col p-4">
+            {NAV_ITEMS.map((item) => (
+              <a
+                key={item.path}
+                href={item.path}
+                className="py-3 text-gray-800 hover:text-blue-800 transition-colors duration-200"
+              >
+                <li className="text-base font-semibold">{item.label}</li>
+              </a>
+            ))}
+          </ul>
+          <div className="p-4">
             {!isAuthenticated ? (
-              <a href="/login" className="bg-white text-gray-800 px-3 py-1 rounded-md text-sm font-medium">Login</a>
+              <a
+                href="/login"
+                className="block w-full text-center bg-blue-800 text-white px-4 py-2 rounded-lg text-base font-medium hover:bg-blue-900 transition-colors duration-200 shadow-md"
+              >
+                Login
+              </a>
             ) : (
-              <button onClick={logoutUser} className="bg-white text-gray-800 px-3 py-1 rounded-md text-sm font-medium">Logout</button>
+              <button
+                onClick={logoutUser}
+                className="w-full bg-blue-800 text-white px-4 py-2 rounded-lg text-base font-medium hover:bg-blue-900 transition-colors duration-200 shadow-md"
+              >
+                Logout
+              </button>
             )}
           </div>
         </div>

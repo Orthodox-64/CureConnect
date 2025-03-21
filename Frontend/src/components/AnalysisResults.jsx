@@ -1,4 +1,5 @@
 import { MessageSquare, Loader2, Image as ImageIcon } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
 
 function AnalysisResults({ isAnalyzing, analysis }) {
     return (
@@ -15,7 +16,7 @@ function AnalysisResults({ isAnalyzing, analysis }) {
                 </div>
             ) : analysis ? (
                 <div className="bg-white rounded-lg p-4 shadow-sm">
-                    <p className="text-gray-700 leading-relaxed">{analysis}</p>
+                    <ReactMarkdown>{analysis}</ReactMarkdown>
                 </div>
             ) : (
                 <div className="text-center py-8 text-gray-500">

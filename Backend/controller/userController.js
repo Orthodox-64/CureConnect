@@ -3,16 +3,18 @@ const User = require("../models/userModel");
 const sendToken = require("../utils/jwtToken");
 const sendEmail = require("../utils/sendEmail");
 const catchAsyncError = require("../middleware/catchAsyncError");
+const validator = require("validator");
+const sendSMS = require("../utils/sendSMS");
 
 
 // Register a User
 exports.registerUser = catchAsyncError(async (req, res, next) => {
 
-    const { name, email, password, role } = req.body;
+    const { name, contact, password, role } = req.body;
 
     const user = await User.create({
         name,
-        email,
+        contact,
         password,
         role,
         avatar: {
@@ -21,15 +23,31 @@ exports.registerUser = catchAsyncError(async (req, res, next) => {
         },
     });
 
-    const message = `Welcome to TeleConnect ${name}`;
-    try {
-        await sendEmail({
-            email: user.email,
-            subject: `Welcome to TeleConnect`,
-            message,
-        });
-    } catch (error) {
-        return next(new ErrorHander(error.message, 500));
+    // Check if contact is email or phone
+    const isEmail = validator.isEmail(contact);
+    
+    if (isEmail) {
+        const message = `Welcome to TeleConnect ${name}`;
+        try {
+            await sendEmail({
+                email: contact,
+                subject: `Welcome to TeleConnect`,
+                message,
+            });
+        } catch (error) {
+            return next(new ErrorHander(error.message, 500));
+        }
+    } else {
+        const message = `Welcome to TeleConnect ${name}`;
+        try {
+            let sms = await sendSMS({
+                phone: `+91${contact}`,
+                message,
+            });
+            console.log(sms);
+        } catch (error) {
+            return next(new ErrorHander(error.message, 500));
+        }
     }
 
     sendToken(user, 201, res);
@@ -37,19 +55,20 @@ exports.registerUser = catchAsyncError(async (req, res, next) => {
 
 // Login User
 exports.loginUser = catchAsyncError(async (req, res, next) => {
-    const { email, password } = req.body;
-    if (!email || !password) {
-        return next(new ErrorHander("Please Enter Email & Password", 400));
+    const { contact, password } = req.body;
+    
+    if (!contact || !password) {
+        return next(new ErrorHander("Please Enter Contact & Password", 400));
     }
 
-    const user = await User.findOne({ email }).select("+password");
+    const user = await User.findOne({ contact }).select("+password");
     if (!user) {
-        return next(new ErrorHander("Invalid email or password", 401));
+        return next(new ErrorHander("Invalid credentials", 401));
     }
 
     const isPasswordMatched = await user.comparePassword(password);
     if (!isPasswordMatched) {
-        return next(new ErrorHander("Invalid email or password", 401));
+        return next(new ErrorHander("Invalid credentials", 401));
     }
 
     sendToken(user, 200, res);
@@ -105,7 +124,7 @@ exports.getAllDoctors = catchAsyncError(async (req, res, next) => {
     const formattedDoctors = doctors.map(doctor => ({
         _id: doctor._id,
         name: doctor.name,
-        email: doctor.email,
+        contact: doctor.contact,
         speciality: doctor.speciality,
         availability: doctor.availablity, // Note: Fix typo in model from 'availablity' to 'availability'
         avatar: doctor.avatar,
@@ -135,7 +154,7 @@ exports.getSingleUser = catchAsyncError(async (req, res, next) => {
 exports.updateUserRole = catchAsyncError(async (req, res, next) => {
     const newUserData = {
         name: req.body.name,
-        email: req.body.email,
+        contact: req.body.contact,
         role: req.body.role,
     };
 

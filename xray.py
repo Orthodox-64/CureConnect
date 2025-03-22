@@ -7,7 +7,7 @@ from io import BytesIO
 from flask_cors import CORS
 
 # Load the model
-model = load_model(r"C:\Users\Lenovo\Downloads\xray_pneumonia_model.keras (1)")
+model = load_model(r"/Users/sachinpangal/Downloads/xray_pneumonia_model");
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -41,7 +41,20 @@ from groq import Groq
 API_KEY_LLAMA = "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"
 
 def generate_llama_response(result,file_path):
-    predefined_prompt=f"You are a X-ray Analyzer you are being provided with X-ray image{file_path} and reslut of it {result} like 'normal' or 'penumonia' you have to assis thye user if penumonia detetcted in just 2 lines "
+    predefined_prompt=f"""
+    You are an expert radiologist analyzing Xray image.
+    Keep the response within 5-6 lines
+    
+    Context:
+    - Xray Analysis Result: {result}
+    - Patient Xray: {file_path}
+    
+    Provide a concise analysis including:
+    - Diagnosis summary
+    - Key findings
+    - Immediate actions (if critical)
+    - Follow-up recommendations
+    """
     client = Groq(api_key=API_KEY_LLAMA)
     response = client.chat.completions.create(
         messages=[{"role": "user", "content": predefined_prompt}],

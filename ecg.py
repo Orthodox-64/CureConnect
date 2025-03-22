@@ -11,7 +11,7 @@ app = Flask(__name__)
 CORS(app)
 
 # Load the model
-model = load_model(r"C:\Users\Lenovo\Downloads\ecg_model (1).h5")
+model = load_model(r"/Users/sachinpangal/Desktop/ecg_model (1).h5")
 
 # Image settings
 img_size = 224

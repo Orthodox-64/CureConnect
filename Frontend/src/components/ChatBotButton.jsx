@@ -134,7 +134,7 @@ const ChatBotButton = () => {
       }
      
     } catch (error) {
-      console.error("Error:", error);
+      console.log("Error:", error);
       setMessages((prev) => [
         ...prev,
         { type: "bot", content: "Sorry, I encountered an error. Please try again.", timestamp: new Date().toISOString() }

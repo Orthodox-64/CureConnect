@@ -10,7 +10,7 @@ const NAV_ITEMS = [
   { path: 'https://video-call-final-git-main-orthodox-64s-projects.vercel.app/', label: 'TeleMedicine' },
   { path: '/chat', label: 'Consult' },
   { path: '/analysis', label: 'Analysis' },
-  { path: '/emergency', label: 'Emergency' }
+  { path: 'https://sachinpro.onrender.com/', label: 'Emergency' }
 ];
 
 export default function Navbar() {

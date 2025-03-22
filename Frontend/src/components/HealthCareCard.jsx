@@ -18,6 +18,13 @@ function Card({ icon, title, description, route, role }) {
         "_blank",
         "noopener,noreferrer"
       );
+    } else if (route === "emergency") {
+      // Redirect emergency to the external site
+      window.open(
+        "https://sachinpro.onrender.com/",
+        "_blank",
+        "noopener,noreferrer"
+      );
     } else if (route.startsWith("/")) {
       // Navigate for internal routes
       navigate(route);
@@ -47,7 +54,7 @@ function Cards() {
       icon: "📞",
       title: t("navbar.telemedicine"),
       description: t("cards.telemedicine"),
-      route: "telemedicine", // Route updated to match second file
+      route: "telemedicine", 
       role: "doctor",
     },
     {
@@ -68,14 +75,14 @@ function Cards() {
       icon: "🩺",
       title: t("navbar.consult"),
       description: t("cards.consulting"),
-      route: "/chat", // Route updated to match second file
+      route: "/chat", 
       role: "doctor",
     },
     {
       icon: "🚑",
       title: t("navbar.emergency"),
       description: t("cards.emergency"),
-      route: "/emergency",
+      route: "emergency",
       role: "patient",
     },
     {
@@ -120,6 +127,13 @@ function Cards() {
           "_blank",
           "noopener,noreferrer"
         );
+      } else if (transcript.includes("emergency")) {
+        // Open external emergency site
+        window.open(
+          "https://sachinpro.onrender.com/",
+          "_blank",
+          "noopener,noreferrer"
+        );
       } else {
         const matchedCard = cards.find((card) =>
           transcript.includes(card.title.toLowerCase())
@@ -128,6 +142,12 @@ function Cards() {
           if (matchedCard.route === "telemedicine") {
             window.open(
               "https://video-call-final-git-main-orthodox-64s-projects.vercel.app/",
+              "_blank",
+              "noopener,noreferrer"
+            );
+          } else if (matchedCard.route === "emergency") {
+            window.open(
+              "https://sachinpro.onrender.com/",
               "_blank",
               "noopener,noreferrer"
             );
@@ -217,14 +237,19 @@ const HealthcareCards = () => {
           "_blank",
           "noopener,noreferrer"
         );
+      } else if (transcript.includes("emergency")) {
+        // Open external emergency site
+        window.open(
+          "https://sachinpro.onrender.com/",
+          "_blank",
+          "noopener,noreferrer"
+        );
       } else if (transcript.includes("analysis")) {
         navigate("/analysis");
       } else if (transcript.includes("health tips")) {
         navigate("/health");
       } else if (transcript.includes("consult")) {
         navigate("/chat");
-      } else if (transcript.includes("emergency")) {
-        navigate("/emergency");
       } else if (transcript.includes("appointment")) {
         navigate("/appointment");
       }
@@ -246,6 +271,12 @@ const HealthcareCards = () => {
     if (route === "telemedicine") {
       window.open(
         "https://video-call-final-git-main-orthodox-64s-projects.vercel.app/",
+        "_blank",
+        "noopener,noreferrer"
+      );
+    } else if (route === "emergency") {
+      window.open(
+        "https://sachinpro.onrender.com/",
         "_blank",
         "noopener,noreferrer"
       );
@@ -352,7 +383,7 @@ const HealthcareCards = () => {
         {/* Card 5 */}
         <div
           className="bg-blue-100 shadow-lg rounded-xl text-center p-8 hover:shadow-xl transform transition-all duration-300 hover:-translate-y-1"
-          onClick={() => handleCardClick("/emergency")}
+          onClick={() => handleCardClick("emergency")}
           style={responsiveStyles.card}
         >
           <div className="mb-6 text-blue-600 text-5xl">🚑</div>

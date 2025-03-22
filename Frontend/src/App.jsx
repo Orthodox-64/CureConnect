@@ -39,7 +39,7 @@ function App() {
           <Route path='/analysis' element={<AnalysisBot />}></Route>
           <Route path='/analysis/ecg' element={<AnalysisBotECG />}></Route>
           <Route path='/analysis/xray' element={<AnalysisBotXRAY />}></Route>
-          <Route path='/emergency' element={<HospitalFinal />}></Route>
+          {/* <Route path='/emergency' element={<HospitalFinal />}></Route> */}
           <Route path='/health' element={<HealthTips/>}></Route>
           <Route path='/chat' element={<Chat/>}></Route>
           <Route path='/telemedicine' element={<VideoCall />}></Route>

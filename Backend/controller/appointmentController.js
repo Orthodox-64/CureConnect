@@ -56,7 +56,7 @@ exports.newAppointment = catchAsyncError(async (req, res, next) => {
     Doctor: Dr. ${doctorExists.name}
     Speciality: ${doctorExists.speciality}
     Description: ${description}
-    Room ID: ${roomId}
+    Room ID: https://video-call-final-git-main-orthodox-64s-projects.vercel.app/?roomID=${roomId}
 
     Best regards,
     TeleConnect Team
@@ -65,6 +65,11 @@ exports.newAppointment = catchAsyncError(async (req, res, next) => {
         try {
             await sendEmail({
                 email: req.user.contact,
+                subject: `Welcome to TeleConnect`,
+                message,
+            });
+            await sendEmail({
+                email: doctorExists.email,
                 subject: `Welcome to TeleConnect`,
                 message,
             });
@@ -77,7 +82,7 @@ exports.newAppointment = catchAsyncError(async (req, res, next) => {
             Dr. ${doctorExists.name} (${doctorExists.speciality})
             Date: ${day}
             Time: ${time}
-            Room ID: ${roomId}
+            Room ID: https://video-call-final-git-main-orthodox-64s-projects.vercel.app/?roomID=${roomId}
             Description: ${description}
         `;
         try {

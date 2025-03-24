@@ -10,7 +10,7 @@ const sendReminder = async (user, appointmentDetails) => {
     Appointment Details:
     Date: ${appointmentDetails.day}
     Time: ${appointmentDetails.time}
-    Room ID: ${appointmentDetails.roomId}
+    Room: https://video-call-final-git-main-orthodox-64s-projects.vercel.app/?roomID=${appointmentDetails.roomId}
     
     Please be ready to join the session.
     `;

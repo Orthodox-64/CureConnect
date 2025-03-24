@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from 'react-redux';
 import { clearErrors, myAppointments } from '../../actions/appointmentActions';
-import { Calendar, Clock, MapPin, Users, CalendarCheck, UserPlus, X, Calendar as CalendarIcon, 
-         Clock as ClockIcon, FileText, User, UserCheck, Video, Filter, ChevronLeft } from 'lucide-react';
+import {
+    Calendar, Clock, MapPin, Users, CalendarCheck, UserPlus, X, Calendar as CalendarIcon,
+    Clock as ClockIcon, FileText, User, UserCheck, Video, Filter, ChevronLeft
+} from 'lucide-react';
 
 const MyAppointment = () => {
     const dispatch = useDispatch();
     const { loading, error, appointments } = useSelector((state) => state.myAppointment);
     const [filter, setFilter] = useState('all');
-    
+
     const statusColors = {
         pending: 'bg-yellow-100 text-yellow-800 border-yellow-200',
         confirmed: 'bg-green-100 text-green-800 border-green-200',
@@ -30,7 +32,7 @@ const MyAppointment = () => {
 
     const filteredAppointments = appointments?.filter(appt => {
         const appointmentDate = new Date(appt.day);
-        
+
         if (filter === 'upcoming') {
             return appointmentDate >= today;
         } else if (filter === 'past') {
@@ -76,7 +78,9 @@ const MyAppointment = () => {
                                             <p className="text-sm text-gray-600">{appt.doctor.speciality}</p>
                                         </div>
                                         <span className={`px-3 py-1 rounded-full text-sm font-medium ${statusColors[appt.status]}`}>
-                                            RoomId: {appt.roomId}
+                                            <a href={`https://video-call-final-git-main-orthodox-64s-projects.vercel.app/?roomID=${appt.roomId}`}>
+                                                {appt.roomId}
+                                            </a>
                                         </span>
                                     </div>
 

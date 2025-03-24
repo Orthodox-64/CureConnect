@@ -269,7 +269,7 @@ const LoginSignup = () => {
                     <Mail className="text-blue-300" size={18} />
                   </div>
                   <input
-                    type="email"
+                    type="text"
                     name="contact"
                     placeholder="you@example.com"
                     value={formData.contact}

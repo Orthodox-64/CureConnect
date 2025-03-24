@@ -25,7 +25,9 @@ const Landing = () => {
             <p className="text-gray-600 mt-3 md:mt-4 text-lg md:text-xl">
               Connecting Rural lives with quality Care{" "}
             </p>
+            <a href="/health">
             <button className="mt-4 md:mt-6 bg-blue-950 text-white px-4 py-2 md:px-6 md:py-3 rounded-lg" style={{backgroundColor:"oklch(0.424 0.199 265.638)"}}>Learn More</button>
+            </a>
           </div>
           <div className="w-full md:w-1/2 mt-6 md:mt-0">
             <img src=".\src\assets\doctors.png" alt="Doctors" className="w-full" />
@@ -38,7 +40,10 @@ const Landing = () => {
         <div className="bg-blue-100 p-4 md:p-9 rounded-md shadow-sm w-full md:max-w-md">
           <h2 className="text-gray-700 font-medium text-base md:text-lg">Book the Best Doctors at your fingertip</h2>
           <p className="text-gray-500 mb-3 md:mb-4 text-sm md:text-base">appointment made easier</p>
-          <button className="bg-blue-800 text-white font-medium py-2 md:py-3 px-3 md:px-4 rounded-md w-full text-sm md:text-base" style={{backgroundColor:"oklch(0.424 0.199 265.638)"}}>MAKE AN APPOINTMENT</button>
+          <a href="/appointment">
+          <button className="bg-blue-800 text-white font-medium py-2 md:py-3 px-3 md:px-4 rounded-md w-full text-sm md:text-base"
+          style={{backgroundColor:"oklch(0.424 0.199 265.638)"}}>MAKE AN APPOINTMENT</button>
+          </a>
         </div>
 
         {/* Emergency */}
@@ -49,7 +54,7 @@ const Landing = () => {
             </svg>
             <h2 className="text-gray-600 text-lg md:text-xl font-medium">Emergency Call</h2>
           </div>
-          <p className="text-gray-800 text-xl md:text-3xl font-bold mt-1 md:mt-2">+91 7314623166</p>
+          <p className="text-gray-800 text-xl md:text-3xl font-bold mt-1 md:mt-2">+91 08045680649</p>
         </div>
       </div>
 

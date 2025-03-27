@@ -262,59 +262,7 @@ const ChatBotButton = () => {
         {!isOpen && (
           <div className="relative">
             {/* 3D Doctor SVG Avatar */}
-            <svg viewBox="0 0 120 120" className="w-20 h-20 drop-shadow-xl">
-              {/* Head/Face base with gradient */}
-              <defs>
-                <linearGradient id="headGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                  <stop offset="10%" stopColor="#e0f2fe" />
-                  <stop offset="90%" stopColor="#bae6fd" />
-                </linearGradient>
-                <linearGradient id="coatGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#0ea5e9" />
-                  <stop offset="100%" stopColor="#0284c7" />
-                </linearGradient>
-                <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
-                  <feDropShadow dx="2" dy="2" stdDeviation="3" floodOpacity="0.3" />
-                </filter>
-                <radialGradient id="glassesGradient" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
-                  <stop offset="0%" stopColor="#475569" stopOpacity="0.6"/>
-                  <stop offset="100%" stopColor="#0f172a" stopOpacity="0.8"/>
-                </radialGradient>
-              </defs>
-              
-              {/* Head */}
-              <ellipse cx="60" cy="42" rx="30" ry="32" fill="url(#headGradient)" stroke="#0284c7" strokeWidth="1.5" filter="url(#shadow)" />
-              
-              {/* Ears */}
-              <ellipse cx="30" cy="42" rx="5" ry="8" fill="#e0f2fe" stroke="#0284c7" strokeWidth="1" />
-              <ellipse cx="90" cy="42" rx="5" ry="8" fill="#e0f2fe" stroke="#0284c7" strokeWidth="1" />
-              
-              {/* Doctor's coat */}
-              <path d="M30 60 L30 100 L50 110 L70 110 L90 100 L90 60 Q75 70 60 70 Q45 70 30 60" fill="url(#coatGradient)" filter="url(#shadow)" />
-              
-              {/* Collar */}
-              <path d="M40 65 L50 75 L60 70 L70 75 L80 65" fill="white" stroke="#0284c7" strokeWidth="1" />
-              
-              {/* Stethoscope */}
-              <path d="M50 80 Q45 90 55 95 Q65 100 75 90" fill="none" stroke="#0f172a" strokeWidth="2" strokeLinecap="round" />
-              <circle cx="75" cy="90" r="4" fill="#0f172a" />
-              
-              {/* Face features */}
-              {/* Glasses */}
-              <path d="M40 40 L55 40 M65 40 L80 40" stroke="#0f172a" strokeWidth="2" />
-              <ellipse cx="47" cy="40" rx="8" ry="7" fill="none" stroke="url(#glassesGradient)" strokeWidth="2" />
-              <ellipse cx="73" cy="40" rx="8" ry="7" fill="none" stroke="url(#glassesGradient)" strokeWidth="2" />
-              
-              {/* Eyes */}
-              <ellipse cx="47" cy="40" rx="3" ry="4" fill="#0f172a" />
-              <ellipse cx="73" cy="40" rx="3" ry="4" fill="#0f172a" />
-              
-              {/* Smile */}
-              <path d="M50 52 Q60 58 70 52" fill="none" stroke="#0f172a" strokeWidth="1.5" strokeLinecap="round" />
-              
-              {/* Hair/Cap */}
-              <path d="M30 30 Q60 10 90 30 L85 35 Q60 20 35 35 Z" fill="#0284c7" filter="url(#shadow)" />
-            </svg>
+            <img src="src\assets\chat-bot.png" className="h-16 w-28" alt="chatbot" />
             
             {/* Notification Badge */}
             {!isOpen && messages.length > 1 && (

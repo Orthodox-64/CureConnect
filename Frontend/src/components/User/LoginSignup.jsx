@@ -325,7 +325,7 @@ const LoginSignup = () => {
                           className="sr-only" // Hide the actual radio button
                         />
                         <div
-                          className={`w-12 h-12 mb-2 rounded-full flex items-center justify-center ${
+                          className={`w-12 mt-6  h-12 mb-2 rounded-full flex items-center justify-center ${
                             role === "patient"
                               ? "bg-blue-500"
                               : "bg-blue-700/50"
@@ -342,7 +342,9 @@ const LoginSignup = () => {
                         </div>
                         <span
                           className={`text-center ${
-                            role === "patient" ? "text-black" : "text-blue-100"
+                            role === "patient"
+                              ? "text-black"
+                              : "text-blue-500 font-bold"
                           }`}
                         >
                           Patient
@@ -369,20 +371,24 @@ const LoginSignup = () => {
                           className="sr-only" // Hide the actual radio button
                         />
                         <div
-                          className={`w-12 h-12 mb-2 rounded-full flex items-center justify-center ${
+                          className={`w-12 h-12 mt-6 mb-2 rounded-full flex items-center pt justify-center ${
                             role === "doctor" ? "bg-blue-500" : "bg-blue-700/50"
                           }`}
                         >
                           <Stethoscope
                             size={24}
                             className={
-                              role === "doctor" ? "text-white" : "text-blue-300"
+                              role === "doctor"
+                                ? "text-white"
+                                : "text-blue-500 font"
                             }
                           />
                         </div>
                         <span
                           className={`text-center ${
-                            role === "doctor" ? "text-white" : "text-blue-100"
+                            role === "doctor"
+                              ? "text-white"
+                              : "text-blue-500 font-bold"
                           }`}
                         >
                           Doctor
@@ -418,18 +424,20 @@ const LoginSignup = () => {
                           />
                         </div>
                       </div>
-                      <label className="flex items-center space-x-3 p-4 border border-blue-300/30 bg-white/10 rounded-xl cursor-pointer hover:bg-white/20 transition-all">
-                        <input
-                          type="checkbox"
-                          name="availability"
-                          checked={formData.availability}
-                          onChange={handleInputChange}
-                          className="form-checkbox h-5 w-5 text-blue-600 rounded-md bg-white/20 border-blue-300/50"
-                        />
-                        <span className="text-blue-100">
-                          Available for new appointments
-                        </span>
-                      </label>
+                      <div className="flex ">
+                        <label className="flex items-center space-x-3 p-6  border  border-blue-500/20 bg-white/10 rounded-xl cursor-pointer hover:bg-white/20 transition-all">
+                          <span className="text-sm font-medium mt-4 ">
+                            Available for new appointments
+                          </span>
+                          <input
+                            type="checkbox"
+                            name="availability"
+                            checked={formData.availability}
+                            onChange={handleInputChange}
+                            className="form-checkbox mt-4 h-5 w-5 text-blue-600 rounded-md bg-white/20 border-blue-300/50"
+                          />
+                        </label>
+                      </div>
                     </div>
                   )}
                 </>

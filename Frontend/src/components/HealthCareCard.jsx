@@ -330,7 +330,7 @@ const HealthcareCards = () => {
       <div style={responsiveStyles.cardsContainer} >
         {/* Card 1 */}
         <div 
-          className="bg-blue-100 shadow-lg rounded-xl text-center p-8 hover:shadow-xl transform transition-all duration-300 hover:-translate-y-1"
+          className="bg-blue-100 cursor-pointer shadow-lg rounded-xl text-center p-8 hover:shadow-xl transform transition-all duration-300 hover:-translate-y-1"
           onClick={() => handleCardClick("telemedicine")}
           style={responsiveStyles.card}
         >
@@ -343,7 +343,7 @@ const HealthcareCards = () => {
 
         {/* Card 2 */}
         <div
-          className="bg-blue-100 shadow-lg rounded-xl text-center p-8 hover:shadow-xl transform transition-all duration-300 hover:-translate-y-1"
+          className="bg-blue-100 shadow-lg cursor-pointer rounded-xl text-center p-8 hover:shadow-xl transform transition-all duration-300 hover:-translate-y-1"
           onClick={() => handleCardClick("/analysis")}
           style={responsiveStyles.card}
         >
@@ -356,7 +356,7 @@ const HealthcareCards = () => {
 
         {/* Card 3 */}
         <div
-          className="bg-blue-100 shadow-lg rounded-xl text-center p-8 hover:shadow-xl transform transition-all duration-300 hover:-translate-y-1"
+          className="bg-blue-100 shadow-lg rounded-xl cursor-pointer text-center p-8 hover:shadow-xl transform transition-all duration-300 hover:-translate-y-1"
           onClick={() => handleCardClick("/health")}
           style={responsiveStyles.card}
         >
@@ -369,7 +369,7 @@ const HealthcareCards = () => {
 
         {/* Card 4 */}
         <div 
-          className="bg-blue-100 shadow-lg rounded-xl text-center p-8 hover:shadow-xl transform transition-all duration-300 hover:-translate-y-1"
+          className="bg-blue-100 shadow-lg cursor-pointer rounded-xl text-center p-8 hover:shadow-xl transform transition-all duration-300 hover:-translate-y-1"
           onClick={() => handleCardClick("/chat")}
           style={responsiveStyles.card}
         >
@@ -382,7 +382,7 @@ const HealthcareCards = () => {
 
         {/* Card 5 */}
         <div
-          className="bg-blue-100 shadow-lg rounded-xl text-center p-8 hover:shadow-xl transform transition-all duration-300 hover:-translate-y-1"
+          className="bg-blue-100 shadow-lg cursor-pointer rounded-xl text-center p-8 hover:shadow-xl transform transition-all duration-300 hover:-translate-y-1"
           onClick={() => handleCardClick("emergency")}
           style={responsiveStyles.card}
         >
@@ -395,7 +395,7 @@ const HealthcareCards = () => {
 
         {/* Card 6 */}
         <div
-          className="bg-blue-100 shadow-lg rounded-xl text-center p-8 hover:shadow-xl transform transition-all duration-300 hover:-translate-y-1"
+          className="bg-blue-100 shadow-lg cursor-pointer rounded-xl text-center p-8 hover:shadow-xl transform transition-all duration-300 hover:-translate-y-1"
           onClick={() => handleCardClick("/appointment")}
           style={responsiveStyles.card}
         >

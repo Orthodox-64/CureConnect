@@ -294,16 +294,12 @@ const HealthTips = () => {
             <div className="relative">
               <input
                 type="text"
-                placeholder="Search health tips..."
+                placeholder={`🔍 Search health tips...`}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full px-4 py-3 pl-10 pr-12 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full  px-4 py-3   rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
-              <div className="absolute left-3 top-3.5 text-gray-400">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-              </div>
+              
               {searchTerm && (
                 <button 
                   onClick={() => setSearchTerm('')}
@@ -369,7 +365,7 @@ const HealthTips = () => {
                     <Sparkles className="w-5 h-5 text-white opacity-70" />
                   </div>
                 </div>
-                <div className="p-6 flex-grow">
+                <div className="p-6 cursor-pointer flex-grow " onClick={()=>window.open(tip.link,"_blank")}>
                   <h3 className="text-xl font-bold text-gray-900 mb-2">{tip.title}</h3>
                   <p className="text-gray-600">{tip.description}</p>
                 </div>

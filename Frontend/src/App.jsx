@@ -43,11 +43,11 @@ function App() {
           <Route path='/' element={<Landing />}></Route>
           <Route path='/analysis' element={<AnalysisBot />}></Route>
           <Route path='/analysis/ecg' element={<AnalysisBotECG />}></Route>
-           <Route path='/analysis/xray' element={<AnalysisBotXRAY />}></Route>
+           {/* <Route path='/analysis/xray' element={<AnalysisBotXRAY />}></Route>
           <Route path='/analysis/cancer' element={<MedicalVisionAI />}></Route>
           <Route path='/analysis/alzheimer' element={<AlzheimerVisionAI />}></Route>
           <Route path='/analysis/skin' element={<SkinVisionAI />}></Route>
-          <Route path='/analysis/retinopathy' element={<RetinolVisionAI />}></Route> 
+          <Route path='/analysis/retinopathy' element={<RetinolVisionAI />}></Route>  */}
           {/* <Route path='/emergency' element={<HospitalFinal />}></Route> */}
           <Route path='/health' element={<HealthTips/>}></Route>
           <Route path='/chat' element={<Chat/>}></Route>

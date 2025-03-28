@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { X, Mic, Square, Globe } from "lucide-react";
+import { X, Mic, Square, Globe, Send } from "lucide-react";
 import { useSelector } from "react-redux";
 
 const ChatBotButton = () => {
@@ -13,7 +13,7 @@ const ChatBotButton = () => {
   const recognitionRef = useRef(null);
   const speechSynthesisRef = useRef(window.speechSynthesis);
   const [isSpeaking, setIsSpeaking] = useState(false);
-  const [selectedLanguage, setSelectedLanguage] = useState("en-US"); // Default to English
+  const [selectedLanguage, setSelectedLanguage] = useState("en-US");
   const [showLanguageSelector, setShowLanguageSelector] = useState(false);
 
   const API_URL = "http://127.0.0.1:8000/chat";
@@ -33,7 +33,7 @@ const ChatBotButton = () => {
 
   const toggleChat = () => {
     setIsOpen(!isOpen);
-    setShowLanguageSelector(false); // Close language selector when chat is toggled
+    setShowLanguageSelector(false);
   };
 
   const toggleLanguageSelector = () => {
@@ -44,14 +44,10 @@ const ChatBotButton = () => {
     setSelectedLanguage(langCode);
     setShowLanguageSelector(false);
     
-    // Display welcome message in the newly selected language
     const langOption = languageOptions.find(lang => lang.code === langCode);
     if (langOption) {
       setMessages([{ type: "bot", content: langOption.welcomeMessage }]);
     }
-
-    // Log to verify language change
-    console.log(`Language changed to: ${langCode}`);
   };
 
   const scrollToBottom = () => {
@@ -64,7 +60,6 @@ const ChatBotButton = () => {
     scrollToBottom();
   }, [messages]);
 
-  // Start/Stop Speech-to-Text (Voice Input)
   const toggleListening = () => {
     if (isListening) {
       stopListening();
@@ -82,7 +77,7 @@ const ChatBotButton = () => {
     const recognition = new window.webkitSpeechRecognition();
     recognition.continuous = false;
     recognition.interimResults = false;
-    recognition.lang = selectedLanguage; // Use selected language for speech recognition
+    recognition.lang = selectedLanguage;
 
     recognition.onstart = () => {
       setIsListening(true);
@@ -112,7 +107,6 @@ const ChatBotButton = () => {
     }
   };
 
-  // Stop Speech Synthesis
   const stopSpeaking = () => {
     if (speechSynthesisRef.current) {
       speechSynthesisRef.current.cancel();
@@ -120,7 +114,6 @@ const ChatBotButton = () => {
     }
   };
 
-  // Send Message
   const sendMessage = async () => {
     if (!inputMessage.trim()) return;
 
@@ -130,9 +123,7 @@ const ChatBotButton = () => {
     setIsLoading(true);
 
     try {
-      // Get language code without region (en, hi, mr)
       const languageCode = selectedLanguage.split("-")[0];
-      console.log(`Sending request with language: ${languageCode}`);
       
       const payload = {
         prompt: inputMessage,
@@ -143,10 +134,8 @@ const ChatBotButton = () => {
           conditions: user?.conditions || [],
           medications: user?.medications || []
         },
-        language: languageCode // Send language code to backend
+        language: languageCode
       };
-      
-      console.log("Sending payload to backend:", payload);
       
       const response = await fetch(API_URL, {
         method: "POST",
@@ -157,31 +146,24 @@ const ChatBotButton = () => {
       });
 
       if (!response.ok) {
-        console.error(`Backend error: ${response.status}`);
         throw new Error(`Network response was not ok: ${response.status}`);
       }
 
       const data = await response.json();
-      console.log("Response from backend:", data);
 
       if (data.response) {
-        // The backend should now return text in the requested language
         setMessages((prev) => [
           ...prev,
           { type: "bot", content: data.response, timestamp: new Date().toISOString() }
         ]);
-
-        // Speak the response (which is already in the requested language)
         speakResponse(data.response);
       } else {
-        console.error("Invalid response format:", data);
         throw new Error("Invalid response format");
       }
       
     } catch (error) {
       console.error("Error in sendMessage:", error);
       
-      // Error messages in different languages
       const errorMessages = {
         "en": "Sorry, I encountered an error. Please try again.",
         "hi": "क्षमा करें, मुझे एक त्रुटि मिली। कृपया पुनः प्रयास करें।",
@@ -200,14 +182,13 @@ const ChatBotButton = () => {
     }
   };
 
-  // Speak Response
   const speakResponse = (text) => {
     if (!text) return;
     
-    stopSpeaking(); // Stop any ongoing speech first
+    stopSpeaking();
     
     const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = selectedLanguage; // Set the language for speech synthesis
+    utterance.lang = selectedLanguage;
     utterance.onstart = () => setIsSpeaking(true);
     utterance.onend = () => setIsSpeaking(false);
     utterance.onerror = (event) => {
@@ -215,27 +196,17 @@ const ChatBotButton = () => {
       setIsSpeaking(false);
     };
 
-    // Make sure voices are loaded
     const voices = speechSynthesisRef.current.getVoices();
-    
-    // Try to find a voice matching the language
     const languagePrefix = selectedLanguage.split("-")[0];
-    console.log(`Looking for voice with language: ${languagePrefix}`);
-    
     const languageVoices = voices.filter(voice => voice.lang.startsWith(languagePrefix));
-    console.log(`Found ${languageVoices.length} matching voices`);
     
     if (languageVoices.length > 0) {
       utterance.voice = languageVoices[0];
-      console.log(`Using voice: ${languageVoices[0].name}`);
-    } else {
-      console.warn(`No matching voice found for ${selectedLanguage}, using default`);
     }
 
     speechSynthesisRef.current.speak(utterance);
   };
 
-  // Get placeholder text based on selected language
   const getInputPlaceholder = () => {
     const placeholders = {
       "en-US": "Ask Arogya AI a question...",
@@ -245,7 +216,6 @@ const ChatBotButton = () => {
     return placeholders[selectedLanguage] || placeholders["en-US"];
   };
 
-  // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
     sendMessage();
@@ -253,131 +223,64 @@ const ChatBotButton = () => {
 
   return (
     <>
-      {/* 3D Doctor Avatar Button without background */}
-      <button
-        onClick={toggleChat}
-        className="fixed bottom-24 right-6 w-20 h-20 flex items-center justify-center z-50 transition-transform hover:scale-105"
-        style={{ background: "none", border: "none" }}
-      >
-        {!isOpen && (
-          <div className="relative">
-            {/* 3D Doctor SVG Avatar */}
-            <svg viewBox="0 0 120 120" className="w-20 h-20 drop-shadow-xl">
-              {/* Head/Face base with gradient */}
-              <defs>
-                <linearGradient id="headGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                  <stop offset="10%" stopColor="#e0f2fe" />
-                  <stop offset="90%" stopColor="#bae6fd" />
-                </linearGradient>
-                <linearGradient id="coatGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#0ea5e9" />
-                  <stop offset="100%" stopColor="#0284c7" />
-                </linearGradient>
-                <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
-                  <feDropShadow dx="2" dy="2" stdDeviation="3" floodOpacity="0.3" />
-                </filter>
-                <radialGradient id="glassesGradient" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
-                  <stop offset="0%" stopColor="#475569" stopOpacity="0.6"/>
-                  <stop offset="100%" stopColor="#0f172a" stopOpacity="0.8"/>
-                </radialGradient>
-              </defs>
-              
-              {/* Head */}
-              <ellipse cx="60" cy="42" rx="30" ry="32" fill="url(#headGradient)" stroke="#0284c7" strokeWidth="1.5" filter="url(#shadow)" />
-              
-              {/* Ears */}
-              <ellipse cx="30" cy="42" rx="5" ry="8" fill="#e0f2fe" stroke="#0284c7" strokeWidth="1" />
-              <ellipse cx="90" cy="42" rx="5" ry="8" fill="#e0f2fe" stroke="#0284c7" strokeWidth="1" />
-              
-              {/* Doctor's coat */}
-              <path d="M30 60 L30 100 L50 110 L70 110 L90 100 L90 60 Q75 70 60 70 Q45 70 30 60" fill="url(#coatGradient)" filter="url(#shadow)" />
-              
-              {/* Collar */}
-              <path d="M40 65 L50 75 L60 70 L70 75 L80 65" fill="white" stroke="#0284c7" strokeWidth="1" />
-              
-              {/* Stethoscope */}
-              <path d="M50 80 Q45 90 55 95 Q65 100 75 90" fill="none" stroke="#0f172a" strokeWidth="2" strokeLinecap="round" />
-              <circle cx="75" cy="90" r="4" fill="#0f172a" />
-              
-              {/* Face features */}
-              {/* Glasses */}
-              <path d="M40 40 L55 40 M65 40 L80 40" stroke="#0f172a" strokeWidth="2" />
-              <ellipse cx="47" cy="40" rx="8" ry="7" fill="none" stroke="url(#glassesGradient)" strokeWidth="2" />
-              <ellipse cx="73" cy="40" rx="8" ry="7" fill="none" stroke="url(#glassesGradient)" strokeWidth="2" />
-              
-              {/* Eyes */}
-              <ellipse cx="47" cy="40" rx="3" ry="4" fill="#0f172a" />
-              <ellipse cx="73" cy="40" rx="3" ry="4" fill="#0f172a" />
-              
-              {/* Smile */}
-              <path d="M50 52 Q60 58 70 52" fill="none" stroke="#0f172a" strokeWidth="1.5" strokeLinecap="round" />
-              
-              {/* Hair/Cap */}
-              <path d="M30 30 Q60 10 90 30 L85 35 Q60 20 35 35 Z" fill="#0284c7" filter="url(#shadow)" />
-            </svg>
-            
-            {/* Notification Badge */}
-            {!isOpen && messages.length > 1 && (
-              <div className="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full shadow-md">
-                !
-              </div>
-            )}
-          </div>
-        )}
-        {isOpen && <X className="w-8 h-8 text-blue-600 bg-white rounded-full p-1 shadow-lg" />}
-      </button>
+      {/* Floating Chat Button */}
+      <div className="fixed bottom-8 right-8 z-50">
+        <button
+          onClick={toggleChat}
+          className={`w-16 h-16 rounded-full flex items-center justify-center shadow-xl transition-all duration-300 transform ${
+            isOpen ? "rotate-90 bg-rose-500" : "bg-gradient-to-br from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700"
+          }`}
+        >
+          {isOpen ? (
+            <X className="w-6 h-6 text-white" />
+          ) : (
+            <div className="relative">
+              {/* Previous chatbot icon */}
+              <img 
+                src="src/assets/chat-bot.jpeg" 
+                className="w-12 h-12 object-contain" 
+                alt="Chat with Arogya AI" 
+              />
+              {messages.length > 1 && (
+                <div className="absolute -top-1 -right-1 bg-rose-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full shadow-md animate-ping">
+                  <span className="animate-pulse">!</span>
+                </div>
+              )}
+            </div>
+          )}
+        </button>
+      </div>
 
       {isOpen && (
-        <div className="fixed bottom-44 right-6 w-80 h-96 bg-white rounded-lg shadow-xl z-50 flex flex-col border border-blue-200">
+        <div className="fixed bottom-28 right-8 w-96 h-[32rem] bg-white rounded-2xl shadow-2xl z-50 flex flex-col border border-gray-100 overflow-hidden backdrop-blur-sm bg-opacity-90">
           {/* Header */}
-          <div className="bg-gradient-to-r from-blue-500 to-blue-600 p-4 rounded-t-lg flex justify-between items-center">
-            <div className="flex items-center">
-              {/* Small Doctor 3D Avatar */}
-              <div className="w-10 h-10 mr-2 flex items-center justify-center">
-                <svg viewBox="0 0 120 120" className="w-10 h-10 drop-shadow-md">
-                  {/* Reuse the same SVG patterns but smaller */}
-                  <defs>
-                    <linearGradient id="smallHeadGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                      <stop offset="10%" stopColor="#e0f2fe" />
-                      <stop offset="90%" stopColor="#bae6fd" />
-                    </linearGradient>
-                    <linearGradient id="smallCoatGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stopColor="#0ea5e9" />
-                      <stop offset="100%" stopColor="#0284c7" />
-                    </linearGradient>
-                  </defs>
-                  
-                  {/* Head */}
-                  <ellipse cx="60" cy="42" rx="30" ry="32" fill="url(#smallHeadGradient)" stroke="#0284c7" strokeWidth="1.5" />
-                  
-                  {/* Doctor's coat */}
-                  <path d="M30 60 L30 100 L50 110 L70 110 L90 100 L90 60 Q75 70 60 70 Q45 70 30 60" fill="url(#smallCoatGradient)" />
-                  
-                  {/* Face features */}
-                  <ellipse cx="47" cy="40" rx="8" ry="7" fill="none" stroke="#0f172a" strokeWidth="2" />
-                  <ellipse cx="73" cy="40" rx="8" ry="7" fill="none" stroke="#0f172a" strokeWidth="2" />
-                  <ellipse cx="47" cy="40" rx="3" ry="4" fill="#0f172a" />
-                  <ellipse cx="73" cy="40" rx="3" ry="4" fill="#0f172a" />
-                  <path d="M50 52 Q60 58 70 52" fill="none" stroke="#0f172a" strokeWidth="1.5" strokeLinecap="round" />
-                  
-                  {/* Hair/Cap */}
-                  <path d="M30 30 Q60 10 90 30 L85 35 Q60 20 35 35 Z" fill="#0284c7" />
-                </svg>
+          <div className="bg-gradient-to-r from-indigo-600 to-purple-600 p-4 rounded-t-2xl flex justify-between items-center">
+            <div className="flex items-center space-x-3">
+              {/* Previous small chatbot icon in header */}
+              <img 
+                src="src/assets/noun-chatbot-1718966-picaai-removebg-preview.jpeg" 
+                className="w-8 h-8" 
+                alt="Arogya AI" 
+              />
+              <div>
+                <h3 className="text-white font-semibold">Arogya AI</h3>
+                <p className="text-xs text-indigo-100">Your personal health assistant</p>
               </div>
-              <h3 className="text-white font-medium">Arogya AI Assistant</h3>
             </div>
-            <div className="flex items-center">
-              {/* Language selector button */}
+            <div className="flex items-center space-x-2">
               <button 
                 onClick={toggleLanguageSelector} 
-                className="text-white mr-2 bg-blue-700 rounded-full p-1 shadow-md hover:bg-blue-800"
+                className="p-2 rounded-full hover:bg-white hover:bg-opacity-20 transition-colors"
                 title="Select language"
               >
-                <Globe className="w-4 h-4" />
+                <Globe className="w-4 h-4 text-white" />
               </button>
               {isSpeaking && (
-                <button onClick={stopSpeaking} className="text-white bg-red-500 rounded-full p-1 shadow-md">
-                  <Square className="w-4 h-4" />
+                <button 
+                  onClick={stopSpeaking} 
+                  className="p-2 rounded-full hover:bg-white hover:bg-opacity-20 transition-colors"
+                >
+                  <Square className="w-4 h-4 text-white" />
                 </button>
               )}
             </div>
@@ -385,13 +288,14 @@ const ChatBotButton = () => {
 
           {/* Language Selector Dropdown */}
           {showLanguageSelector && (
-            <div className="absolute right-0 top-12 w-40 bg-white border border-blue-200 rounded-md shadow-lg z-10">
+            <div className="absolute right-4 top-16 w-40 bg-white border border-gray-200 rounded-xl shadow-lg z-10 overflow-hidden animate-fade-in">
+              <div className="px-3 py-2 text-xs font-medium text-gray-500 bg-gray-50">Select Language</div>
               {languageOptions.map((lang) => (
                 <button
                   key={lang.code}
                   onClick={() => selectLanguage(lang.code)}
-                  className={`w-full text-left px-4 py-2 hover:bg-blue-50 ${
-                    selectedLanguage === lang.code ? "bg-blue-100 font-medium" : ""
+                  className={`w-full text-left px-4 py-2 text-sm hover:bg-indigo-50 transition-colors ${
+                    selectedLanguage === lang.code ? "bg-indigo-100 text-indigo-700 font-medium" : "text-gray-700"
                   }`}
                 >
                   {lang.name}
@@ -401,51 +305,40 @@ const ChatBotButton = () => {
           )}
 
           {/* Chat Container */}
-          <div ref={chatContainerRef} className="flex-1 p-4 overflow-y-auto bg-gradient-to-b from-blue-50 to-white">
+          <div 
+            ref={chatContainerRef} 
+            className="flex-1 p-4 overflow-y-auto bg-gradient-to-b from-gray-50 to-white"
+            style={{ scrollBehavior: 'smooth' }}
+          >
             <div className="space-y-4">
               {messages.map((message, index) => (
-                <div key={index} className={`flex items-start ${message.type === "user" ? "justify-end" : "justify-start"}`}>
-                  {message.type === "bot" && (
-                    <div className="w-8 h-8 mr-2 flex-shrink-0">
-                      <svg viewBox="0 0 120 120" className="w-8 h-8 drop-shadow-sm">
-                        {/* Minimal version of doctor for chat bubbles */}
-                        <ellipse cx="60" cy="42" rx="30" ry="32" fill="#e0f2fe" stroke="#0284c7" strokeWidth="1" />
-                        <path d="M30 60 L30 100 L50 110 L70 110 L90 100 L90 60 Q75 70 60 70 Q45 70 30 60" fill="#0ea5e9" />
-                        <ellipse cx="47" cy="40" rx="3" ry="4" fill="#0f172a" />
-                        <ellipse cx="73" cy="40" rx="3" ry="4" fill="#0f172a" />
-                        <path d="M50 52 Q60 58 70 52" fill="none" stroke="#0f172a" strokeWidth="1.5" />
-                        <path d="M30 30 Q60 15 90 30" fill="#0284c7" />
-                      </svg>
-                    </div>
-                  )}
+                <div 
+                  key={index} 
+                  className={`flex ${message.type === "user" ? "justify-end" : "justify-start"}`}
+                >
                   <div
-                    className={`rounded-lg p-3 max-w-[80%] shadow-md ${
+                    className={`max-w-[85%] rounded-2xl p-4 transition-all duration-200 ${
                       message.type === "user" 
-                        ? "bg-gradient-to-r from-blue-600 to-blue-500 text-white" 
-                        : "bg-white text-gray-800 border border-blue-100"
+                        ? "bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-br-none shadow-md"
+                        : "bg-white text-gray-800 border border-gray-200 rounded-bl-none shadow-sm"
                     }`}
                   >
                     <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                    <div className={`text-xs mt-1.5 ${
+                      message.type === "user" ? "text-indigo-200" : "text-gray-500"
+                    }`}>
+                      {new Date(message.timestamp || new Date()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    </div>
                   </div>
                 </div>
               ))}
               {isLoading && (
-                <div className="flex items-start">
-                  <div className="w-8 h-8 mr-2 flex-shrink-0">
-                    <svg viewBox="0 0 120 120" className="w-8 h-8 drop-shadow-sm">
-                      <ellipse cx="60" cy="42" rx="30" ry="32" fill="#e0f2fe" stroke="#0284c7" strokeWidth="1" />
-                      <path d="M30 60 L30 100 L50 110 L70 110 L90 100 L90 60 Q75 70 60 70 Q45 70 30 60" fill="#0ea5e9" />
-                      <ellipse cx="47" cy="40" rx="3" ry="4" fill="#0f172a" />
-                      <ellipse cx="73" cy="40" rx="3" ry="4" fill="#0f172a" />
-                      <path d="M50 52 Q60 58 70 52" fill="none" stroke="#0f172a" strokeWidth="1.5" />
-                      <path d="M30 30 Q60 15 90 30" fill="#0284c7" />
-                    </svg>
-                  </div>
-                  <div className="bg-white rounded-lg p-3 border border-blue-100 shadow-md">
-                    <div className="flex space-x-1">
-                      <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: "0s" }}></div>
-                      <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: "0.2s" }}></div>
-                      <div className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: "0.4s" }}></div>
+                <div className="flex justify-start">
+                  <div className="bg-white rounded-2xl p-4 border border-gray-200 shadow-sm rounded-bl-none max-w-[85%]">
+                    <div className="flex space-x-2">
+                      <div className="w-2.5 h-2.5 bg-indigo-400 rounded-full animate-bounce" style={{ animationDelay: "0s" }}></div>
+                      <div className="w-2.5 h-2.5 bg-indigo-400 rounded-full animate-bounce" style={{ animationDelay: "0.2s" }}></div>
+                      <div className="w-2.5 h-2.5 bg-indigo-400 rounded-full animate-bounce" style={{ animationDelay: "0.4s" }}></div>
                     </div>
                   </div>
                 </div>
@@ -454,36 +347,41 @@ const ChatBotButton = () => {
           </div>
 
           {/* Input Area */}
-          <div className="border-t p-3 bg-gradient-to-r from-blue-100 to-blue-50 rounded-b-lg">
-            <form onSubmit={handleSubmit} className="flex gap-2">
+          <div className="border-t border-gray-200 p-4 bg-white">
+            <form onSubmit={handleSubmit} className="flex gap-2 items-center">
               <button
                 type="button"
                 onClick={toggleListening}
-                className={`p-2 rounded-full shadow-md ${isListening ? "bg-red-500" : "bg-blue-500 hover:bg-blue-600"}`}
+                className={`p-3 rounded-full transition-all ${
+                  isListening 
+                    ? "bg-rose-500 text-white animate-pulse" 
+                    : "bg-gray-100 hover:bg-gray-200 text-gray-600"
+                }`}
               >
-                <Mic className="w-4 h-4 text-white" />
+                <Mic className="w-4 h-4" />
               </button>
               <input
                 type="text"
                 value={inputMessage}
                 onChange={(e) => setInputMessage(e.target.value)}
                 placeholder={getInputPlaceholder()}
-                className="flex-1 border rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 bg-white text-gray-800 shadow-inner"
+                className="flex-1 border border-gray-300 rounded-full px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-transparent bg-white text-gray-800 placeholder-gray-500 transition-all"
                 disabled={isLoading}
               />
               <button
                 type="submit"
                 disabled={isLoading || !inputMessage.trim()}
-                className="bg-gradient-to-r from-blue-500 to-blue-600 text-white p-2 rounded-full hover:from-blue-600 hover:to-blue-700 disabled:opacity-50 disabled:cursor-not-allowed shadow-md"
+                className={`p-3 rounded-full transition-all ${
+                  isLoading || !inputMessage.trim()
+                    ? "bg-gray-300 text-gray-500"
+                    : "bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 text-white shadow-md"
+                }`}
               >
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M22 2L11 13"></path>
-                  <path d="M22 2L15 22L11 13L2 9L22 2Z"></path>
-                </svg>
+                <Send className="w-4 h-4" />
               </button>
             </form>
-            <div className="mt-2 text-xs text-center text-blue-500 font-medium">
-              <span>Powered by CureConnect | Language: {languageOptions.find(lang => lang.code === selectedLanguage)?.name}</span>
+            <div className="mt-3 text-xs text-center text-gray-400">
+              <span>Powered by CureConnect • {languageOptions.find(lang => lang.code === selectedLanguage)?.name}</span>
             </div>
           </div>
         </div>

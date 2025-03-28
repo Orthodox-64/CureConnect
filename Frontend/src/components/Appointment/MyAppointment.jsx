@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from 'react-redux';
 import { clearErrors, myAppointments } from '../../actions/appointmentActions';
+import { getMedicalHistory } from '../../actions/userActions';
+import MedicalHistoryModal from './MedicalHistoryModal';
 import {
     Calendar, Clock, MapPin, Users, CalendarCheck, UserPlus, X, Calendar as CalendarIcon,
     Clock as ClockIcon, FileText, User, UserCheck, Video, Filter, ChevronLeft
@@ -10,6 +12,10 @@ const MyAppointment = () => {
     const dispatch = useDispatch();
     const { loading, error, appointments } = useSelector((state) => state.myAppointment);
     const [filter, setFilter] = useState('all');
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedPatientHistory, setSelectedPatientHistory] = useState(null);
+    const [isLoadingHistory, setIsLoadingHistory] = useState(false);
+    const [historyError, setHistoryError] = useState(null);
 
     const statusColors = {
         pending: 'bg-yellow-100 text-yellow-800 border-yellow-200',
@@ -47,6 +53,21 @@ const MyAppointment = () => {
         }
         dispatch(myAppointments());
     }, [dispatch, error]);
+
+    const handleViewMedicalHistory = async (patientId) => {
+        setIsLoadingHistory(true);
+        setHistoryError(null);
+        try {
+            const response = await dispatch(getMedicalHistory(patientId));
+            setSelectedPatientHistory(response);
+            setIsModalOpen(true);
+        } catch (error) {
+            console.error('Failed to fetch medical history:', error);
+            setHistoryError(error.response?.data?.message || 'Failed to fetch medical history');
+        } finally {
+            setIsLoadingHistory(false);
+        }
+    };
 
     if (loading) {
         return (
@@ -113,6 +134,17 @@ const MyAppointment = () => {
                                     <div className="text-xs text-gray-500 mt-4">
                                         Booked on {formatDate(appt.createdAt)}
                                     </div>
+
+                                    <div className="flex justify-end mt-4">
+                                        <button
+                                            onClick={() => handleViewMedicalHistory(appt.patient.id)}
+                                            className="inline-flex items-center px-3 py-2 text-sm font-medium text-blue-600 
+                                                       bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors"
+                                        >
+                                            <FileText className="w-4 h-4 mr-2" />
+                                            View Medical History
+                                        </button>
+                                    </div>
                                 </div>
                             ))}
                         </div>
@@ -123,11 +155,17 @@ const MyAppointment = () => {
                     )}
                 </div>
             </div>
-
-            {/* Footer */}
-            <footer className="bg-white border-t border-gray-200 mt-12 py-8">
-                {/* ...footer content... */}
-            </footer>
+            <MedicalHistoryModal
+                isOpen={isModalOpen}
+                onClose={() => {
+                    setIsModalOpen(false);
+                    setSelectedPatientHistory(null);
+                    setHistoryError(null);
+                }}
+                medicalHistory={selectedPatientHistory}
+                isLoading={isLoadingHistory}
+                error={historyError}
+            />
         </div>
     );
 };

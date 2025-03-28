@@ -169,7 +169,11 @@ exports.updateUserRole = catchAsyncError(async (req, res, next) => {
     });
 });
 
+
+
+
 // Delete User --Admin
+
 exports.deleteUser = catchAsyncError(async (req, res, next) => {
     const user = await User.findById(req.params.id);
 
@@ -183,5 +187,70 @@ exports.deleteUser = catchAsyncError(async (req, res, next) => {
     res.status(200).json({
         success: true,
         message: "User Deleted Successfully",
+    });
+});
+
+
+// Add Medical History with Image
+exports.addMedicalHistory = catchAsyncError(async (req, res, next) => {
+    if (!req.user._id) {
+        return next(new ErrorHander("Please login to add medical history", 401));
+    }
+
+    const { analysis, url } = req.body;
+
+    if (!analysis) {
+        return next(new ErrorHander("Analysis is required", 400));
+    }
+
+    if (!url) {
+        return next(new ErrorHander("Image details are required", 400));
+    }
+
+    const user = await User.findById(req.user._id);
+
+    if (!user) {
+        return next(new ErrorHander("User not found", 404));
+    }
+
+    user.medicalHistory.push({
+        analysis,
+        image: {
+            url
+        },
+        createdAt: new Date()
+    });
+
+    await user.save();
+
+    res.status(200).json({
+        success: true,
+        message: "Medical history added successfully",
+        medicalHistory: user.medicalHistory
+    });
+});
+
+// Get Medical History
+exports.getMedicalHistory = catchAsyncError(async (req, res, next) => {
+    const userId = req.params.userId;
+
+    if (!userId) {
+        return next(new ErrorHander("User ID is required", 400));
+    }
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+        return next(new ErrorHander("User not found", 404));
+    }
+
+    // Check if the requesting user is authorized to view this medical history
+    if (req.user.role !== "doctor" && req.user._id.toString() !== userId.toString()) {
+        return next(new ErrorHander("Not authorized to view this medical history", 403));
+    }
+
+    res.status(200).json({
+        success: true,
+        medicalHistory: user.medicalHistory
     });
 });

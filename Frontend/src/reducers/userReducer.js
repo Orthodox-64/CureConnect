@@ -3,6 +3,8 @@ import {
     REGISTER_USER_REQUEST, REGISTER_USER_SUCCESS, REGISTER_USER_FAIL,
     LOAD_USER_REQUEST, LOAD_USER_SUCCESS, LOAD_USER_FAIL,
     LOGOUT_SUCCESS, LOGOUT_FAIL,
+    UPLOAD_REQUEST, UPLOAD_SUCCESS, UPLOAD_FAIL,
+    GET_HISTORY_REQUEST, GET_HISTORY_SUCCESS, GET_HISTORY_FAIL,
     CLEAR_ERRORS,
     UPDATE_PROFILE_REQUEST, UPDATE_PROFILE_SUCCESS, UPDATE_PROFILE_FAIL, UPDATE_PROFILE_RESET,
     UPDATE_PASSWORD_SUCCESS, UPDATE_PASSWORD_REQUEST, UPDATE_PASSWORD_FAIL, UPDATE_PASSWORD_RESET,
@@ -76,6 +78,44 @@ export const userReducer = (state = { user: {} }, action) => {
                 ...state,
                 loading: false,
                 error: action.payload,
+            };
+
+        case LOGOUT_FAIL:
+            return {
+                ...state,
+                loading: false,
+                error: action.payload,
+            };
+
+        case UPLOAD_REQUEST:
+        case GET_HISTORY_REQUEST:
+            return {
+                ...state,
+                loading: true
+            };
+
+        case UPLOAD_SUCCESS:
+            return {
+                ...state,
+                loading: false,
+                medicalHistory: action.payload,
+                success: true
+            };
+
+        case GET_HISTORY_SUCCESS:
+            return {
+                ...state,
+                loading: false,
+                medicalHistory: action.payload
+            };
+
+        case UPLOAD_FAIL:
+        case GET_HISTORY_FAIL:
+            return {
+                ...state,
+                loading: false,
+                error: action.payload,
+                success: false
             };
 
         case CLEAR_ERRORS:

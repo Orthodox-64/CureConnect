@@ -6,9 +6,11 @@ import Header from '../components/Header';
 import ImageUpload from '../components/ImageUpload';
 import AnalysisResults from '../components/AnalysisResults';
 import Disclaimer from '../components/Disclaimer';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { addMedicalHistory, getMedicalHistory } from "./../actions/userActions";
 
 function AnalysisBotECG() {
+    const dispatch = useDispatch();
     const [selectedImage, setSelectedImage] = useState(null);
     const [isAnalyzing, setIsAnalyzing] = useState(false);
     const [analysis, setAnalysis] = useState(null);
@@ -97,6 +99,7 @@ function AnalysisBotECG() {
             } else {
                 setAnalysis("Error: " + (data.error || "Unexpected response"));
             }
+            dispatch(addMedicalHistory(data.prediction, imageUrl));
         } catch (error) {
             console.error('Error processing the image:', error);
             setAnalysis("Error processing the image.");

@@ -1,5 +1,5 @@
 const express = require('express');
-const { registerUser, loginUser, getUserDetails, logout, getAllUsers, getSingleUser, updateUserRole, deleteUser, getAllDoctors } = require('../controller/userController');
+const { registerUser, loginUser, getUserDetails, logout, getAllUsers, getSingleUser, updateUserRole, deleteUser, getAllDoctors, addMedicalHistory, getMedicalHistory } = require('../controller/userController');
 const { isAuthenticatedUser, authorizeRoles } = require('../middleware/auth');
 
 const router = express.Router()
@@ -12,6 +12,12 @@ router.route('/logout').get(logout)
 
 router.route('/doctors').get(getAllDoctors)
 router.route('/me').get(isAuthenticatedUser, getUserDetails)
+
+router.route("/medical-history")
+    .post(isAuthenticatedUser, addMedicalHistory)
+
+router.route("/medical-history/:userId")
+    .get(isAuthenticatedUser, getMedicalHistory)
 
 // router.route('/admin/users').get(isAuthenticatedUser, authorizeRoles("admin"), getAllUsers)
 // router.route('/admin/user/:id')

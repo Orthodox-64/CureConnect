@@ -1,4 +1,4 @@
-import { useState, useRef ,useEffect} from 'react';
+import { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
 import Header from '../components/Header';
 import jsPDF from 'jspdf';
@@ -6,9 +6,11 @@ import 'jspdf-autotable';
 import ImageUpload from '../components/ImageUpload';
 import AnalysisResults from '../components/AnalysisResults';
 import Disclaimer from '../components/Disclaimer';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { addMedicalHistory, getMedicalHistory } from "./../actions/userActions";
 
 function AnalysisBotXRAY() {
+    const dispatch = useDispatch();
     const [selectedImage, setSelectedImage] = useState(null);
     const [isAnalyzing, setIsAnalyzing] = useState(false);
     const [logoImageData, setLogoImageData] = useState(null);
@@ -24,7 +26,7 @@ function AnalysisBotXRAY() {
                 const img = new Image();
                 img.crossOrigin = 'Anonymous';
                 img.src = './logo.png';
-                
+
                 img.onload = () => {
                     const canvas = document.createElement('canvas');
                     canvas.width = img.width;
@@ -67,7 +69,7 @@ function AnalysisBotXRAY() {
                 reader.readAsDataURL(file);
 
                 // Upload to Cloudinary first
-                const cloudinaryUrl = await uploadToCloudinary(file);                
+                const cloudinaryUrl = await uploadToCloudinary(file);
                 await analyzeImage(cloudinaryUrl);
             } catch (error) {
                 console.error('Error handling image upload:', error);
@@ -95,6 +97,8 @@ function AnalysisBotXRAY() {
             } else {
                 setAnalysis("Error: " + (data.error || "Unexpected response"));
             }
+
+            dispatch(addMedicalHistory(data.prediction, imageUrl));
         } catch (error) {
             console.error('Error processing the image:', error);
             setAnalysis("Error processing the image.");
@@ -103,14 +107,6 @@ function AnalysisBotXRAY() {
         }
     };
 
-    // const resetAnalysis = () => {
-    //     setSelectedImage(null);
-    //     setAnalysis(null);
-    //     if (fileInputRef.current) {
-    //         fileInputRef.current.value = '';
-    //     }
-    // };
-
     const generatePDF = () => {
         if (!analysis) {
             alert("No analysis data available to generate PDF.");
@@ -118,7 +114,6 @@ function AnalysisBotXRAY() {
         }
 
         try {
-            // Create new PDF document
             const doc = new jsPDF();
             const pageWidth = doc.internal.pageSize.getWidth();
             const pageHeight = doc.internal.pageSize.getHeight();
@@ -139,7 +134,7 @@ function AnalysisBotXRAY() {
                     console.error('Error adding logo to PDF:', error);
                 }
             }
-            
+
             doc.setFontSize(16);
             doc.setFont("helvetica", "bold");
             doc.setTextColor(0, 51, 102); // Dark blue color for header
@@ -155,7 +150,7 @@ function AnalysisBotXRAY() {
                     pageHeight - 10,
                     { align: 'center' }
                 );
-                
+
                 if (logoImageData) {
                     try {
                         doc.addImage(logoImageData, 'PNG', pageWidth - margin - 20, pageHeight - 15, 10, 10);
@@ -184,7 +179,7 @@ function AnalysisBotXRAY() {
             doc.setFont("helvetica", "bold");
             doc.setTextColor(51, 51, 51);
             doc.text("Patient Information", margin, yPosition);
-            
+
             yPosition += 10;
             doc.setFontSize(12);
             doc.setFont("helvetica", "normal");
@@ -204,23 +199,23 @@ function AnalysisBotXRAY() {
             doc.setFont("helvetica", "normal");
             doc.setFontSize(12);
             doc.setTextColor(51, 51, 51);
-            
+
             const splitText = doc.splitTextToSize(analysis, pageWidth - (2 * margin));
-            
+
             // Check if text might overflow to next page
             if (yPosition + (splitText.length * 7) > pageHeight - margin) {
                 addFooter();
                 doc.addPage();
-                
+
                 // Add background to new page
                 doc.setFillColor(208, 235, 255);
                 doc.rect(0, 0, pageWidth, pageHeight, 'F');
-                
+
                 yPosition = margin;
             }
-            
+
             doc.text(splitText, margin, yPosition);
-            
+
             // Add a box around the analysis text
             const textHeight = splitText.length * 7;
             doc.setDrawColor(0, 102, 204);
@@ -239,7 +234,7 @@ function AnalysisBotXRAY() {
             // Save the PDF with a proper filename
             const filename = `ECG_Report_${user?.name?.replace(/\s+/g, '_') || 'Patient'}_${new Date().toLocaleDateString().replace(/\//g, '-')}.pdf`;
             doc.save(filename);
-            
+
             return true;
         } catch (error) {
             console.error('Error generating PDF:', error);

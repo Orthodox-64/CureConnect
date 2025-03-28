@@ -3,7 +3,9 @@ import {
     LOAD_USER_FAIL, LOAD_USER_REQUEST, LOAD_USER_SUCCESS,
     LOGIN_FAIL, LOGIN_REQUEST, LOGIN_SUCCESS,
     LOGOUT_SUCCESS, LOGOUT_FAIL,
-    REGISTER_USER_FAIL, REGISTER_USER_REQUEST, REGISTER_USER_SUCCESS
+    REGISTER_USER_FAIL, REGISTER_USER_REQUEST, REGISTER_USER_SUCCESS,
+    UPLOAD_REQUEST, UPLOAD_SUCCESS, UPLOAD_FAIL,
+    GET_HISTORY_REQUEST, GET_HISTORY_SUCCESS, GET_HISTORY_FAIL
 } from "../constants/userConstants";
 import axios from '../axios';
 
@@ -64,6 +66,60 @@ export const logout = () => async (dispatch) => {
         dispatch({ type: LOGOUT_FAIL, payload: error.response.data.message })
     }
 }
+
+export const addMedicalHistory = (analysis, url) => async (dispatch) => {
+    try {
+        dispatch({ type: UPLOAD_REQUEST });
+        
+        const config = { 
+            headers: { "Content-Type": "application/json" },
+            withCredentials: true
+        };
+        
+        const { data } = await axios.post(
+            `/medical-history`,
+            { analysis, url },
+            config
+        );
+
+        dispatch({ 
+            type: UPLOAD_SUCCESS,
+            payload: data.medicalHistory 
+        });
+
+        return data.medicalHistory; // Return for component use if needed
+    } catch (error) {
+        dispatch({ 
+            type: UPLOAD_FAIL, 
+            payload: error.response?.data?.message || "Failed to upload medical history"
+        });
+    }
+};
+
+export const getMedicalHistory = (userId) => async (dispatch) => {
+    try {
+        dispatch({ type: GET_HISTORY_REQUEST });
+        
+        const config = { 
+            withCredentials: true 
+        };
+        
+        const { data } = await axios.get(`/medical-history/${userId}`, config);
+
+        dispatch({ 
+            type: GET_HISTORY_SUCCESS,
+            payload: data.medicalHistory 
+        });
+
+        return data.medicalHistory; // Return for component use if needed
+    } catch (error) {
+        dispatch({ 
+            type: GET_HISTORY_FAIL, 
+            payload: error.response?.data?.message || "Failed to fetch medical history"
+        });
+        throw error; // Re-throw for component error handling
+    }
+};
 
 export const clearErrors = () => async (dispatch) => {
     dispatch({ type: CLEAR_ERRORS })

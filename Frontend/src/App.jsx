@@ -21,6 +21,11 @@ import AnalysisBotXRAY from "./pages/AnalysisBotXRAY.jsx";
 import HealthTips from "./components/HealthTips.jsx"
 import Chat from "./components/Chat/Chat.jsx"
 import Landing from "./pages/Landing.jsx";
+import MedicalVisionAI from "./pages/FinalCancer.jsx"
+import AlzheimerVisionAI from "./pages/Alziemer.jsx"
+import SkinVisionAI from "./pages/SkinAnalysis.jsx"
+import RetinolVisionAI from "./pages/Retinopathy.jsx"
+
 
 function App() {
 
@@ -39,6 +44,10 @@ function App() {
           <Route path='/analysis' element={<AnalysisBot />}></Route>
           <Route path='/analysis/ecg' element={<AnalysisBotECG />}></Route>
           <Route path='/analysis/xray' element={<AnalysisBotXRAY />}></Route>
+          <Route path='/analysis/cancer' element={<MedicalVisionAI />}></Route>
+          <Route path='/analysis/alzheimer' element={<AlzheimerVisionAI />}></Route>
+          <Route path='/analysis/skin' element={<SkinVisionAI />}></Route>
+          <Route path='/analysis/retinopathy' element={<RetinolVisionAI />}></Route>
           {/* <Route path='/emergency' element={<HospitalFinal />}></Route> */}
           <Route path='/health' element={<HealthTips/>}></Route>
           <Route path='/chat' element={<Chat/>}></Route>

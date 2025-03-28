@@ -1,23 +1,30 @@
 import React, { useEffect, useState } from 'react'
 import { Mail, Stethoscope, Calendar, Phone, MapPin, Clock, Award, Edit, Briefcase, UserCircle, Calendar as CalendarIcon, Clock as ClockIcon, Shield } from 'lucide-react';
 import { useNavigate } from 'react-router-dom'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
+import { getMedicalHistory } from '../../actions/userActions';
 
 // Default profile images
 import doctorDefaultImage from '../../assets/doctor-default.png';
 import patientDefaultImage from '../../assets/patient-default.png';
+import MedicalHistoryModal from '../Appointment/MedicalHistoryModal';
 
 const Profile = () => {
+    const dispatch = useDispatch();
     const navigate = useNavigate()
     const { user, loading, isAuthenticated } = useSelector(state => state.user);
     const [activeTab, setActiveTab] = useState('profile');
     const [defaultImage, setDefaultImage] = useState(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedPatientHistory, setSelectedPatientHistory] = useState(null);
+    const [isLoadingHistory, setIsLoadingHistory] = useState(false);
+    const [historyError, setHistoryError] = useState(null);
 
     useEffect(() => {
         if (isAuthenticated === false) {
             navigate('/login')
         }
-        
+
         // Set default image based on user role
         if (user?.role === 'doctor') {
             setDefaultImage(doctorDefaultImage);
@@ -25,6 +32,21 @@ const Profile = () => {
             setDefaultImage(patientDefaultImage);
         }
     }, [navigate, isAuthenticated, user])
+
+    const handleViewMedicalHistory = async (userId) => {
+        setIsLoadingHistory(true);
+        setHistoryError(null);
+        try {
+            const response = await dispatch(getMedicalHistory(userId));
+            setSelectedPatientHistory(response);
+            setIsModalOpen(true);
+        } catch (error) {
+            console.error('Failed to fetch medical history:', error);
+            setHistoryError(error.response?.data?.message || 'Failed to fetch medical history');
+        } finally {
+            setIsLoadingHistory(false);
+        }
+    };
 
     // Handle image loading errors
     const handleImageError = (e) => {
@@ -73,30 +95,30 @@ const Profile = () => {
                             {/* Optional: Add profession-specific decorative elements */}
                             {user?.role === 'doctor' && (
                                 <div className="absolute inset-0 opacity-10">
-                                    <div className="w-full h-full" style={{ 
+                                    <div className="w-full h-full" style={{
                                         backgroundImage: 'url("data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23ffffff" fill-opacity="1"%3E%3Cpath d="M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z"%3E%3C/path%3E%3C/g%3E%3C/g%3E%3C/svg%3E")',
                                         backgroundSize: '30px 30px'
                                     }}></div>
                                 </div>
                             )}
                         </div>
-                        
+
                         {/* Profile Info Overlay */}
                         <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/60 to-transparent"></div>
-                        
+
                         {/* Profile Picture */}
                         <div className="absolute -bottom-16 left-8">
                             {user?.avatar ? (
-                                <img 
-                                    src={user.avatar} 
-                                    alt={user.name} 
+                                <img
+                                    src={user.avatar}
+                                    alt={user.name}
                                     className="w-32 h-32 rounded-full border-4 border-white shadow-lg object-cover"
                                     onError={handleImageError}
                                 />
                             ) : defaultImage ? (
-                                <img 
-                                    src={defaultImage} 
-                                    alt={user.name} 
+                                <img
+                                    src={defaultImage}
+                                    alt={user.name}
                                     className="w-32 h-32 rounded-full border-4 border-white shadow-lg object-cover"
                                     onError={(e) => {
                                         e.target.onerror = null;
@@ -106,7 +128,7 @@ const Profile = () => {
                                     }}
                                 />
                             ) : (
-                                <div 
+                                <div
                                     id="initials-fallback"
                                     className="w-32 h-32 rounded-full border-4 border-white shadow-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center"
                                 >
@@ -114,7 +136,7 @@ const Profile = () => {
                                 </div>
                             )}
                         </div>
-                        
+
                         {/* Role Badge */}
                         <div className="absolute -bottom-6 left-36">
                             <div className={`rounded-full p-2 ${user?.role === 'doctor' ? 'bg-blue-600' : 'bg-indigo-500'} shadow-md`}>
@@ -125,7 +147,7 @@ const Profile = () => {
                                 )}
                             </div>
                         </div>
-                        
+
                         {/* Name and Role */}
                         <div className="absolute bottom-4 left-48 text-white">
                             <h1 className="text-3xl font-bold">{user?.name || 'User'}</h1>
@@ -140,50 +162,47 @@ const Profile = () => {
                                 )}
                             </div>
                         </div>
-                        
+
                         {/* Edit Profile Button */}
                         <button className="absolute top-4 right-4 bg-white/10 backdrop-blur-md hover:bg-white/20 text-white rounded-full px-4 py-2 flex items-center gap-2 transition-all duration-200">
                             <Edit size={16} />
                             <span>Edit Profile</span>
                         </button>
                     </div>
-                    
+
                     {/* Tab Navigation - with spacing to avoid avatar overlay */}
                     <div className="mt-20 px-8 border-b">
                         <nav className="flex space-x-8">
-                            <button 
+                            <button
                                 onClick={() => setActiveTab('profile')}
-                                className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 ${
-                                    activeTab === 'profile' 
-                                        ? 'border-blue-600 text-blue-600' 
-                                        : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                                }`}
+                                className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 ${activeTab === 'profile'
+                                    ? 'border-blue-600 text-blue-600'
+                                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                                    }`}
                             >
                                 Profile
                             </button>
-                            <button 
+                            <button
                                 onClick={() => setActiveTab('activity')}
-                                className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 ${
-                                    activeTab === 'activity' 
-                                        ? 'border-blue-600 text-blue-600' 
-                                        : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                                }`}
+                                className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 ${activeTab === 'activity'
+                                    ? 'border-blue-600 text-blue-600'
+                                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                                    }`}
                             >
                                 Activity
                             </button>
-                            <button 
+                            <button
                                 onClick={() => setActiveTab('settings')}
-                                className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 ${
-                                    activeTab === 'settings' 
-                                        ? 'border-blue-600 text-blue-600' 
-                                        : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                                }`}
+                                className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200 ${activeTab === 'settings'
+                                    ? 'border-blue-600 text-blue-600'
+                                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                                    }`}
                             >
                                 Settings
                             </button>
                         </nav>
                     </div>
-                    
+
                     {/* Profile Content */}
                     {activeTab === 'profile' && (
                         <div className="p-8">
@@ -195,7 +214,7 @@ const Profile = () => {
                                             <UserCircle className="w-5 h-5 mr-2 text-blue-600" />
                                             Personal Information
                                         </h2>
-                                        
+
                                         <div className="bg-gray-50 rounded-xl p-6 shadow-sm">
                                             {/* Email */}
                                             <div className="mb-6">
@@ -207,7 +226,7 @@ const Profile = () => {
                                                     </div>
                                                 </div>
                                             </div>
-                                            
+
                                             {/* Phone */}
                                             <div className="mb-6">
                                                 <div className="flex items-start">
@@ -218,7 +237,7 @@ const Profile = () => {
                                                     </div>
                                                 </div>
                                             </div>
-                                            
+
                                             {/* Location - placeholder since we don't have this data */}
                                             <div>
                                                 <div className="flex items-start">
@@ -231,14 +250,14 @@ const Profile = () => {
                                             </div>
                                         </div>
                                     </div>
-                                    
+
                                     {/* Account Information */}
                                     <div>
                                         <h2 className="text-xl font-semibold text-gray-800 mb-6 flex items-center">
                                             <Shield className="w-5 h-5 mr-2 text-blue-600" />
                                             Account Information
                                         </h2>
-                                        
+
                                         <div className="bg-gray-50 rounded-xl p-6 shadow-sm">
                                             <div className="flex items-center justify-between mb-4">
                                                 <div className="flex items-center">
@@ -260,7 +279,7 @@ const Profile = () => {
                                         </div>
                                     </div>
                                 </div>
-                                
+
                                 {/* Right Column - Professional Information (Doctor Only) */}
                                 <div>
                                     {user?.role === 'doctor' ? (
@@ -269,7 +288,7 @@ const Profile = () => {
                                                 <Briefcase className="w-5 h-5 mr-2 text-blue-600" />
                                                 Professional Information
                                             </h2>
-                                            
+
                                             <div className="bg-gray-50 rounded-xl p-6 shadow-sm mb-8">
                                                 {/* Specialty */}
                                                 <div className="mb-6">
@@ -281,7 +300,7 @@ const Profile = () => {
                                                         </div>
                                                     </div>
                                                 </div>
-                                                
+
                                                 {/* Education */}
                                                 <div className="mb-6">
                                                     <div className="flex items-start">
@@ -292,7 +311,7 @@ const Profile = () => {
                                                         </div>
                                                     </div>
                                                 </div>
-                                                
+
                                                 {/* Availability */}
                                                 <div>
                                                     <div className="flex items-start">
@@ -306,14 +325,14 @@ const Profile = () => {
                                                     </div>
                                                 </div>
                                             </div>
-                                            
+
                                             {/* Schedule Information - Placeholder as we don't have this data */}
                                             <div>
                                                 <h2 className="text-xl font-semibold text-gray-800 mb-6 flex items-center">
                                                     <CalendarIcon className="w-5 h-5 mr-2 text-blue-600" />
                                                     Schedule Information
                                                 </h2>
-                                                
+
                                                 <div className="bg-gray-50 rounded-xl p-6 shadow-sm">
                                                     <div className="flex items-center justify-between mb-4">
                                                         <div className="flex items-center">
@@ -349,11 +368,13 @@ const Profile = () => {
                                                 <CalendarIcon className="w-5 h-5 mr-2 text-blue-600" />
                                                 Medical Records
                                             </h2>
-                                            
+
                                             <div className="bg-gray-50 rounded-xl p-6 shadow-sm">
                                                 <div className="text-center py-8">
                                                     <p className="text-gray-500 mb-4">No medical records available at this time.</p>
-                                                    <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                                                    <button
+                                                        onClick={() => handleViewMedicalHistory(user._id)}
+                                                        className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
                                                         View Medical History
                                                     </button>
                                                 </div>
@@ -364,7 +385,7 @@ const Profile = () => {
                             </div>
                         </div>
                     )}
-                    
+
                     {/* Activity Tab - Placeholder content */}
                     {activeTab === 'activity' && (
                         <div className="p-8">
@@ -374,7 +395,7 @@ const Profile = () => {
                             </div>
                         </div>
                     )}
-                    
+
                     {/* Settings Tab - Placeholder content */}
                     {activeTab === 'settings' && (
                         <div className="p-8">
@@ -386,6 +407,18 @@ const Profile = () => {
                     )}
                 </div>
             </div>
+            
+            <MedicalHistoryModal
+                isOpen={isModalOpen}
+                onClose={() => {
+                    setIsModalOpen(false);
+                    setSelectedPatientHistory(null);
+                    setHistoryError(null);
+                }}
+                medicalHistory={selectedPatientHistory}
+                isLoading={isLoadingHistory}
+                error={historyError}
+            />
         </div>
     );
 }

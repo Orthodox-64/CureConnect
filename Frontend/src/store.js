@@ -7,6 +7,7 @@ import { persistReducer } from 'redux-persist';  // redux-persist for storing da
 
 import { allUsersReducer, profileReducer, userDetailsReducer, userReducer } from './reducers/userReducer';
 import { allDoctorsReducer, newAppointmentReducer, myAppointmentReducer } from './reducers/appointmentReducer';
+import { prescriptionReducer } from './reducers/prescriptionReducer';
 
 const persistConfig = {
     key: 'root',
@@ -22,7 +23,8 @@ const persistCombineReducer = combineReducers({
     myAppointment: myAppointmentReducer,
     // appointmentDetails: appointmentDetailsReducer,
     // allAppointment: allAppointmentReducer,
-    allDoctors: allDoctorsReducer
+    allDoctors: allDoctorsReducer,
+    prescription: prescriptionReducer,
 }); // To combine multiple reducers in one
 
 const persistedReducer = persistReducer(persistConfig, persistCombineReducer)

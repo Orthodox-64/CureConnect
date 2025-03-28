@@ -15,6 +15,9 @@ export default {
           '100%': { opacity: '1', transform: 'translateY(0)' },
         },
       },
+      fontFamily: {
+        signature: ['Great Vibes', 'cursive']
+      }
     },
   },
   plugins: [],

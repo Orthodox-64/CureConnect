@@ -3,6 +3,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { clearErrors, myAppointments } from '../../actions/appointmentActions';
 import { getMedicalHistory } from '../../actions/userActions';
 import MedicalHistoryModal from './MedicalHistoryModal';
+import PrescriptionModal from './PrescriptionModal';
+import ViewPrescriptionModal from './ViewPrescriptionModal';
+import {getPrescriptions} from '../../actions/prescriptionActions';
 import {
     Calendar, Clock, MapPin, Users, CalendarCheck, UserPlus, X, Calendar as CalendarIcon,
     Clock as ClockIcon, FileText, User, UserCheck, Video, Filter, ChevronLeft
@@ -16,6 +19,10 @@ const MyAppointment = () => {
     const [selectedPatientHistory, setSelectedPatientHistory] = useState(null);
     const [isLoadingHistory, setIsLoadingHistory] = useState(false);
     const [historyError, setHistoryError] = useState(null);
+    const [isPrescriptionModalOpen, setPrescriptionModalOpen] = useState(false);
+    const [selectedAppointment, setSelectedAppointment] = useState(null);
+    const [selectedPrescription, setSelectedPrescription] = useState(null);
+    const { user } = useSelector((state) => state.user);
 
     const statusColors = {
         pending: 'bg-yellow-100 text-yellow-800 border-yellow-200',
@@ -66,6 +73,15 @@ const MyAppointment = () => {
             setHistoryError(error.response?.data?.message || 'Failed to fetch medical history');
         } finally {
             setIsLoadingHistory(false);
+        }
+    };
+
+    const handleViewPrescription = async () => {
+        try {
+            const prescription = await dispatch(getPrescriptions());
+            setSelectedPrescription(prescription);
+        } catch (error) {
+            console.error('Failed to fetch prescription:', error);
         }
     };
 
@@ -135,11 +151,32 @@ const MyAppointment = () => {
                                         Booked on {formatDate(appt.createdAt)}
                                     </div>
 
-                                    <div className="flex justify-end mt-4">
+                                    <div className="flex justify-end space-x-3 mt-4">
+                                        {user.role === "doctor" && (
+                                            <button
+                                                onClick={() => {
+                                                    setSelectedAppointment(appt);
+                                                    setPrescriptionModalOpen(true);
+                                                }}
+                                                className="inline-flex items-center px-3 py-2 text-sm font-medium text-green-600 
+                                                           bg-green-50 rounded-lg hover:bg-green-100 transition-colors"
+                                            >
+                                                <FileText className="w-4 h-4 mr-2" />
+                                                Add Prescription
+                                            </button>
+                                        )}
+                                        <button
+                                            onClick={() => handleViewPrescription(appt._id)}
+                                            className="inline-flex items-center px-3 py-2 text-sm font-medium text-indigo-600 
+                                                   bg-indigo-50 rounded-lg hover:bg-indigo-100 transition-colors"
+                                        >
+                                            <FileText className="w-4 h-4 mr-2" />
+                                            View Prescription
+                                        </button>
                                         <button
                                             onClick={() => handleViewMedicalHistory(appt.patient.id)}
                                             className="inline-flex items-center px-3 py-2 text-sm font-medium text-blue-600 
-                                                       bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors"
+                                                   bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors"
                                         >
                                             <FileText className="w-4 h-4 mr-2" />
                                             View Medical History
@@ -165,6 +202,16 @@ const MyAppointment = () => {
                 medicalHistory={selectedPatientHistory}
                 isLoading={isLoadingHistory}
                 error={historyError}
+            />
+            <PrescriptionModal
+                isOpen={isPrescriptionModalOpen}
+                onClose={() => setPrescriptionModalOpen(false)}
+                appointment={selectedAppointment}
+            />
+            <ViewPrescriptionModal
+                isOpen={!!selectedPrescription}
+                onClose={() => setSelectedPrescription(null)}
+                prescription={selectedPrescription}
             />
         </div>
     );

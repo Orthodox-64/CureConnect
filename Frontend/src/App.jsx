@@ -25,7 +25,9 @@ import MedicalVisionAI from "./pages/FinalCancer.jsx"
 import AlzheimerVisionAI from "./pages/Alziemer.jsx"
 import SkinVisionAI from "./pages/SkinAnalysis.jsx"
 import RetinolVisionAI from "./pages/Retinopathy.jsx"
-
+import Payment from "./components/Appointment/Pay.jsx";
+import Scheme from "./pages/Scheme.jsx"
+ 
 
 function App() {
 
@@ -43,11 +45,11 @@ function App() {
           <Route path='/' element={<Landing />}></Route>
           <Route path='/analysis' element={<AnalysisBot />}></Route>
           <Route path='/analysis/ecg' element={<AnalysisBotECG />}></Route>
-           {/* <Route path='/analysis/xray' element={<AnalysisBotXRAY />}></Route>
+           <Route path='/analysis/xray' element={<AnalysisBotXRAY />}></Route>
           <Route path='/analysis/cancer' element={<MedicalVisionAI />}></Route>
           <Route path='/analysis/alzheimer' element={<AlzheimerVisionAI />}></Route>
           <Route path='/analysis/skin' element={<SkinVisionAI />}></Route>
-          <Route path='/analysis/retinopathy' element={<RetinolVisionAI />}></Route>  */}
+          <Route path='/analysis/retinopathy' element={<RetinolVisionAI />}></Route> 
           {/* <Route path='/emergency' element={<HospitalFinal />}></Route> */}
           <Route path='/health' element={<HealthTips/>}></Route>
           <Route path='/chat' element={<Chat/>}></Route>
@@ -56,6 +58,9 @@ function App() {
           <Route exact path='/login' element={<LoginSignup />} />
           <Route exact path='/account' element={<Profile user={user} />} />
           <Route exact path='/myappointments' element={<MyAppointment />} />
+          <Route exact path='/test' element={<Payment amount={200}></Payment>} />
+          <Route exact path='/schemes' element={<Scheme></Scheme>} />
+
         </Routes>
         <Footer />
         <ChatBotButton/>

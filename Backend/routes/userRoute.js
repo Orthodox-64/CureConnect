@@ -1,6 +1,7 @@
 const express = require('express');
 const { registerUser, loginUser, getUserDetails, logout, getAllUsers, getSingleUser, updateUserRole, deleteUser, getAllDoctors, addMedicalHistory, getMedicalHistory } = require('../controller/userController');
 const { isAuthenticatedUser, authorizeRoles } = require('../middleware/auth');
+const { createPrescription, getPrescriptions, getSinglePrescription } = require('../controller/prescriptionController');
 
 const router = express.Router()
 
@@ -18,6 +19,15 @@ router.route("/medical-history")
 
 router.route("/medical-history/:userId")
     .get(isAuthenticatedUser, getMedicalHistory)
+
+router.route("/prescription/new")
+    .post(isAuthenticatedUser, authorizeRoles("doctor"), createPrescription);
+
+router.route("/prescriptions")
+    .get(isAuthenticatedUser, getPrescriptions);
+
+router.route("/prescription/:id")
+    .get(isAuthenticatedUser, getSinglePrescription);
 
 // router.route('/admin/users').get(isAuthenticatedUser, authorizeRoles("admin"), getAllUsers)
 // router.route('/admin/user/:id')

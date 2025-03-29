@@ -228,7 +228,7 @@ const GovernmentSchemesPage = () => {
                     Annual Income (in ₹)
                   </label>
                   <div className="relative">
-                    <span className="absolute inset-y-0 left-0 flex items-center pl-5 text-gray-500 text-xl">₹</span>
+                    {/* <span className="absolute inset-y-0 left-0 flex items-center pl-5 text-gray-500 text-xl">₹</span> */}
                     <input
                       type="number"
                       name="income"
@@ -239,7 +239,7 @@ const GovernmentSchemesPage = () => {
                           ? 'border-red-300 bg-red-50 focus:border-red-500' 
                           : 'border-gray-200 focus:border-blue-500'
                       } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-200 transition-all duration-300`}
-                      placeholder="       Enter your annual income"
+                      placeholder=" Enter your annual income"
                     />
                   </div>
                   {errors.income && (

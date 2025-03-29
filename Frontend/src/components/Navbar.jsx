@@ -11,7 +11,8 @@ const NAV_ITEMS = [
   { path: '/chat', label: 'Consult' },
   { path: '/analysis', label: 'Analysis' },
   { path: 'http://localhost:5174/', label: 'Emergency' },
-  {path: '/schemes',label: 'Government Schemes'}
+  {path: '/schemes',label: 'Government Schemes'},
+  {path:"https://medi-store.vercel.app/",label:"Shop"}
 ];
 
 export default function Navbar() {

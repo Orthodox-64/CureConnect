@@ -10,13 +10,15 @@ const sendSMS = require("../utils/sendSMS");
 // Register a User
 exports.registerUser = catchAsyncError(async (req, res, next) => {
 
-    const { name, contact, password, role } = req.body;
+    const { name, contact, password, role, speciality, availability, } = req.body;
 
     const user = await User.create({
         name,
         contact,
         password,
         role,
+        speciality,
+        availability,
         avatar: {
             public_id: "This is sample image",
             url: "PicURL",

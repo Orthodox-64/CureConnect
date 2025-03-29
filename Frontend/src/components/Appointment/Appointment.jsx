@@ -1,32 +1,41 @@
 import React, { useState, useEffect } from "react";
-import { Calendar, Clock, MapPin, Users, CalendarCheck, UserPlus, Mail, Search } from 'lucide-react';
+import { CalendarCheck, UserPlus, Mail, Search, MapPin } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { clearErrors, allDoctors } from '../../actions/appointmentActions';
-import BookingModal from './BookingModal'
-
+import BookingModal from './BookingModal';
 
 const Appointment = () => {
     const [activeTab, setActiveTab] = useState('book');
     const [selectedDoctor, setSelectedDoctor] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
+    const [appointmentInProgress, setAppointmentInProgress] = useState(false);
 
     const dispatch = useDispatch();
-
     const { user } = useSelector((state) => state.user);
     const { loading, error, doctors } = useSelector((state) => state.allDoctors);
 
     useEffect(() => {
         if (error) {
-            dispatch(clearErrors())
+            dispatch(clearErrors());
         }
         dispatch(allDoctors());
+    }, [dispatch, error]);
 
-    }, [dispatch, error])
-
+    // Filter doctors based on the search term
     const filteredDoctors = doctors?.filter(doctor => 
         doctor.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
         doctor.speciality.toLowerCase().includes(searchTerm.toLowerCase())
     );
+
+    // Handle doctor selection for booking
+    const handleDoctorSelection = (doctor) => {
+        if (appointmentInProgress) {
+            alert("You already have an appointment in progress. Please complete it before selecting a new doctor.");
+            return;
+        }
+        setSelectedDoctor(doctor);
+        setAppointmentInProgress(true);
+    };
 
     if (loading) {
         return (
@@ -66,15 +75,27 @@ const Appointment = () => {
                     <div className="bg-white rounded-xl shadow-xl p-8">
                         <div className="flex flex-col md:flex-row md:items-center justify-between mb-8">
                             <h2 className="text-2xl font-bold text-gray-900 mb-4 md:mb-0">Available Specialists</h2>
+                            {/* Search input */}
+                            <div className="flex items-center space-x-4">
+                                <input 
+                                    type="text"
+                                    placeholder="Search by name or speciality"
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                    className="px-4 py-2 rounded-md border border-gray-300 w-64"
+                                />
+                                <Search className="h-5 w-5 text-gray-600" />
+                            </div>
                         </div>
 
+                        {/* Doctor Cards (Only visible if the user is NOT a doctor) */}
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {filteredDoctors.map((doctor) => (
+                            {user.role !== 'doctor' && filteredDoctors.map((doctor) => (
                                 <div 
                                     key={doctor._id} 
                                     className="bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl 
-                                             transition-all duration-500 transform hover:-translate-y-2 
-                                             border border-gray-100"
+                                            transition-all duration-500 transform hover:-translate-y-2 
+                                            border border-gray-100"
                                 >
                                     <div className="p-6">
                                         <div className="flex items-center space-x-6">
@@ -82,8 +103,8 @@ const Appointment = () => {
                                                 src={"https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&q=80&w=300&h=300"}
                                                 alt={doctor.name}
                                                 className="w-24 h-24 rounded-full object-cover 
-                                                         border-4 border-white shadow-lg 
-                                                         ring-2 ring-blue-500/20"
+                                                        border-4 border-white shadow-lg 
+                                                        ring-2 ring-blue-500/20"
                                             />
                                             <div className="flex-grow">
                                                 <h2 className="text-xl font-bold text-gray-900 mb-3">{doctor.name}</h2>
@@ -102,7 +123,7 @@ const Appointment = () => {
                                             </div>
                                         </div>
                                         <button 
-                                            onClick={(e) => { e.preventDefault(); setSelectedDoctor(doctor); }}
+                                            onClick={(e) => { e.preventDefault(); handleDoctorSelection(doctor); }}
                                             className="mt-6 w-full bg-gradient-to-r from-blue-900 to-blue-700 
                                                      text-white py-3 px-6 rounded-xl text-sm font-semibold 
                                                      hover:from-blue-700 hover:to-blue-800 transition-all duration-300 
@@ -117,7 +138,7 @@ const Appointment = () => {
                             ))}
                         </div>
 
-                        {filteredDoctors.length === 0 && (
+                        {user.role !== 'doctor' && filteredDoctors.length === 0 && (
                             <div className="text-center py-16">
                                 <MapPin className="h-12 w-12 text-indigo-300 mx-auto mb-4" />
                                 <h3 className="text-xl font-medium text-gray-900 mb-2">No doctors found</h3>
@@ -146,7 +167,7 @@ const Appointment = () => {
                 <BookingModal
                     doctor={selectedDoctor}
                     isOpen={true}
-                    onClose={() => setSelectedDoctor(null)}
+                    onClose={() => { setSelectedDoctor(null); setAppointmentInProgress(false); }}
                 />
             )}
         </div>

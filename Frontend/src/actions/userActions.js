@@ -38,7 +38,7 @@ export const register = (contact, password, name, role, speciality, availability
         const { data } = await axios.post(
             `/register`,
             { contact, password, name, role },
-            // { email, password, name, role, speciality, availability },
+            //{ email, password, name, role, speciality, availability },
             config
         )
 

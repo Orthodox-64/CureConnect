@@ -5,13 +5,16 @@ import cv2
 import requests
 from io import BytesIO
 from flask_cors import CORS
+import os
+from dotenv import load_dotenv
+from groq import Groq
 
-# Load the model
-model = load_model(r"/Users/sachinpangal/Downloads/xray_pneumonia_model");
-
-# Initialize Flask app
 app = Flask(__name__)
 CORS(app)
+load_dotenv()
+
+API_KEY_LLAMA = os.getenv("API_KEY_LLAMA")
+model = load_model(r"models\xray_pneumonia_model.keras (1)");
 
 # Define the prediction function
 def predict_xray(image_source):
@@ -36,10 +39,6 @@ def predict_xray(image_source):
     prediction = model.predict(img)[0][0]
     return "Pneumonia" if prediction > 0.5 else "Normal"
 
-
-from groq import Groq
-API_KEY_LLAMA = "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"
-
 def generate_llama_response(result,file_path):
     predefined_prompt=f"""
     You are an expert radiologist analyzing Xray image.
@@ -62,29 +61,21 @@ def generate_llama_response(result,file_path):
     )
     return response.choices[0].message.content
 
-
-# Define the /model route
+# Flask API route
 @app.route('/model', methods=['POST'])
 def model_predict():
-    # Get JSON data from the request body
     data = request.get_json()
-
-    # Check if the file path is provided
     if not data or 'file_path' not in data:
         return jsonify({"error": "No file path or URL provided"}), 400
 
     file_path = data['file_path']
 
-    # Make a prediction
     try:
         result = predict_xray(file_path)
-        # response
         response=generate_llama_response(result,file_path)
         return jsonify({"prediction": response})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-
-
 
 
 if __name__ == '__main__':

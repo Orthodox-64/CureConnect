@@ -1,24 +1,24 @@
+from flask import Flask, jsonify, request
 from tensorflow.keras.models import load_model
-import cv2
 import numpy as np
+import cv2
 import requests
 from io import BytesIO
-from flask import Flask, jsonify, request
 from flask_cors import CORS
+import os
+from dotenv import load_dotenv
 from groq import Groq
 
 app = Flask(__name__)
 CORS(app)
+load_dotenv()
 
-# Load the model
-model = load_model(r"/Users/sachinpangal/Desktop/ecg_model (1).h5")
+API_KEY_LLAMA = os.getenv("API_KEY_LLAMA")
+model = load_model(r"models\ecg_model (1).h5")
 
 # Image settings
 img_size = 224
 class_labels = ["Myocardial Infarction", "History of MI", "Abnormal Heartbeat", "Normal Person"]
-
-# Groq API Key (Ensure this is stored securely in an environment variable)
-API_KEY_LLAMA = "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"
 
 # Function to generate Llama response
 def generate_llama_response(result, file_path):
@@ -82,12 +82,11 @@ def model_predict():
 
     try:
         result = predict_ecg(file_path)
-        # response
         response = generate_llama_response(result, file_path)
         return jsonify({"prediction": response})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-# Run Flask app
+
 if __name__ == '__main__':
     app.run(port=8001, host="0.0.0.0")

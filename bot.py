@@ -3,19 +3,22 @@ import os
 import requests
 from flask_cors import CORS
 from flask import Flask,jsonify,request
+from dotenv import load_dotenv
 
 app = Flask(__name__)
 
 CORS(app)
+load_dotenv()
 
 
-API_KEY_LLAMA = "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"
+API_KEY_LLAMA = os.getenv("API_KEY_LLAMA")
 
 def generate_llama_response(context,prompt):
-    pre_defined=f"""answer in the same language as user
-    You will recieve user's medical history :{context}\n
-                    You are a professional doctor,you have to assist the user with his basic questions: {prompt}
-                 """
+    pre_defined=f"""
+        answer in the same language as user
+        You will recieve user's medical history :{context}\n
+        You are a professional doctor,you have to assist the user with his basic questions: {prompt}
+    """
     
     client = Groq(api_key=API_KEY_LLAMA)
     response = client.chat.completions.create(

@@ -1,83 +1,77 @@
-# MediConnect - Advanced Telemedicine Platform
+# CureConnect - AI Powered Low-Bandwidth Telemedicine Platform for Rural Areas
 
-![MediConnect Logo](./assets/dashboard.png)
+![CureConnect Logo](./assets/dashboard.png)
 
-## About MediConnect
+## About CureConnect
 
-MediConnect is a comprehensive telemedicine platform designed to bridge the gap between patients and healthcare providers. Our platform offers a seamless, secure, and efficient way to access quality healthcare services from the comfort of your home.
+CureConnect is a next-gen AI-powered telemedicine platform designed to bring accessible, affordable, and efficient healthcare to remote areas. Whether you have low internet bandwidth, no smartphone, or need AI-driven diagnostics, CureConnect ensures seamless medical support for everyone.
 
 ## Our Features
 
-### 1. Virtual Consultations
+### 1.  HD Video Calling via WebRTC (Optimized for Low Bandwidth) 📡
 
-- **HD Video Conferencing**: Crystal clear video and audio quality for effective doctor-patient communication
-- **Low Bandwidth**: The foundation of video-calling lies in WebRTC which operates on low-bandwidth
-- **Prescription Management**: Receive digital prescriptions directly after consultation
-- **Consultation History**: Access records of all your past consultations
+![ HD Video Calling](./assets/vc.png)
 
-### 2. Secure Messaging System
+- Enables real-time doctor-patient consultations even in areas with limited internet speed.
+- It automatically adjusts video quality based on internet speed, so calls stay smooth even on slow networks like 2G or  3G.
 
-![Secure Messaging](./assets/chat_app.png)
+### 2. Offline Doctor Chat with WebSockets 🔒
 
-- **End-to-End Encryption**: Your conversations remain private and secure
-- **Quick Responses**: Get answers to simple queries without scheduling a full consultation
-- **Low Bandwidth**: The foundation of video-calling lies in WebRTC which operates on low-bandwidth
+![Secure Messaging](./assets/chat.png)
 
-### 3. Advanced Medical Analysis
+- Patients can send messages to doctors even with no internet connectivity.
+- Uses WebSockets for real-time, lightweight, and encrypted chat, reducing dependency on high-speed internet.
 
-![Medical Analysis](./assets/xray.png)
+### 3.  AI/ML-Based Diagnostics 🩺
 
-![Medical Analysis](./assets/ecg.png)
+![Medical Analysis](./assets/analysis.png)
 
-- **ECG Analysis**: Upload and receive professional interpretation of your ECG reports
-- **X-ray Interpretation**: Get expert analysis of X-rays with detailed reports
-- **AI-Assisted Diagnostics**: Preliminary analysis using cutting-edge AI technology
-- **Specialist Referrals**: Connect with specialists based on your analysis results
-- **Secure Storage**: All your medical images and reports stored securely for easy access
+- Uses CNN & LSTM models to analyze ECG, X-ray, Retinopathy, PET scans, Skin diseases, and Alzheimer’s.
+- Provides instant AI-generated reports, reducing diagnostic delays in rural areas.
 
-### 4. Personalized Health Tips
+### 4. RAG-Powered AI Chatbot 🤖
 
-![Health Tips](./assets/health_tips.png)
+![chatbot](./assets/bot.png)
 
-- **Daily Health Insights**: Receive personalized health tips based on your medical history
-- **Nutrition Guidance**: Get customized dietary recommendations
-- **Exercise Plans**: Access workout routines tailored to your health condition
-- **Medication Reminders**: Never miss a dose with our smart reminder system
-- **Wellness Articles**: Read expert-written articles on various health topics
+- Uses Retrieval-Augmented Generation (RAG) to provide context-aware, accurate health responses.
+- Patients can get personalized health tips, symptom checks, and self-care advice in multiple languages.
 
-### 5. Emergency Hospital Locator
+### 5.Appointment Booking System 💳📝
 
-![Hospital Locator](./assets/emergency.png)
+![Hospital Locator](./assets/appointment.png)
 
-- **Real-time Hospital Mapping**: Find the nearest hospitals in case of emergencies
-- **Ambulance Services**: Quick access to ambulance contact information
-- **Wait Time Indicators**: See estimated wait times at different emergency rooms
-- **Specialty Filters**: Find hospitals based on specific medical specialties
-- **Route Navigation**: Get directions to the hospital of your choice
+- Patients can schedule consultations with doctors, ensuring timely medical assistance.
+- Integrated with a secure payment gateway for hassle-free online payments.
+- Generates digital prescriptions, reducing paperwork and enhancing record-keeping.
 
-### 6. Comprehensive Appointment Dashboard
+### 6.  IVR-Based Emergency Assistance & Hospital Locator 🚨☎️
 
-![Appointment Dashboard](./assets/appointments.png)
+- Patients can call an IVR number to connect with emergency medical services, even without a smartphone
+- SOS feature auto-routes calls to nearest hospitals & ambulances, ensuring quick response times.
+- After receiving a digital prescription from the doctor, patients can locate nearby medical stores for easy access to medicines.
 
-![Appointment Dashboard](./assets/my_appointments.png)
+### 7.  Multilingual & Voice-Assisted Accessibility 🗣️👁️
 
-- **Intuitive Calendar Interface**: Easily schedule, reschedule, or cancel appointments
-- **Availability Checker**: See real-time availability of healthcare providers
-- **Appointment Reminders**: Get notifications before your scheduled appointments
-- **Payment Integration**: Pay for consultations directly through the platform
-- **Follow-up Scheduling**: Easily book follow-up appointments as recommended by your doctor
+- Supports multiple regional languages, breaking language barriers in healthcare access.
+- Integrated voice assistance for visually impaired users, ensuring accessibility for all
 
-## Why Choose MediConnect?
+### 8. E-Commerce for Affordable Medicine Delivery 💊🏪
 
-- **Accessibility**: Healthcare services available 24/7, regardless of your location
-- **Affordability**: Reduce costs associated with in-person visits
-- **Efficiency**: Save time with quick access to healthcare professionals
-- **Comprehensive Care**: All your healthcare needs addressed on a single platform
-- **Data Security**: Your medical information is protected with state-of-the-art security measures.
+- Patients can order medicines at subsidized rates, reducing costs for rural healthcare.
+- Ensures doorstep delivery, eliminating the need to travel long distances for essential medication.
+
+
+## Why Choose CureConnect?
+
+- **Accessibility**:  Get 24/7 healthcare support, even in remote areas with low or no internet.
+- **Affordability**: Minimize healthcare costs with AI diagnostics, digital prescriptions, and online consultations.
+- **Efficiency**: Instantly connect with doctors, book appointments, and receive quick diagnoses.
+- **Comprehensive Care**: From consultations to AI-powered diagnostics, emergency assistance, and medicine delivery—all in one platform.
+- **Data Security**:Your health data is encrypted and protected with advanced security measures.
 
 ## Get Started Today
 
-Join thousands of satisfied users who have made MediConnect their preferred healthcare platform. Sign up now and take the first step towards convenient, efficient, and quality healthcare.
+Join thousands of satisfied users who have made CureConnect their preferred healthcare platform. Sign up now and take the first step towards convenient, efficient, and quality healthcare.
 
 ---
 

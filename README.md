@@ -25,26 +25,30 @@ CureConnect is a next-gen AI-powered telemedicine platform designed to bring acc
 ### 3.  AI/ML-Based Diagnostics 🩺
 
 ![Medical Analysis](./assets/analysis.png)
+![Xray Analysis](./assets/xray.png)
 
 - Uses CNN & LSTM models to analyze ECG, X-ray, Retinopathy, PET scans, Skin diseases, and Alzheimer’s.
 - Provides instant AI-generated reports, reducing diagnostic delays in rural areas.
 
 ### 4. RAG-Powered AI Chatbot 🤖
 
-![chatbot](./assets/bot.png)
+![Health Tips](./assets/health_tips.png)
 
 - Uses Retrieval-Augmented Generation (RAG) to provide context-aware, accurate health responses.
 - Patients can get personalized health tips, symptom checks, and self-care advice in multiple languages.
 
 ### 5.Appointment Booking System 💳📝
 
-![Hospital Locator](./assets/appointment.png)
+![doctors](./assets/avail_doctors.png)
+![Appointments](./assets/appointment.png)
 
 - Patients can schedule consultations with doctors, ensuring timely medical assistance.
 - Integrated with a secure payment gateway for hassle-free online payments.
 - Generates digital prescriptions, reducing paperwork and enhancing record-keeping.
 
 ### 6.  IVR-Based Emergency Assistance & Hospital Locator 🚨☎️
+
+![Hospital locator](./assets/locator.png)
 
 - Patients can call an IVR number to connect with emergency medical services, even without a smartphone
 - SOS feature auto-routes calls to nearest hospitals & ambulances, ensuring quick response times.
@@ -59,6 +63,15 @@ CureConnect is a next-gen AI-powered telemedicine platform designed to bring acc
 
 - Patients can order medicines at subsidized rates, reducing costs for rural healthcare.
 - Ensures doorstep delivery, eliminating the need to travel long distances for essential medication.
+
+### 9. Government Healthcare Programs & Eligibility Checker 🏥📜
+
+![Government Schemes](./assets/gs.png)
+
+- Provides users with an easy way to discover healthcare schemes they may qualify for.
+- A dedicated tool to verify eligibility for government healthcare assistance based on income and ration card category.
+- Users can check if they meet the criteria by entering their income, selecting their ration card color, and confirming necessary documents.
+- Requires Aadhaar and CM Letter for authentication, making the eligibility process transparent and secure.
 
 
 ## Why Choose CureConnect?

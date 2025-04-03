@@ -1,5 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
+import { addMedicalHistory } from "./../actions/userActions";
 import { GoogleGenAI } from "@google/genai";
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
@@ -81,6 +83,9 @@ export default function MedicalVisionAI() {
     const [logoImageData, setLogoImageData] = useState(null);
     const fileInputRef = useRef(null);
 
+    const dispatch = useDispatch();
+    const { user } = useSelector(state => state.user);
+
     // Load logo image when component mounts
     useEffect(() => {
         const loadLogo = async () => {
@@ -125,6 +130,7 @@ export default function MedicalVisionAI() {
             const cloudinaryUrl = await uploadToCloudinary(selectedImage);
             const result = await analyzeImage(cloudinaryUrl);
             setAnalysis(result);
+            dispatch(addMedicalHistory(result, cloudinaryUrl));
         } catch (error) {
             console.error("Error processing image:", error);
             setAnalysis("Error processing image. Please try again.");
@@ -235,6 +241,8 @@ export default function MedicalVisionAI() {
             yPosition += 10;
             doc.setFontSize(12);
             doc.setFont("helvetica", "normal");
+            doc.text(`Patient Name: ${user?.name || 'Not Available'}`, margin, yPosition);
+            yPosition += 10;
             doc.text(`Date: ${new Date().toLocaleString()}`, margin, yPosition);
 
             // Analysis Results - Bold Header
@@ -282,9 +290,9 @@ export default function MedicalVisionAI() {
             addFooter();
 
             // Save the PDF with a proper filename
-            const filename = `PET_Scan_Report_${new Date().toLocaleDateString().replace(/\//g, '-')}.pdf`;
+            const filename = `CANCER_Scan_Report_${user?.name?.replace(/\s+/g, '_') || 'Patient'}_${new Date().toLocaleDateString().replace(/\//g, '-')}.pdf`;
             doc.save(filename);
-            
+
             return true;
         } catch (error) {
             console.error('Error generating PDF:', error);

@@ -54,7 +54,7 @@ const Landing = () => {
             </svg>
             <h2 className="text-gray-600 text-lg md:text-xl font-medium">Emergency Call</h2>
           </div>
-          <p className="text-gray-800 text-xl md:text-3xl font-bold mt-1 md:mt-2">+91 08045680649</p>
+          <p className="text-gray-800 text-xl md:text-3xl font-bold mt-1 md:mt-2">+91 08045682977</p>
         </div>
       </div>
 

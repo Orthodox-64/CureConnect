@@ -94,7 +94,7 @@ const uploadImageToCloudinary = async (imageBlob) => {
  */
 export const analyzeImageWithGemini = async (imageUrl, analysisType) => {
   try {
-    const GEMINI_API_KEY = "AIzaSyAerBoGRKAl_AMK4uGDG1re1u86sNxa28o";
+    const GEMINI_API_KEY = process.env.REACT_APP_GEMINI_API_KEY || "AIzaSyAerBoGRKAl_AMK4uGDG1re1u86sNxa28o";
     const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
     
     // Define analysis prompts based on type

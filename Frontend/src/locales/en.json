@@ -1,0 +1,20 @@
+{
+  "navbar": {
+    "dashboard": "Dashboard",
+    "telemedicine": "Telemedicine",
+    "analysis": "Analysis",
+    "health_tips": "Health-Tips",
+    "chatbot": "ChatBot",
+    "consult": "Consult",
+    "appointment":"appointment",
+    "emergency":"emergency"
+  },
+  "cards": {
+    "telemedicine": "Smart Telemedicine for Smarter Health",
+    "medical_analysis": "Get Expert Medical Insights Instantly",
+    "health_tips": "Daily Wellness Tips for a Healthier You.",
+    "consulting": "Instant Healthcare, Anytime, Anywhere.",
+    "emergency": "Your Health, Our Priority – 24/7.",
+    "appointment": "Personalized Health Tips, Just for You."
+  }
+}

@@ -34,6 +34,15 @@ import Appointments from './pages/Appointments.jsx';
 import Prescriptions from './pages/Prescriptions.jsx';
 import ErrorBoundary from './components/ErrorBoundary.jsx';
 import VideoAnalysisTest from './components/VideoAnalysisTest.jsx';
+import PharmacyRegistration from './pages/PharmacyRegistration.jsx';
+import PharmacyDashboard from './pages/PharmacyDashboard.jsx';
+import MedicineCatalog from './pages/MedicineCatalog.jsx';
+import ShoppingCart from './pages/ShoppingCart.jsx';
+import Checkout from './pages/Checkout.jsx';
+import OrderTracking from './pages/OrderTracking.jsx';
+import PharmacyAdminPanel from './pages/PharmacyAdminPanel.jsx';
+import PharmacistDashboard from './pages/PharmacistDashboard.jsx';
+import CreateMedicine from './pages/CreateMedicine.jsx';
 
 function App() {
   const { user } = useSelector((state) => state.user);
@@ -74,6 +83,17 @@ function App() {
           <Route exact path='/appointments' element={<Appointments />} />
           <Route exact path='/prescriptions' element={<ErrorBoundary><Prescriptions /></ErrorBoundary>} />
           <Route exact path='/test-video' element={<VideoAnalysisTest />} />
+          
+          {/* Pharmacy Routes */}
+          <Route exact path='/pharmacy/register' element={<PharmacyRegistration />} />
+          <Route exact path='/pharmacy/dashboard' element={<PharmacyDashboard />} />
+          <Route exact path='/medicines' element={<MedicineCatalog />} />
+          <Route exact path='/cart' element={<ShoppingCart />} />
+          <Route exact path='/checkout' element={<Checkout />} />
+          <Route exact path='/orders' element={<OrderTracking />} />
+          <Route exact path='/admin/pharmacy' element={<PharmacyAdminPanel />} />
+          <Route exact path='/pharmacist/dashboard' element={<PharmacistDashboard />} />
+          <Route exact path='/pharmacist/create-medicine' element={<CreateMedicine />} />
         </Routes>
         <Footer />
         <MedicalAssistant/>

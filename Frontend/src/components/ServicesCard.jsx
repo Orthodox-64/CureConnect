@@ -6,19 +6,19 @@ const ServicesCard = () => {
       id: 1,
       title: "WebRtc",
       description: "Low Bandwidth Video Calling ",
-      image: "/src/assets/webrtc.jpg"
+      image: "/webrtc.jpg"
     },
     {
       id: 2,
       title: "ECG analysis",
       description: "ECG Report at tip of your hands",
-      image: "/src/assets/ecg.png"
+      image: "/ecg.png"
     },
     {
       id: 3,
       title: "Xray analysis",
       description: "XRAY report at tip of your hands",
-      image: "/src/assets/xray.png"
+      image: "/xray.png"
     }
   ];
 

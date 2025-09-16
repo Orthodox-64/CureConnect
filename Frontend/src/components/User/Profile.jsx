@@ -5,8 +5,8 @@ import { useSelector, useDispatch } from 'react-redux'
 import { getMedicalHistory } from '../../actions/userActions';
 
 // Default profile images
-import doctorDefaultImage from '../../assets/doctor-default.png';
-import patientDefaultImage from '../../assets/patient-default.png';
+const doctorDefaultImage = '/doctor-default.png';
+const patientDefaultImage = '/patient-default.png';
 import MedicalHistoryModal from '../MedicalHistoryModal';
 import PatientQRCode from '../PatientQRCode';
 import { hasValidAvatar } from '../../utils/avatarUtils';

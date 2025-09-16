@@ -403,6 +403,50 @@ const LoginSignup = () => {
                           </div>
                         )}
                       </label>
+                      
+                      <label
+                        className={`relative flex flex-col items-center p-4 border rounded-xl cursor-pointer transition-all ${
+                          role === "pharmacist"
+                            ? "bg-green-600 border-green-400 shadow-lg shadow-green-800/30"
+                            : "bg-white/10 border-blue-300/30 hover:bg-white/20"
+                        }`}
+                      >
+                        <input
+                          type="radio"
+                          name="role"
+                          value="pharmacist"
+                          checked={role === "pharmacist"}
+                          onChange={(e) => setRole(e.target.value)}
+                          className="sr-only"
+                        />
+                        <div
+                          className={`w-12 h-12 mb-2 rounded-full flex items-center justify-center ${
+                            role === "pharmacist" ? "bg-green-500" : "bg-blue-700/50"
+                          }`}
+                        >
+                          <svg
+                            className={role === "pharmacist" ? "text-white" : "text-blue-300"}
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="currentColor"
+                          >
+                            <path d="M6 3h12v2H6V3zm0 4h12v14H6V7zm2 2v10h8V9H8zm2 2h4v2h-4v-2zm0 4h4v2h-4v-2z"/>
+                          </svg>
+                        </div>
+                        <span
+                          className={`text-center ${
+                            role === "pharmacist" ? "text-white" : "text-blue-100"
+                          }`}
+                        >
+                          Pharmacist
+                        </span>
+                        {role === "pharmacist" && (
+                          <div className="absolute top-2 right-2 bg-green-500 p-1 rounded-full">
+                            <CheckCircle size={16} className="text-white" />
+                          </div>
+                        )}
+                      </label>
                     </div>
                   </div>
 
@@ -520,36 +564,33 @@ const LoginSignup = () => {
       </div>
 
       {/* Style injections for animations */}
-      <style jsx>
-        {" "}
-        {`
-          @keyframes float {
-            0% {
-              transform: translateY(0px);
-            }
-            50% {
-              transform: translateY(-20px);
-            }
-            100% {
-              transform: translateY(0px);
-            }
+      <style>{`
+        @keyframes float {
+          0% {
+            transform: translateY(0px);
           }
+          50% {
+            transform: translateY(-20px);
+          }
+          100% {
+            transform: translateY(0px);
+          }
+        }
 
-          .animate-pulse {
-            animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-          }
+        .animate-pulse {
+          animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
 
-          @keyframes pulse {
-            0%,
-            100% {
-              opacity: 0.7;
-            }
-            50% {
-              opacity: 0.3;
-            }
+        @keyframes pulse {
+          0%,
+          100% {
+            opacity: 0.7;
           }
-        `}
-      </style>
+          50% {
+            opacity: 0.3;
+          }
+        }
+      `}</style>
     </div>
   );
 };

@@ -204,6 +204,9 @@ app.use("/api/v1", user);
 const appointment = require('./routes/appointmentRoutes');
 app.use('/api/v1', appointment);
 
+const pharmacy = require('./routes/pharmacyRoutes');
+app.use('/api/v1', pharmacy);
+
 // 404 handler
 app.use("/", (req, res, next) => {
     res.status(404).json({
@@ -211,6 +214,39 @@ app.use("/", (req, res, next) => {
         ok: false,
         message: "No such route founded in server...💣💣💣",
     });
+});
+
+// Global error handler (last middleware)
+// Ensures controller-thrown errors return proper status instead of generic 500 HTML
+app.use((err, req, res, next) => {
+    let status = err.statuscode || err.statusCode || 500;
+    let message = err.message || 'Internal Server Error';
+
+    // Normalize common error types
+    if (err.name === 'ValidationError') {
+        status = 400;
+        // Aggregate field messages if available
+        const details = Object.values(err.errors || {}).map(e => e.message);
+        if (details.length) message = details.join(', ');
+    }
+    if (err.name === 'CastError') {
+        status = 400;
+        message = `Invalid ${err.path}: ${err.value}`;
+    }
+    if (err.code === 11000) {
+        status = 400;
+        const fields = Object.keys(err.keyValue || {}).join(', ');
+        message = `Duplicate value entered for ${fields}`;
+    }
+
+    if (process.env.NODE_ENV !== 'production') {
+        console.error('Error middleware:', {
+            status,
+            message,
+            stack: err.stack,
+        });
+    }
+    res.status(status).json({ success: false, message });
 });
 
 // Make io accessible to routes

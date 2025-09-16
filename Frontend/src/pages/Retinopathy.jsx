@@ -131,7 +131,7 @@ export default function Retinopathy() {
             try {
                 const img = new Image();
                 img.crossOrigin = 'Anonymous';
-                img.src = './logo.png';
+                img.src = '/logo.png';
                 
                 img.onload = () => {
                     const canvas = document.createElement('canvas');

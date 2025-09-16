@@ -1,28 +1,49 @@
 import { useState } from "react";
-import { useTranslation } from "react-i18next";
-import { useSelector, useDispatch } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../actions/userActions';
-import React from 'react'
 
-// Constants
-const NAV_ITEMS = [
-  { path: '/', label: 'Home' },
-  { path: '/telemedicine', label: 'Video Call' },
-  { path: '/chat', label: 'Chat Consult' },
-  { path: '/analysis', label: 'Analysis' },
-  { path: '/appointments', label: 'Appointments' },
-  { path: '/prescriptions', label: 'Prescriptions' }
-];
+// Role-based navigation items
+const getNavItems = (userRole) => {
+  const baseItems = [
+    { path: '/', label: 'Home' }
+  ];
+  
+  if (userRole === 'pharmacist') {
+    return [
+      ...baseItems,
+      { path: '/pharmacist/create-medicine', label: 'Create Medicine' },
+      { path: '/medicines', label: 'Medicines' },
+      { path: '/orders', label: 'Order History' }
+    ];
+  }
+  
+  if (userRole === 'admin') {
+    return [
+      ...baseItems,
+      { path: '/admin/panel', label: 'Admin Panel' },
+      { path: '/medicines', label: 'Medicines' },
+      { path: '/orders', label: 'Orders' }
+    ];
+  }
+  
+  // Default navigation for patients/users
+  return [
+    ...baseItems,
+    { path: '/telemedicine', label: 'Video Call' },
+    { path: '/chat', label: 'Chat Consult' },
+    { path: '/analysis', label: 'Analysis' },
+    { path: '/appointments', label: 'Appointments' },
+    { path: '/prescriptions', label: 'Prescriptions' },
+    { path: '/medicines', label: 'Medicines' }
+  ];
+};
 
 export default function Navbar() {
   const dispatch = useDispatch();
-  const { user, loading, isAuthenticated } = useSelector(state => state.user);
+  const { user, isAuthenticated } = useSelector(state => state.user);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { t, i18n } = useTranslation();
 
-  const changeLanguage = (e) => {
-    i18n.changeLanguage(e.target.value);
-  };
+  const navItems = getNavItems(user?.role);
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
@@ -39,7 +60,7 @@ export default function Navbar() {
         <a href="/" className="flex items-center">
           <div className="h-10 w-10">
             <img
-              src="/src/assets/logo.png"
+              src="/logo.png"
               alt="Logo"
               className="w-auto object-contain ml-4 md:ml-8 cursor-pointer transition-transform duration-300 hover:scale-105"
             />
@@ -60,7 +81,7 @@ export default function Navbar() {
 
         {/* Desktop Navigation */}
         <ul className="hidden md:flex items-center space-x-4 lg:space-x-9">
-          {NAV_ITEMS.map((item) => (
+          {navItems.map((item) => (
             <a
               key={item.path}
               href={item.path}
@@ -82,20 +103,70 @@ export default function Navbar() {
               Login
             </a>
           ) : (
-            <button
-              onClick={logoutUser}
-              className="bg-blue-800 text-white px-4 py-2 rounded-lg text-base font-medium hover:bg-blue-900 transition-colors duration-200 shadow-md"
-            >
-              Logout
-            </button>
+            <div className="flex items-center space-x-3">
+              {/* Role-specific dashboard links */}
+              <div className="relative group">
+                <button className="text-gray-800 hover:text-blue-800 transition-colors duration-200 font-medium">
+                  Dashboard ▼
+                </button>
+                <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                  <div className="py-1">
+                    <a
+                      href="/account"
+                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    >
+                      My Profile
+                    </a>
+                    {user?.role === 'pharmacist' && (
+                      <>
+                        <a
+                          href="/pharmacist/dashboard"
+                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        >
+                          Pharmacist Dashboard
+                        </a>
+                        <a
+                          href="/pharmacist/create-medicine"
+                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        >
+                          Create Medicine
+                        </a>
+                        <a
+                          href="/pharmacy/register"
+                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                        >
+                          Register Pharmacy
+                        </a>
+                      </>
+                    )}
+                    {user?.role === 'admin' && (
+                      <a
+                        href="/admin/panel"
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      >
+                        Admin Panel
+                      </a>
+                    )}
+                  </div>
+                </div>
+              </div>
+              
+              <button
+                onClick={logoutUser}
+                className="bg-blue-800 text-white px-4 py-2 rounded-lg text-base font-medium hover:bg-blue-900 transition-colors duration-200 shadow-md"
+              >
+                Logout
+              </button>
+              
+              <a href="/account" className="transform hover:scale-110 transition-transform duration-200">
+                <img
+                  className="w-10 h-10 rounded-full border-2 border-blue-800"
+                  src={user?.profilePicture || "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png"}
+                  alt="Profile"
+                />
+              </a>
+            </div>
           )}
-          <a href="/account" className="transform hover:scale-110 transition-transform duration-200">
-            <img
-              className="w-10 h-10 rounded-full border-2 border-blue-800"
-              src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png"
-              alt="Profile"
-            />
-          </a>
         </div>
       </nav>
 
@@ -103,17 +174,20 @@ export default function Navbar() {
       {mobileMenuOpen && (
         <div className="block md:hidden bg-white shadow-lg animate-fadeIn">
           <ul className="flex flex-col p-4">
-            {NAV_ITEMS.map((item) => (
+            {navItems.map((item) => (
               <a
                 key={item.path}
                 href={item.path}
                 className="py-3 text-gray-800 hover:text-blue-800 transition-colors duration-200"
+                onClick={() => setMobileMenuOpen(false)}
               >
                 <li className="text-base font-semibold">{item.label}</li>
               </a>
             ))}
           </ul>
-          <div className="p-4">
+          
+          {/* Mobile user menu */}
+          <div className="p-4 border-t">
             {!isAuthenticated ? (
               <a
                 href="/login"
@@ -122,12 +196,58 @@ export default function Navbar() {
                 Login
               </a>
             ) : (
-              <button
-                onClick={logoutUser}
-                className="w-full bg-blue-800 text-white px-4 py-2 rounded-lg text-base font-medium hover:bg-blue-900 transition-colors duration-200 shadow-md"
-              >
-                Logout
-              </button>
+              <div className="space-y-2">
+                <a
+                  href="/account"
+                  className="block w-full text-center bg-gray-100 text-gray-800 px-4 py-2 rounded-lg text-base font-medium hover:bg-gray-200 transition-colors duration-200"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  My Profile
+                </a>
+                
+                {user?.role === 'pharmacist' && (
+                  <>
+                    <a
+                      href="/pharmacist/dashboard"
+                      className="block w-full text-center bg-gray-100 text-gray-800 px-4 py-2 rounded-lg text-base font-medium hover:bg-gray-200 transition-colors duration-200"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      Pharmacist Dashboard
+                    </a>
+                    <a
+                      href="/pharmacist/create-medicine"
+                      className="block w-full text-center bg-gray-100 text-gray-800 px-4 py-2 rounded-lg text-base font-medium hover:bg-gray-200 transition-colors duration-200"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      Create Medicine
+                    </a>
+                    <a
+                      href="/pharmacy/register"
+                      className="block w-full text-center bg-gray-100 text-gray-800 px-4 py-2 rounded-lg text-base font-medium hover:bg-gray-200 transition-colors duration-200"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      Register Pharmacy
+                    </a>
+                  </>
+                )}
+                
+                {user?.role === 'admin' && (
+                  <a
+                    href="/admin/panel"
+                    className="block w-full text-center bg-gray-100 text-gray-800 px-4 py-2 rounded-lg text-base font-medium hover:bg-gray-200 transition-colors duration-200"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Admin Panel
+                  </a>
+                )}
+                
+                <button
+                  onClick={logoutUser}
+                  className="w-full bg-blue-800 text-white px-4 py-2 rounded-lg text-base font-medium hover:bg-blue-900 transition-colors duration-200 shadow-md"
+                >
+                  Logout
+                </button>
+              </div>
             )}
           </div>
         </div>

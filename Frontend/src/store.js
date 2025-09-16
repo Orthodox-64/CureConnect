@@ -8,6 +8,18 @@ import { persistReducer } from 'redux-persist';  // redux-persist for storing da
 import { allUsersReducer, profileReducer, userDetailsReducer, userReducer } from './reducers/userReducer';
 import { allDoctorsReducer, newAppointmentReducer, myAppointmentReducer, availableSlotsReducer } from './reducers/appointmentReducer';
 import { prescriptionReducer } from './reducers/prescriptionReducer';
+import { 
+    pharmacyRegisterReducer, 
+    pharmacyDetailsReducer, 
+    myPharmacyReducer, 
+    pharmacyUpdateReducer, 
+    pharmacyStatsReducer,
+    pharmacyMedicinesReducer,
+    medicineOperationReducer,
+    lowStockMedicinesReducer,
+    expiringMedicinesReducer,
+    pharmacyOrdersReducer
+} from './reducers/pharmacyReducers';
 
 const persistConfig = {
     key: 'root',
@@ -26,6 +38,17 @@ const persistCombineReducer = combineReducers({
     allDoctors: allDoctorsReducer,
     availableSlots: availableSlotsReducer,
     prescription: prescriptionReducer,
+    // Pharmacy reducers
+    pharmacyRegister: pharmacyRegisterReducer,
+    pharmacyDetails: pharmacyDetailsReducer,
+    myPharmacy: myPharmacyReducer,
+    pharmacyUpdate: pharmacyUpdateReducer,
+    pharmacyStats: pharmacyStatsReducer,
+    pharmacyMedicines: pharmacyMedicinesReducer,
+    medicineOperation: medicineOperationReducer,
+    lowStockMedicines: lowStockMedicinesReducer,
+    expiringMedicines: expiringMedicinesReducer,
+    pharmacyOrders: pharmacyOrdersReducer,
 }); // To combine multiple reducers in one
 
 const persistedReducer = persistReducer(persistConfig, persistCombineReducer)

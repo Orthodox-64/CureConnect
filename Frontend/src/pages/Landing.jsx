@@ -29,7 +29,7 @@ const Landing = () => {
             </a>
           </div>
           <div className="w-full md:w-1/2 mt-6 md:mt-0">
-            <img src=".\src\assets\doctors.png" alt="Doctors" className="w-full" />
+            <img src="/doctors.png" alt="Doctors" className="w-full" />
           </div>
         </header>
       </div>

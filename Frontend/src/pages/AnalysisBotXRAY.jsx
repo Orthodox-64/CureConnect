@@ -30,7 +30,7 @@ function AnalysisBotXRAY() {
                 // Convert logo to base64 to avoid CORS issues
                 const img = new Image();
                 img.crossOrigin = 'Anonymous';
-                img.src = './logo.png';
+                img.src = '/logo.png';
 
                 img.onload = () => {
                     const canvas = document.createElement('canvas');

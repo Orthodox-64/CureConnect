@@ -51,11 +51,11 @@ function AnalysisBotXRAY() {
     const uploadToCloudinary = async (file) => {
         const formData = new FormData();
         formData.append('file', file);
-        formData.append('upload_preset', 'teleconnect'); // Replace with your upload preset
+        formData.append('upload_preset', 'sachin'); // Replace with your upload preset
 
         try {
             const response = await axios.post(
-                'https://api.cloudinary.com/v1_1/dfwzeazkg/image/upload', // Replace with your cloud name
+                'https://api.cloudinary.com/v1_1/drxliiejo/image/upload', // Replace with your cloud name
                 formData
             );
             return response.data.secure_url;

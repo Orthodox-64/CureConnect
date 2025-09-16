@@ -1,8 +1,8 @@
 import axios from 'axios';
 
-// Cloudinary configuration
-const CLOUDINARY_CLOUD_NAME = 'dcmdkvmwe';
-const CLOUDINARY_UPLOAD_PRESET = 'teleconnect';
+// Cloudinary configuration (use env variables with fallbacks)
+const CLOUDINARY_CLOUD_NAME =  'drxliiejo';
+const CLOUDINARY_UPLOAD_PRESET =  'sachin';
 
 /**
  * Captures a snapshot from a video file and returns it as a data URL
@@ -67,7 +67,7 @@ const uploadImageToCloudinary = async (imageBlob) => {
     const formData = new FormData();
     formData.append('file', imageBlob);
     formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
-    formData.append('folder', 'teleconnect/video-snapshots');
+    formData.append('folder', `${CLOUDINARY_UPLOAD_PRESET}/video-snapshots`);
     
     const response = await axios.post(
       `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,
@@ -81,8 +81,9 @@ const uploadImageToCloudinary = async (imageBlob) => {
     
     return response.data.secure_url;
   } catch (error) {
-    console.error('Error uploading image to Cloudinary:', error);
-    throw new Error('Failed to upload image to Cloudinary');
+    const cloudinaryError = error?.response?.data?.error?.message || error?.message;
+    console.error('Error uploading image to Cloudinary:', cloudinaryError);
+    throw new Error(cloudinaryError || 'Failed to upload image to Cloudinary');
   }
 };
 

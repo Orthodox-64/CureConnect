@@ -8,6 +8,7 @@ import SkinAnalysisModal from '../components/SkinAnalysisModal';
 import XRayAnalysisModal from '../components/XRayAnalysisModal';
 import ECGAnalysisModal from '../components/ECGAnalysisModal';
 import axios from 'axios';
+import api from '../axios';
 import Header from '../components/Header';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
@@ -77,7 +78,7 @@ function SpecificAnalysis() {
       console.log(imageUrl);
       
       // Send to backend for analysis
-      const response = await axios.post('http://172.31.4.177:5001/analyze', {
+      const response = await api.post('/analyze', {
         image_url: imageUrl,
         prompt: "Analyze this medical image for any signs of disease or abnormalities. Focus on identifying key symptoms, patterns, and potential conditions. Assess the severity and progression of any detected conditions. Include an Emergency Level (1 for high emergency, 2 for moderate emergency, 3 for low emergency) based on the severity of symptoms observed."
       });
@@ -102,6 +103,32 @@ function SpecificAnalysis() {
       setAnalysis('Error during analysis. Please try again.');
     } finally {
       setIsAnalyzing(false);
+    }
+  };
+
+  // Local helper to upload files to Cloudinary (images/videos)
+  const uploadToCloudinary = async (file) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', 'sachin');
+    // Optional: store under a folder
+    formData.append('folder', 'teleconnect/specific-analysis');
+
+    try {
+      // Use the same Cloudinary cloud as the backend setup
+      const CLOUD_NAME = 'dcmdkvmwe';
+      // Decide endpoint based on mime type
+      const isVideo = (file.type || '').startsWith('video/');
+      const resourceType = isVideo ? 'video' : 'image';
+
+      const response = await axios.post(
+        `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/${resourceType}/upload`,
+        formData
+      );
+      return response.data.secure_url;
+    } catch (error) {
+      console.error('Error uploading to Cloudinary:', error);
+      throw new Error('Cloudinary upload failed');
     }
   };
 

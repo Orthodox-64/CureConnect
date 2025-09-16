@@ -206,6 +206,9 @@ app.use('/api/v1', appointment);
 
 const pharmacy = require('./routes/pharmacyRoutes');
 app.use('/api/v1', pharmacy);
+// Analysis routes (image/video analysis)
+const analysis = require('./routes/analysisRoutes');
+app.use('/api/v1', analysis);
 
 // 404 handler
 app.use("/", (req, res, next) => {

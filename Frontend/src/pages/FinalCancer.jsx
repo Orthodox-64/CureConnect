@@ -332,11 +332,11 @@ function FinalCancer() {
                     clearInterval(timer);
                     // Handle routing based on emergency level
                     if (emergencyLevel === 1) {
-                        navigate('https://tinyurl.com/4jdnrr5b');
+                        navigate('/chat'); // Beginner level - chat support
                     } else if (emergencyLevel === 2) {
-                        navigate('/telemedicine');
+                        navigate('/telemedicine'); // Intermediate level - telemedicine
                     } else if (emergencyLevel === 3) {
-                        navigate('/chat');
+                        navigate('https://tinyurl.com/4jdnrr5b'); // High level - emergency
                     }
                     return 0;
                 }
@@ -370,7 +370,7 @@ function FinalCancer() {
             const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
             // Create the prompt parts
-            const prompt = "You are an expert oncologist specializing in cancer detection. Analyze the provided medical image and determine whether it indicates signs of cancer. Provide a confidence score (in percentage) for your diagnosis. If cancer is detected, also mention the suspected type and affected region with a probability score and in a user-friendly language. Include an Emergency Level (1 for high emergency, 2 for moderate emergency, 3 for low emergency) based on the severity of symptoms observed.";
+            const prompt = "You are an expert oncologist specializing in cancer detection. Analyze the provided medical image and determine whether it indicates signs of cancer. Provide a confidence score (in percentage) for your diagnosis. If cancer is detected, also mention the suspected type and affected region with a probability score and in a user-friendly language. IMPORTANT: At the end of your analysis, include exactly one of these emergency levels: 'Emergency Level: 1' (beginner level - minor issues, routine care), 'Emergency Level: 2' (intermediate level - moderate concerns, prompt attention needed), 'Emergency Level: 3' (high level - serious conditions, immediate attention required), or 'Emergency Level: 0' (no emergency - normal findings).";
 
             // Generate content
             const result = await model.generateContent([
@@ -389,9 +389,12 @@ function FinalCancer() {
 
             // Extract emergency level from the analysis
             const emergencyLevelMatch = text.match(/Emergency Level:\s*(\d)/i);
-            const level = emergencyLevelMatch ? parseInt(emergencyLevelMatch[1]) : 3;
+            const level = emergencyLevelMatch ? parseInt(emergencyLevelMatch[1]) : 0;
             setEmergencyLevel(level);
-            setShowRedirect(true);
+            // Only show redirect if there's an actual emergency (level > 0)
+            if (level > 0) {
+                setShowRedirect(true);
+            }
 
             return text;
         } catch (error) {
@@ -568,16 +571,16 @@ function FinalCancer() {
                         <div className="text-center">
                             <h2 className="text-2xl font-bold mb-4">Emergency Level Detected</h2>
                             <div className={`text-4xl font-bold mb-4 ${
-                                emergencyLevel === 1 ? 'text-red-600' :
+                                emergencyLevel === 1 ? 'text-green-600' :
                                 emergencyLevel === 2 ? 'text-yellow-600' :
-                                'text-green-600'
+                                'text-red-600'
                             }`}>
                                 Level {emergencyLevel}
                             </div>
                             <p className="text-gray-600 mb-4">
-                                {emergencyLevel === 1 ? 'High Emergency - Immediate attention required' :
-                                 emergencyLevel === 2 ? 'Moderate Emergency - Prompt medical attention needed' :
-                                 'Low Emergency - Routine care recommended'}
+                                {emergencyLevel === 1 ? 'Beginner Level - Minor issues, routine care recommended' :
+                                 emergencyLevel === 2 ? 'Intermediate Level - Moderate concerns, prompt attention needed' :
+                                 'High Level - Serious conditions, immediate attention required'}
                             </p>
                             
                             {!isRedirecting ? (
@@ -585,14 +588,14 @@ function FinalCancer() {
                                     <button
                                         onClick={handleRedirect}
                                         className={`px-6 py-2 rounded-lg font-semibold text-white ${
-                                            emergencyLevel === 1 ? 'bg-red-600 hover:bg-red-700' :
+                                            emergencyLevel === 1 ? 'bg-green-600 hover:bg-green-700' :
                                             emergencyLevel === 2 ? 'bg-yellow-600 hover:bg-yellow-700' :
-                                            'bg-green-600 hover:bg-green-700'
+                                            'bg-red-600 hover:bg-red-700'
                                         }`}
                                     >
-                                        Proceed to {emergencyLevel === 1 ? 'Emergency' : 
+                                        Proceed to {emergencyLevel === 1 ? 'Chat' : 
                                                    emergencyLevel === 2 ? 'Telemedicine' : 
-                                                   'Chat'}
+                                                   'Emergency'}
                                     </button>
                                     <button
                                         onClick={handleStayOnPage}
@@ -612,9 +615,9 @@ function FinalCancer() {
                                                 className="h-2.5 rounded-full transition-all duration-1000"
                                                 style={{
                                                     width: `${(countdown / 5) * 100}%`,
-                                                    backgroundColor: emergencyLevel === 1 ? '#dc2626' :
+                                                    backgroundColor: emergencyLevel === 1 ? '#16a34a' :
                                                                     emergencyLevel === 2 ? '#d97706' :
-                                                                    '#16a34a'
+                                                                    '#dc2626'
                                                 }}
                                             ></div>
                                         </div>

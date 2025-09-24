@@ -25,6 +25,7 @@ function SkinVideoAnalysis() {
     const { user } = useSelector(state => state.user);
     const fileInputRef = useRef(null);
     const [isSimplified, setIsSimplified] = useState(false);
+    const [emergencyLevel, setEmergencyLevel] = useState(null);
     const [countdown, setCountdown] = useState(5);
     const [showRedirect, setShowRedirect] = useState(false);
     const [isRedirecting, setIsRedirecting] = useState(false);
@@ -89,7 +90,15 @@ function SkinVideoAnalysis() {
             
             setSnapshotUrl(result.imageUrl);
             setAnalysis(result.analysis);
-            setShowRedirect(true);
+            
+            // Extract emergency level from the analysis
+            const emergencyLevelMatch = result.analysis.match(/Emergency Level:\s*(\d)/i);
+            const level = emergencyLevelMatch ? parseInt(emergencyLevelMatch[1]) : 0;
+            setEmergencyLevel(level);
+            // Only show redirect if there's an actual emergency (level > 0)
+            if (level > 0) {
+                setShowRedirect(true);
+            }
 
             if (user) {
                 dispatch(addMedicalHistory(
@@ -343,8 +352,14 @@ function SkinVideoAnalysis() {
             setCountdown((prev) => {
                 if (prev <= 1) {
                     clearInterval(timer);
-                    // Redirect to video call
-                    navigate('/telemedicine');
+                    // Handle routing based on emergency level
+                    if (emergencyLevel === 1) {
+                        navigate('/chat'); // Beginner level - chat support
+                    } else if (emergencyLevel === 2) {
+                        navigate('/telemedicine'); // Intermediate level - telemedicine
+                    } else if (emergencyLevel === 3) {
+                        navigate('https://tinyurl.com/4jdnrr5b'); // High level - emergency
+                    }
                     return 0;
                 }
                 return prev - 1;
@@ -436,24 +451,36 @@ function SkinVideoAnalysis() {
                 
                 <Disclaimer />
 
-                {showRedirect && (
+                {showRedirect && emergencyLevel && (
                     <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-6 rounded-lg shadow-xl z-50">
                         <div className="text-center">
-                            <h2 className="text-2xl font-bold mb-4">Analysis Complete</h2>
-                            <div className="text-4xl font-bold mb-4 text-blue-600">
-                                ✓
+                            <h2 className="text-2xl font-bold mb-4">Emergency Level Detected</h2>
+                            <div className={`text-4xl font-bold mb-4 ${
+                                emergencyLevel === 1 ? 'text-green-600' :
+                                emergencyLevel === 2 ? 'text-yellow-600' :
+                                'text-red-600'
+                            }`}>
+                                Level {emergencyLevel}
                             </div>
                             <p className="text-gray-600 mb-4">
-                                Your skin analysis has been completed. You can proceed to video consultation or chat.
+                                {emergencyLevel === 1 ? 'Beginner Level - Minor issues, routine care recommended' :
+                                 emergencyLevel === 2 ? 'Intermediate Level - Moderate concerns, prompt attention needed' :
+                                 'High Level - Serious conditions, immediate attention required'}
                             </p>
                             
                             {!isRedirecting ? (
                                 <div className="flex gap-4 justify-center mt-6">
                                     <button
                                         onClick={handleRedirect}
-                                        className="px-6 py-2 rounded-lg font-semibold text-white bg-blue-600 hover:bg-blue-700"
+                                        className={`px-6 py-2 rounded-lg font-semibold text-white ${
+                                            emergencyLevel === 1 ? 'bg-green-600 hover:bg-green-700' :
+                                            emergencyLevel === 2 ? 'bg-yellow-600 hover:bg-yellow-700' :
+                                            'bg-red-600 hover:bg-red-700'
+                                        }`}
                                     >
-                                        Proceed to Video Call
+                                        Proceed to {emergencyLevel === 1 ? 'Chat' : 
+                                                   emergencyLevel === 2 ? 'Telemedicine' : 
+                                                   'Emergency'}
                                     </button>
                                     <button
                                         onClick={handleStayOnPage}
@@ -473,7 +500,9 @@ function SkinVideoAnalysis() {
                                                 className="h-2.5 rounded-full transition-all duration-1000"
                                                 style={{
                                                     width: `${(countdown / 5) * 100}%`,
-                                                    backgroundColor: '#2563eb'
+                                                    backgroundColor: emergencyLevel === 1 ? '#16a34a' :
+                                                                    emergencyLevel === 2 ? '#d97706' :
+                                                                    '#dc2626'
                                                 }}
                                             ></div>
                                         </div>

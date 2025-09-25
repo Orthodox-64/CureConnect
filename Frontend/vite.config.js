@@ -12,6 +12,7 @@ export default defineConfig({
       "localhost",
       "127.0.0.1",
       "agpatil-frontend.onrender.com",
+      "cureconnect-0oy1.onrender.com",
       ".onrender.com",
     ],
     hmr: {
@@ -19,7 +20,7 @@ export default defineConfig({
     },
     proxy: {
       "/api/v1": {
-        target: "http://localhost:5001",
+        target: "https://cureconnect-0oy1.onrender.com",
         changeOrigin: true,
         secure: true,
         ws: true,

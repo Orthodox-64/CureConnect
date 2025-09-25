@@ -17,7 +17,7 @@ const Chat = () => {
     const messagesEndRef = useRef(null);
 
     useEffect(() => {
-        const newSocket = io('https://agpatil.onrender.com/chat', {
+        const newSocket = io('https://cureconnect-0oy1.onrender.com/chat', {
             transports: ['websocket', 'polling']
         });
 

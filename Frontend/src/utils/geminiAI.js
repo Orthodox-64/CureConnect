@@ -5,7 +5,7 @@ const genAI = new GoogleGenerativeAI(import.meta.env.VITE_GEMINI_API_KEY);
 
 export const generateSymptomAnalysis = async (symptoms, patientAge = null, patientGender = null) => {
     try {
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+        const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
         const prompt = `
         As a medical AI assistant, analyze the following symptoms and provide helpful suggestions for the patient until their appointment. 
@@ -51,7 +51,7 @@ export const generateSymptomAnalysis = async (symptoms, patientAge = null, patie
 
 export const generateAppointmentReminder = async (symptoms, doctorName, appointmentDate, appointmentTime) => {
     try {
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+        const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
         const prompt = `
         Generate a helpful appointment reminder message for a patient. Include:

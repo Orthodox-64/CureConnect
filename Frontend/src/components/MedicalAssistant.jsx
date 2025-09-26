@@ -5,8 +5,9 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { useSelector } from 'react-redux';
 
-const GEMINI_API_KEY = "AIzaSyAerBoGRKAl_AMK4uGDG1re1u86sNxa28o";
-const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
+const GEMINI_API_KEY = "AIzaSyBjhpEfKWZa5jNA6iV-Rs6qmMhCnbtrJA8";
+// Updated to use Gemini 2.5 Flash (free version)
+const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent";
 
 const VOICE_LANG_CODES = {
   english: "en-US",
@@ -166,7 +167,7 @@ const MedicalAssistant = forwardRef((props, ref) => {
 
     const userContext = user ? `User is a ${user.role} (${user.name}). ` : "";
 
-    const prompt = `You are Arogya AI, a knowledgeable medical assistant and healthcare companion for AgPatil Healthcare. 
+    const prompt = `You are Arogya AI, a knowledgeable medical assistant and healthcare companion for CureConnect Healthcare. 
 
 IMPORTANT LANGUAGE REQUIREMENT: ${languageInstructions[language]}
 
@@ -187,19 +188,92 @@ CRITICAL: Your ENTIRE response must be in ${language} language only. Do not mix 
 
 Remember: This is for general health guidance only. Always recommend consulting a doctor for serious symptoms or medical emergencies.`;
     
-    const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }),
-    });
-    const data = await response.json();
-    const fallbackMessages = {
-      english: "Sorry, I couldn't process that. Please try again.",
-      hindi: "माफ़ करें, मैं इसे प्रोसेस नहीं कर सका। कृपया पुनः प्रयास करें।",
-      marathi: "माफ करा, मी याला प्रक्रिया करू शकलो नाही. कृपया पुन्हा प्रयत्न करा.",
-      gujarati: "માફ કરો, હું આને પ્રક્રિયા કરી શક્યો નથી. કૃપા કરીને ફરીથી પ્રયાસ કરો."
-    };
-    return data?.candidates?.[0]?.content?.parts?.[0]?.text ?? fallbackMessages[language] ?? fallbackMessages.english;
+    try {
+      const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
+        method: "POST",
+        headers: { 
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ 
+          contents: [{ 
+            parts: [{ text: prompt }] 
+          }],
+          generationConfig: {
+            temperature: 0.7,
+            topK: 40,
+            topP: 0.95,
+            maxOutputTokens: 1024,
+          },
+          safetySettings: [
+            {
+              category: "HARM_CATEGORY_HARASSMENT",
+              threshold: "BLOCK_MEDIUM_AND_ABOVE"
+            },
+            {
+              category: "HARM_CATEGORY_HATE_SPEECH",
+              threshold: "BLOCK_MEDIUM_AND_ABOVE"
+            },
+            {
+              category: "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+              threshold: "BLOCK_MEDIUM_AND_ABOVE"
+            },
+            {
+              category: "HARM_CATEGORY_DANGEROUS_CONTENT",
+              threshold: "BLOCK_MEDIUM_AND_ABOVE"
+            }
+          ]
+        }),
+      });
+
+      console.log('Response status:', response.status);
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('API Error Response:', errorText);
+        throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
+      }
+
+      const data = await response.json();
+      console.log('API Response:', data);
+      
+      // Check if response has the expected structure
+      if (data?.candidates?.[0]?.content?.parts?.[0]?.text) {
+        return data.candidates[0].content.parts[0].text;
+      } else if (data?.candidates?.[0]?.finishReason === 'SAFETY') {
+        const safetyMessages = {
+          english: "I apologize, but I cannot provide a response to that query due to safety guidelines. Please rephrase your health question.",
+          hindi: "माफ़ करें, सुरक्षा दिशानिर्देशों के कारण मैं इस प्रश्न का उत्तर नहीं दे सकता। कृपया अपना स्वास्थ्य प्रश्न दोबारा पूछें।",
+          marathi: "माफ करा, सुरक्षा मार्गदर्शक तत्त्वांमुळे मी या प्रश्नाचे उत्तर देऊ शकत नाही. कृपया आपला आरोग्य प्रश्न पुन्हा विचारा.",
+          gujarati: "માફ કરો, સુરક્ષા માર્ગદર્શિકાઓને કારણે હું આ પ્રશ્નનો જવાબ આપી શકતો નથી. કૃપા કરીને તમારો સ્વાસ્થ્ય પ્રશ્ન ફરીથી પૂછો.",
+          bengali: "দুঃখিত, নিরাপত্তা নির্দেশিকার কারণে আমি এই প্রশ্নের উত্তর দিতে পারছি না। অনুগ্রহ করে আপনার স্বাস্থ্য প্রশ্ন আবার জিজ্ঞাসা করুন।",
+          tamil: "மன்னிக்கவும், பாதுகாப்பு வழிகாட்டுதல்களின் காரணமாக என்னால் இந்த கேள்விக்கு பதில் அளிக்க முடியவில்லை. தயவுசெய்து உங்கள் சுகாதார கேள்வியை மீண்டும் கேளுங்கள்।",
+          japanese: "申し訳ありませんが、安全ガイドラインのため、この質問にお答えできません。健康に関する質問を言い換えてください。",
+          spanish: "Lo siento, no puedo proporcionar una respuesta a esa consulta debido a las pautas de seguridad. Por favor, reformule su pregunta de salud.",
+          french: "Je m'excuse, mais je ne peux pas fournir de réponse à cette requête en raison des directives de sécurité. Veuillez reformuler votre question de santé.",
+          german: "Entschuldigung, ich kann aufgrund von Sicherheitsrichtlinien keine Antwort auf diese Anfrage geben. Bitte formulieren Sie Ihre Gesundheitsfrage neu."
+        };
+        return safetyMessages[language] || safetyMessages.english;
+      } else {
+        console.error('Unexpected API response structure:', data);
+        throw new Error('Invalid response structure from API');
+      }
+      
+    } catch (error) {
+      console.error('Gemini API Error:', error);
+      const errorMessages = {
+        english: "Sorry, I'm having trouble connecting to the medical AI service. Please check your internet connection and try again.",
+        hindi: "माफ़ करें, चिकित्सा AI सेवा से कनेक्ट करने में समस्या हो रही है। कृपया अपना इंटरनेट कनेक्शन जांचें और पुनः प्रयास करें।",
+        marathi: "माफ करा, वैद्यकीय AI सेवेशी कनेक्ट होण्यात समस्या येत आहे. कृपया आपले इंटरनेट कनेक्शन तपासा आणि पुन्हा प्रयत्न करा.",
+        gujarati: "માફ કરો, મેડિકલ AI સેવા સાથે કનેક્ટ કરવામાં સમસ્યા આવી રહી છે. કૃપા કરીને તમારું ઇન્ટરનેટ કનેક્શન તપાસો અને ફરીથી પ્રયાસ કરો.",
+        bengali: "দুঃখিত, চিকিৎসা AI সেবার সাথে সংযোগে সমস্যা হচ্ছে। অনুগ্রহ করে আপনার ইন্টারনেট সংযোগ পরীক্ষা করুন এবং আবার চেষ্টা করুন।",
+        tamil: "மன்னிக்கவும், மருத்துவ AI சேவையுடன் இணைப்பதில் சிக்கல் உள்ளது. தயவுசெய்து உங்கள் இணைய இணைப்பைச் சரிபார்த்து மீண்டும் முயற்சிக்கவும்.",
+        japanese: "申し訳ありませんが、医療AIサービスへの接続に問題があります。インターネット接続を確認してもう一度お試しください。",
+        spanish: "Lo siento, tengo problemas para conectarme al servicio de IA médica. Por favor, verifique su conexión a internet e inténtelo de nuevo.",
+        french: "Désolé, j'ai des problèmes de connexion au service d'IA médicale. Veuillez vérifier votre connexion internet et réessayer.",
+        german: "Entschuldigung, ich habe Probleme beim Verbinden mit dem medizinischen KI-Dienst. Bitte überprüfen Sie Ihre Internetverbindung und versuchen Sie es erneut."
+      };
+      throw new Error(errorMessages[language] || errorMessages.english);
+    }
   };
 
   const speak = async (text) => {
@@ -290,7 +364,13 @@ Remember: This is for general health guidance only. Always recommend consulting 
         english: "Error while processing your request. Please try again.",
         hindi: "आपके अनुरोध को संसाधित करते समय त्रुटि। कृपया पुनः प्रयास करें।",
         marathi: "तुमचा विनंती प्रक्रिया करताना त्रुटी. कृपया पुन्हा प्रयत्न करा.",
-        gujarati: "તમારી વિનંતી પ્રક્રિયા કરતી વખતે ભૂલ. કૃપા કરીને ફરીથી પ્રયાસ કરો."
+        gujarati: "તમારી વિનંતી પ્રક્રિયા કરતી વખતે ભૂલ. કૃપા કરીને ફરીથી પ્રયાસ કરો.",
+        bengali: "আপনার অনুরোধ প্রক্রিয়াকরণে ত্রুটি। অনুগ্রহ করে আবার চেষ্টা করুন।",
+        tamil: "உங்கள் கோரிக்கையை செயலாக்குவதில் பிழை. தயவுசெய்து மீண்டும் முயற்சி செய்யுங்கள்।",
+        japanese: "リクエストの処理中にエラーが発生しました。もう一度お試しください。",
+        spanish: "Error al procesar su solicitud. Por favor, inténtelo de nuevo.",
+        french: "Erreur lors du traitement de votre demande. Veuillez réessayer.",
+        german: "Fehler bei der Bearbeitung Ihrer Anfrage. Bitte versuchen Sie es erneut."
       };
       alert(errorMessages[language] ?? errorMessages.english);
     }

@@ -9,7 +9,7 @@ import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 // Initialize Gemini AI
-const genAI = new GoogleGenerativeAI("AIzaSyAerBoGRKAl_AMK4uGDG1re1u86sNxa28o");
+const genAI = new GoogleGenerativeAI("AIzaSyBjhpEfKWZa5jNA6iV-Rs6qmMhCnbtrJA8");
 
 const uploadToCloudinary = async (file) => {
     // Simulate upload delay

@@ -11,7 +11,7 @@ import Disclaimer from '../components/Disclaimer';
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 // Initialize Gemini AI
-const genAI = new GoogleGenerativeAI("AIzaSyAerBoGRKAl_AMK4uGDG1re1u86sNxa28o");
+const genAI = new GoogleGenerativeAI("AIzaSyBjhpEfKWZa5jNA6iV-Rs6qmMhCnbtrJA8");
 
 const formatAnalysisResults = (text) => {
     const lines = text.split('\n').filter(line => line.trim() !== '');

@@ -11,7 +11,7 @@ import AnalysisResults from '../components/AnalysisResults';
 import { useNavigate } from 'react-router-dom';
 import { analyzeVideoWithSnapshot } from '../utils/videoSnapshot';
 
-const genAI = new GoogleGenerativeAI("AIzaSyAerBoGRKAl_AMK4uGDG1re1u86sNxa28o");
+const genAI = new GoogleGenerativeAI("AIzaSyBjhpEfKWZa5jNA6iV-Rs6qmMhCnbtrJA8");
 
 function SkinVideoAnalysis() {
     const dispatch = useDispatch();

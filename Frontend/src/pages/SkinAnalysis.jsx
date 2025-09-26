@@ -5,12 +5,12 @@ import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import { useNavigate } from "react-router-dom";
 
-const genAI = new GoogleGenerativeAI("AIzaSyAerBoGRKAl_AMK4uGDG1re1u86sNxa28o");
+const genAI = new GoogleGenerativeAI("AIzaSyBjhpEfKWZa5jNA6iV-Rs6qmMhCnbtrJA8");
 
 const uploadToCloudinary = async (file) => {
     const formData = new FormData();
     formData.append("file", file);
-    formData.append("upload_preset", "teleconnect");
+    formData.append("upload_preset", "sachin");
 
     try {
         const response = await axios.post(
@@ -125,7 +125,7 @@ export default function SkinAnalysis() {
             });
 
             // Get the model
-            const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+            const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
             // Create the prompt parts
             const prompt = "You are an expert dermatologist specializing in skin condition analysis. Analyze the provided skin image and determine whether it indicates any skin conditions, diseases, or abnormalities. Provide a confidence score (in percentage) for your diagnosis. If a condition is detected, also mention the type and severity with a probability score and in a user-friendly language. IMPORTANT: At the end of your analysis, include exactly one of these emergency levels: 'Emergency Level: 1' (beginner level - minor issues, routine care), 'Emergency Level: 2' (intermediate level - moderate concerns, prompt attention needed), 'Emergency Level: 3' (high level - serious conditions, immediate attention required), or 'Emergency Level: 0' (no emergency - normal findings).";

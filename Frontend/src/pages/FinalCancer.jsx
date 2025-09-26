@@ -8,12 +8,12 @@ import { addMedicalHistory } from '../actions/userActions';
 import Disclaimer from '../components/Disclaimer';
 import { useNavigate } from 'react-router-dom';
 
-const genAI = new GoogleGenerativeAI("AIzaSyAerBoGRKAl_AMK4uGDG1re1u86sNxa28o");
+const genAI = new GoogleGenerativeAI("AIzaSyBjhpEfKWZa5jNA6iV-Rs6qmMhCnbtrJA8");
 
 const uploadToCloudinary = async (file) => {
     const formData = new FormData();
     formData.append("file", file);
-    formData.append("upload_preset", "teleconnect");
+    formData.append("upload_preset", "sachin");
 
     try {
         const response = await axios.post(

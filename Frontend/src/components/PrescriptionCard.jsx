@@ -195,7 +195,7 @@ const PrescriptionCard = ({ prescription, userRole }) => {
             </div>
           )}
 
-          {/* Follow-up Instructions */}
+          {/*  */}
           {prescription.followUpInstructions && (
             <div>
               <h4 className="font-semibold text-gray-900 mb-2">Follow-up Instructions</h4>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Plus, Trash2, FileText, Download } from 'lucide-react';
+import { X, Plus, Trash2, FileText, Stethoscope } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { createPrescription } from '../actions/prescriptionActions';
 import { myAppointments } from '../actions/appointmentActions';
@@ -22,14 +22,12 @@ const PrescriptionModal = ({ isOpen, onClose, appointmentId, patientId, patientN
     followUpInstructions: ''
   });
 
-  // Fetch appointments when modal opens and no appointment is pre-selected
   useEffect(() => {
     if (isOpen && !appointmentId && user.role === 'doctor') {
       dispatch(myAppointments());
     }
   }, [isOpen, appointmentId, user.role, dispatch]);
 
-  // Reset form when modal opens with new data
   useEffect(() => {
     if (isOpen) {
       setFormData({
@@ -82,11 +80,9 @@ const PrescriptionModal = ({ isOpen, onClose, appointmentId, patientId, patientN
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Use either form-selected values or props passed to modal
     const finalAppointmentId = formData.selectedAppointmentId || appointmentId;
     const finalPatientId = formData.selectedPatientId || patientId;
     
-    // Validate appointment and patient selection
     if (!finalAppointmentId) {
       toast.error('Please select an appointment');
       return;
@@ -121,11 +117,6 @@ const PrescriptionModal = ({ isOpen, onClose, appointmentId, patientId, patientN
       followUpInstructions: formData.followUpInstructions
     };
 
-    console.log('Form data:', formData);
-    console.log('Props - appointmentId:', appointmentId, 'patientId:', patientId, 'patientName:', patientName);
-    console.log('Final values - finalAppointmentId:', finalAppointmentId, 'finalPatientId:', finalPatientId);
-    console.log('Sending prescription data:', prescriptionData);
-
     try {
       await dispatch(createPrescription(prescriptionData));
       toast.success('Prescription created successfully!');
@@ -148,52 +139,107 @@ const PrescriptionModal = ({ isOpen, onClose, appointmentId, patientId, patientN
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-        <div className="p-6">
-          {/* Header */}
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center space-x-3">
-              <div className="p-2 bg-blue-100 rounded-lg">
-                <FileText className="w-6 h-6 text-blue-600" />
-              </div>
-              <div>
-                <h2 className="text-2xl font-bold text-gray-900">Create Prescription</h2>
-                <p className="text-gray-600">
-                  {(formData.selectedPatientName || patientName) ? 
-                    `Patient: ${formData.selectedPatientName || patientName}` : 
-                    'Select an appointment to continue'
-                  }
-                </p>
+    <div className="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Crimson+Text:wght@600&display=swap');
+        
+        .doctor-signature {
+          font-family: 'Dancing Script', cursive;
+          font-size: 2rem;
+          font-weight: 700;
+          color: #1e40af;
+          text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+        
+        .prescription-header {
+          font-family: 'Crimson Text', serif;
+          font-weight: 600;
+        }
+        
+        .rx-symbol {
+          font-size: 3rem;
+          font-weight: bold;
+          color: #2563eb;
+          font-style: italic;
+        }
+        
+        .prescription-paper {
+          background: linear-gradient(to bottom, #ffffff 0%, #fefefe 100%);
+          box-shadow: 0 20px 60px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.8);
+        }
+        
+        .watermark {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%) rotate(-45deg);
+          font-size: 8rem;
+          color: rgba(37, 99, 235, 0.03);
+          font-weight: 900;
+          pointer-events: none;
+          user-select: none;
+          z-index: 0;
+        }
+      `}</style>
+      
+      <div className="prescription-paper rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto relative">
+        <div className="watermark">℞</div>
+        
+        {/* Medical Header */}
+        <div className="relative bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 p-6 border-b-4 border-blue-800">
+          <button
+            onClick={onClose}
+            className="absolute top-4 right-4 p-2 bg-white/20 hover:bg-white/30 rounded-lg transition-all z-10 backdrop-blur-sm"
+          >
+            <X className="w-5 h-5 text-white" />
+          </button>
+          
+          <div className="flex items-start space-x-4">
+            <div className="p-3 bg-white/20 backdrop-blur-md rounded-xl border-2 border-white/30">
+              <Stethoscope className="w-10 h-10 text-white" />
+            </div>
+            <div className="text-white">
+              <h1 className="prescription-header text-3xl font-bold mb-1">Dr. {user?.name || 'Doctor Name'}</h1>
+              <p className="text-blue-100 text-sm">{user?.contact || 'Contact Information'}</p>
+              <div className="mt-2 pt-2 border-t border-white/30">
+                <p className="text-xs text-blue-100">Medical Registration: {user?.registrationNumber || 'REG123456'}</p>
               </div>
             </div>
-            <button
-              onClick={onClose}
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-            >
-              <X className="w-6 h-6 text-gray-500" />
-            </button>
           </div>
+        </div>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Appointment Selection - Only show if no appointment is pre-selected */}
+        <div className="p-8 relative z-10">
+          {/* Patient Information Section */}
+          <div className="mb-8 pb-6 border-b-2 border-gray-200">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="prescription-header text-xl text-gray-900 flex items-center space-x-2">
+                <span className="text-2xl">📋</span>
+                <span>Patient Information</span>
+              </h2>
+              <div className="text-sm text-gray-600">
+                Date: {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+              </div>
+            </div>
+
             {!appointmentId && (
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+              <div className="mb-4">
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
                   Select Appointment *
                 </label>
                 <select
                   value={formData.selectedAppointmentId}
                   onChange={(e) => {
                     const selectedAppointment = appointments?.find(apt => apt._id === e.target.value);
+                    const patientId = selectedAppointment?.patient?._id || selectedAppointment?.patient?.id || '';
+                    
                     setFormData(prev => ({
                       ...prev,
                       selectedAppointmentId: e.target.value,
-                      selectedPatientId: selectedAppointment?.patient?._id || selectedAppointment?.patient?.id || '',
+                      selectedPatientId: patientId,
                       selectedPatientName: selectedAppointment?.patient?.name || ''
                     }));
                   }}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900"
+                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 shadow-sm"
                   required
                 >
                   <option value="">Select an appointment</option>
@@ -203,209 +249,247 @@ const PrescriptionModal = ({ isOpen, onClose, appointmentId, patientId, patientN
                     </option>
                   ))}
                 </select>
-                {formData.selectedPatientName && (
-                  <p className="mt-1 text-sm text-gray-600">
-                    Patient: {formData.selectedPatientName}
-                  </p>
-                )}
               </div>
             )}
 
-            {/* Diagnosis */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Diagnosis *
-              </label>
-              <textarea
-                name="diagnosis"
-                value={formData.diagnosis}
-                onChange={handleInputChange}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900"
-                rows="3"
-                placeholder="Enter the medical diagnosis"
-                required
-              />
-            </div>
+            {(formData.selectedPatientName || patientName) && (
+              <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-lg">
+                <p className="text-lg font-semibold text-gray-900">
+                  Patient: <span className="text-blue-700">{formData.selectedPatientName || patientName}</span>
+                </p>
+              </div>
+            )}
+          </div>
 
-            {/* Symptoms */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Symptoms
-              </label>
-              <textarea
-                name="symptoms"
-                value={formData.symptoms}
-                onChange={handleInputChange}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900"
-                rows="3"
-                placeholder="Describe the symptoms observed"
-              />
-            </div>
-
-            {/* Medications */}
-            <div>
-              <div className="flex items-center justify-between mb-4">
-                <label className="block text-sm font-medium text-gray-700">
-                  Medications *
+          {/* Rx Symbol & Diagnosis */}
+          <div className="mb-6">
+            <div className="flex items-start space-x-4 mb-4">
+              <div className="rx-symbol">℞</div>
+              <div className="flex-1">
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Diagnosis *
                 </label>
-                <button
-                  type="button"
-                  onClick={addMedication}
-                  className="flex items-center space-x-2 px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
-                >
-                  <Plus className="w-4 h-4" />
-                  <span>Add Medication</span>
-                </button>
-              </div>
-
-              <div className="space-y-4">
-                {formData.medications.map((medication, index) => (
-                  <div key={index} className="border border-gray-200 rounded-lg p-4">
-                    <div className="flex items-center justify-between mb-4">
-                      <h4 className="font-medium text-gray-700">Medication {index + 1}</h4>
-                      {formData.medications.length > 1 && (
-                        <button
-                          type="button"
-                          onClick={() => removeMedication(index)}
-                          className="p-1 text-red-600 hover:bg-red-100 rounded"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      )}
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Medication Name *
-                        </label>
-                        <input
-                          type="text"
-                          value={medication.name}
-                          onChange={(e) => handleMedicationChange(index, 'name', e.target.value)}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900"
-                          placeholder="e.g., Paracetamol"
-                          required
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Dosage *
-                        </label>
-                        <input
-                          type="text"
-                          value={medication.dosage}
-                          onChange={(e) => handleMedicationChange(index, 'dosage', e.target.value)}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900"
-                          placeholder="e.g., 500mg"
-                          required
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Frequency *
-                        </label>
-                        <input
-                          type="text"
-                          value={medication.frequency}
-                          onChange={(e) => handleMedicationChange(index, 'frequency', e.target.value)}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900"
-                          placeholder="e.g., Twice daily"
-                          required
-                        />
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Duration
-                        </label>
-                        <input
-                          type="text"
-                          value={medication.duration}
-                          onChange={(e) => handleMedicationChange(index, 'duration', e.target.value)}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900"
-                          placeholder="e.g., 7 days"
-                        />
-                      </div>
-
-                      <div className="md:col-span-2">
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                          Instructions
-                        </label>
-                        <textarea
-                          value={medication.instructions}
-                          onChange={(e) => handleMedicationChange(index, 'instructions', e.target.value)}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900"
-                          rows="2"
-                          placeholder="Special instructions for taking this medication"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                ))}
+                <textarea
+                  name="diagnosis"
+                  value={formData.diagnosis}
+                  onChange={handleInputChange}
+                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-amber-50/30 text-gray-900 shadow-sm"
+                  rows="3"
+                  placeholder="Medical diagnosis..."
+                  required
+                />
               </div>
             </div>
+          </div>
 
-            {/* Additional Notes */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Additional Notes
-              </label>
-              <textarea
-                name="notes"
-                value={formData.notes}
-                onChange={handleInputChange}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900"
-                rows="3"
-                placeholder="Any additional notes or recommendations"
-              />
-            </div>
+          {/* Symptoms */}
+          <div className="mb-6">
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Presenting Symptoms
+            </label>
+            <textarea
+              name="symptoms"
+              value={formData.symptoms}
+              onChange={handleInputChange}
+              className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-amber-50/30 text-gray-900 shadow-sm"
+              rows="3"
+              placeholder="Patient's reported symptoms..."
+            />
+          </div>
 
-            {/* Follow-up Instructions */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Follow-up Instructions
-              </label>
-              <textarea
-                name="followUpInstructions"
-                value={formData.followUpInstructions}
-                onChange={handleInputChange}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900"
-                rows="3"
-                placeholder="Instructions for follow-up care"
-              />
-            </div>
-
-            {/* Action Buttons */}
-            <div className="flex items-center justify-end space-x-4 pt-6 border-t border-gray-200">
+          {/* Medications Section */}
+          <div className="mb-6">
+            <div className="flex items-center justify-between mb-4 pb-2 border-b-2 border-gray-200">
+              <h3 className="prescription-header text-lg text-gray-900 flex items-center space-x-2">
+                <span>💊</span>
+                <span>Prescribed Medications</span>
+              </h3>
               <button
                 type="button"
-                onClick={onClose}
-                className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                onClick={addMedication}
+                className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-green-600 to-emerald-600 text-white rounded-lg hover:from-green-700 hover:to-emerald-700 transition-all shadow-md hover:shadow-lg"
               >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                disabled={loading}
-                className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors flex items-center space-x-2"
-              >
-                {loading ? (
-                  <>
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                    <span>Creating...</span>
-                  </>
-                ) : (
-                  <>
-                    <FileText className="w-4 h-4" />
-                    <span>Create Prescription</span>
-                  </>
-                )}
+                <Plus className="w-4 h-4" />
+                <span>Add Medicine</span>
               </button>
             </div>
-          </form>
+
+            <div className="space-y-4">
+              {formData.medications.map((medication, index) => (
+                <div key={index} className="border-2 border-blue-200 bg-gradient-to-r from-blue-50/50 to-indigo-50/50 rounded-xl p-5 shadow-sm relative">
+                  <div className="absolute top-3 left-3 w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold text-sm shadow-md">
+                    {index + 1}
+                  </div>
+                  
+                  {formData.medications.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => removeMedication(index)}
+                      className="absolute top-3 right-3 p-2 text-red-600 hover:bg-red-100 rounded-lg transition-colors"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  )}
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8">
+                    <div>
+                      <label className="block text-xs font-bold text-gray-700 mb-1 uppercase tracking-wide">
+                        Medicine Name *
+                      </label>
+                      <input
+                        type="text"
+                        value={medication.name}
+                        onChange={(e) => handleMedicationChange(index, 'name', e.target.value)}
+                        className="w-full px-3 py-2.5 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 font-medium"
+                        placeholder="e.g., Paracetamol"
+                        required
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-gray-700 mb-1 uppercase tracking-wide">
+                        Dosage *
+                      </label>
+                      <input
+                        type="text"
+                        value={medication.dosage}
+                        onChange={(e) => handleMedicationChange(index, 'dosage', e.target.value)}
+                        className="w-full px-3 py-2.5 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 font-medium"
+                        placeholder="e.g., 500mg"
+                        required
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-gray-700 mb-1 uppercase tracking-wide">
+                        Frequency *
+                      </label>
+                      <input
+                        type="text"
+                        value={medication.frequency}
+                        onChange={(e) => handleMedicationChange(index, 'frequency', e.target.value)}
+                        className="w-full px-3 py-2.5 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 font-medium"
+                        placeholder="e.g., Twice daily"
+                        required
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-bold text-gray-700 mb-1 uppercase tracking-wide">
+                        Duration
+                      </label>
+                      <input
+                        type="text"
+                        value={medication.duration}
+                        onChange={(e) => handleMedicationChange(index, 'duration', e.target.value)}
+                        className="w-full px-3 py-2.5 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 font-medium"
+                        placeholder="e.g., 7 days"
+                      />
+                    </div>
+
+                    <div className="md:col-span-2">
+                      <label className="block text-xs font-bold text-gray-700 mb-1 uppercase tracking-wide">
+                        Special Instructions
+                      </label>
+                      <textarea
+                        value={medication.instructions}
+                        onChange={(e) => handleMedicationChange(index, 'instructions', e.target.value)}
+                        className="w-full px-3 py-2.5 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900"
+                        rows="2"
+                        placeholder="e.g., Take after meals, avoid alcohol..."
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Additional Notes */}
+          <div className="mb-6">
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Additional Clinical Notes
+            </label>
+            <textarea
+              name="notes"
+              value={formData.notes}
+              onChange={handleInputChange}
+              className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-amber-50/30 text-gray-900 shadow-sm"
+              rows="3"
+              placeholder="Additional medical notes, precautions, or recommendations..."
+            />
+          </div>
+
+          {/* Follow-up Instructions */}
+          <div className="mb-8">
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Follow-up Care Instructions
+            </label>
+            <textarea
+              name="followUpInstructions"
+              value={formData.followUpInstructions}
+              onChange={handleInputChange}
+              className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-amber-50/30 text-gray-900 shadow-sm"
+              rows="3"
+              placeholder="Follow-up appointment schedule, monitoring instructions..."
+            />
+          </div>
+
+          {/* Doctor Signature Section */}
+          <div className="mb-8 pt-6 border-t-2 border-gray-200">
+            <div className="flex justify-end">
+              <div className="text-right">
+                <div className="mb-2">
+                  <div className="doctor-signature">Dr. {user?.name || 'Doctor Name'}</div>
+                </div>
+                <div className="text-sm text-gray-600 font-medium">
+                  {user?.speciality || 'General Medicine'}
+                </div>
+                <div className="text-xs text-gray-500 mt-1">
+                  Registration No: {user?.registrationNumber || 'REG123456'}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex items-center justify-end space-x-4 pt-4 border-t-2 border-gray-200">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-all font-semibold"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              onClick={handleSubmit}
+              disabled={loading}
+              className="px-8 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg hover:from-blue-700 hover:to-indigo-700 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed transition-all flex items-center space-x-2 shadow-lg hover:shadow-xl font-semibold"
+            >
+              {loading ? (
+                <>
+                  <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
+                  <span>Creating Prescription...</span>
+                </>
+              ) : (
+                <>
+                  <FileText className="w-5 h-5" />
+                  <span>Issue Prescription</span>
+                </>
+              )}
+            </button>
+          </div>
+        </div>
+
+        {/* Prescription Footer */}
+        <div className="bg-gradient-to-r from-gray-100 to-gray-50 px-8 py-4 border-t-2 border-gray-200 text-center">
+          <p className="text-xs text-gray-600">
+            This is a digitally generated prescription. Valid for 30 days from date of issue.
+          </p>
+          <p className="text-xs text-gray-500 mt-1">
+            For any queries or concerns, please contact the prescribing physician.
+          </p>
         </div>
       </div>
     </div>

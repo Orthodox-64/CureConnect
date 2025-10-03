@@ -1,21 +1,49 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, Plus, Trash2, FileText, Download } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { createPrescription } from '../actions/prescriptionActions';
+import { myAppointments } from '../actions/appointmentActions';
 import { toast } from 'react-toastify';
 
 const PrescriptionModal = ({ isOpen, onClose, appointmentId, patientId, patientName }) => {
   const dispatch = useDispatch();
   const { loading } = useSelector(state => state.prescription);
   const { user } = useSelector(state => state.user);
+  const { appointments } = useSelector(state => state.myAppointment);
 
   const [formData, setFormData] = useState({
+    selectedAppointmentId: appointmentId || '',
+    selectedPatientId: patientId || '',
+    selectedPatientName: patientName || '',
     diagnosis: '',
     symptoms: '',
     medications: [{ name: '', dosage: '', frequency: '', duration: '', instructions: '' }],
     notes: '',
     followUpInstructions: ''
   });
+
+  // Fetch appointments when modal opens and no appointment is pre-selected
+  useEffect(() => {
+    if (isOpen && !appointmentId && user.role === 'doctor') {
+      dispatch(myAppointments());
+    }
+  }, [isOpen, appointmentId, user.role, dispatch]);
+
+  // Reset form when modal opens with new data
+  useEffect(() => {
+    if (isOpen) {
+      setFormData({
+        selectedAppointmentId: appointmentId || '',
+        selectedPatientId: patientId || '',
+        selectedPatientName: patientName || '',
+        diagnosis: '',
+        symptoms: '',
+        medications: [{ name: '', dosage: '', frequency: '', duration: '', instructions: '' }],
+        notes: '',
+        followUpInstructions: ''
+      });
+    }
+  }, [isOpen, appointmentId, patientId, patientName]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -54,6 +82,21 @@ const PrescriptionModal = ({ isOpen, onClose, appointmentId, patientId, patientN
   const handleSubmit = async (e) => {
     e.preventDefault();
     
+    // Use either form-selected values or props passed to modal
+    const finalAppointmentId = formData.selectedAppointmentId || appointmentId;
+    const finalPatientId = formData.selectedPatientId || patientId;
+    
+    // Validate appointment and patient selection
+    if (!finalAppointmentId) {
+      toast.error('Please select an appointment');
+      return;
+    }
+    
+    if (!finalPatientId) {
+      toast.error('Please select a patient');
+      return;
+    }
+    
     if (!formData.diagnosis.trim()) {
       toast.error('Please enter a diagnosis');
       return;
@@ -69,8 +112,8 @@ const PrescriptionModal = ({ isOpen, onClose, appointmentId, patientId, patientN
     }
 
     const prescriptionData = {
-      patientId,
-      appointmentId,
+      patientId: finalPatientId,
+      appointmentId: finalAppointmentId,
       diagnosis: formData.diagnosis,
       symptoms: formData.symptoms,
       medications: validMedications,
@@ -78,11 +121,19 @@ const PrescriptionModal = ({ isOpen, onClose, appointmentId, patientId, patientN
       followUpInstructions: formData.followUpInstructions
     };
 
+    console.log('Form data:', formData);
+    console.log('Props - appointmentId:', appointmentId, 'patientId:', patientId, 'patientName:', patientName);
+    console.log('Final values - finalAppointmentId:', finalAppointmentId, 'finalPatientId:', finalPatientId);
+    console.log('Sending prescription data:', prescriptionData);
+
     try {
       await dispatch(createPrescription(prescriptionData));
       toast.success('Prescription created successfully!');
       onClose();
       setFormData({
+        selectedAppointmentId: appointmentId || '',
+        selectedPatientId: patientId || '',
+        selectedPatientName: patientName || '',
         diagnosis: '',
         symptoms: '',
         medications: [{ name: '', dosage: '', frequency: '', duration: '', instructions: '' }],
@@ -108,7 +159,12 @@ const PrescriptionModal = ({ isOpen, onClose, appointmentId, patientId, patientN
               </div>
               <div>
                 <h2 className="text-2xl font-bold text-gray-900">Create Prescription</h2>
-                <p className="text-gray-600">Patient: {patientName}</p>
+                <p className="text-gray-600">
+                  {(formData.selectedPatientName || patientName) ? 
+                    `Patient: ${formData.selectedPatientName || patientName}` : 
+                    'Select an appointment to continue'
+                  }
+                </p>
               </div>
             </div>
             <button
@@ -120,6 +176,41 @@ const PrescriptionModal = ({ isOpen, onClose, appointmentId, patientId, patientN
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Appointment Selection - Only show if no appointment is pre-selected */}
+            {!appointmentId && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Select Appointment *
+                </label>
+                <select
+                  value={formData.selectedAppointmentId}
+                  onChange={(e) => {
+                    const selectedAppointment = appointments?.find(apt => apt._id === e.target.value);
+                    setFormData(prev => ({
+                      ...prev,
+                      selectedAppointmentId: e.target.value,
+                      selectedPatientId: selectedAppointment?.patient?._id || selectedAppointment?.patient?.id || '',
+                      selectedPatientName: selectedAppointment?.patient?.name || ''
+                    }));
+                  }}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white text-gray-900"
+                  required
+                >
+                  <option value="">Select an appointment</option>
+                  {appointments?.filter(apt => apt.status !== 'cancelled').map(appointment => (
+                    <option key={appointment._id} value={appointment._id}>
+                      {appointment.patient?.name} - {appointment.day} at {appointment.time}
+                    </option>
+                  ))}
+                </select>
+                {formData.selectedPatientName && (
+                  <p className="mt-1 text-sm text-gray-600">
+                    Patient: {formData.selectedPatientName}
+                  </p>
+                )}
+              </div>
+            )}
+
             {/* Diagnosis */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">

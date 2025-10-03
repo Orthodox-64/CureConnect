@@ -177,12 +177,14 @@ exports.allAppointments = catchAsyncError(async (req, res, next) => {
     const formattedAppointments = appointments.map(appointment => ({
         _id: appointment._id,
         patient: {
-            id: appointment.patient._id,
+            _id: appointment.patient._id, // Use _id instead of id for consistency
+            id: appointment.patient._id,  // Keep id for backward compatibility
             name: appointment.patient.name,
             contact: appointment.patient.contact
         },
         doctor: {
-            id: appointment.doctor._id,
+            _id: appointment.doctor._id,  // Use _id instead of id for consistency
+            id: appointment.doctor._id,   // Keep id for backward compatibility
             name: appointment.doctor.name,
             speciality: appointment.doctor.speciality,
             availability: appointment.doctor.availablity
@@ -374,11 +376,13 @@ exports.markAppointmentComplete = catchAsyncError(async (req, res, next) => {
         appointment: {
             _id: appointment._id,
             patient: {
+                _id: appointment.patient._id,
                 id: appointment.patient._id,
                 name: appointment.patient.name,
                 contact: appointment.patient.contact
             },
             doctor: {
+                _id: appointment.doctor._id,
                 id: appointment.doctor._id,
                 name: appointment.doctor.name,
                 speciality: appointment.doctor.speciality

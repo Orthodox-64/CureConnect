@@ -242,7 +242,12 @@ const AppointmentCard = ({ appointment, userRole }) => {
                         {userRole === 'doctor' && (
                             <>
                                 <button
-                                    onClick={() => navigate('/prescriptions', { state: { appointmentId: appointment._id, patientId: appointment.patient?._id, patientName: appointment.patient?.name } })}
+                                    onClick={() => {
+                                        console.log('Appointment object:', appointment);
+                                        console.log('Patient data:', appointment.patient);
+                                        console.log('Patient ID:', appointment.patient?._id || appointment.patient?.id);
+                                        navigate('/prescriptions', { state: { appointmentId: appointment._id, patientId: appointment.patient?._id || appointment.patient?.id, patientName: appointment.patient?.name } })
+                                    }}
                                     className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm"
                                 >
                                     <FileText className="w-4 h-4" />

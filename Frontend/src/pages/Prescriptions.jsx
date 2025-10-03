@@ -33,6 +33,7 @@ const Prescriptions = () => {
         _id: location.state.appointmentId,
         patient: {
           _id: location.state.patientId,
+          id: location.state.patientId, // Add both for compatibility
           name: location.state.patientName
         }
       });

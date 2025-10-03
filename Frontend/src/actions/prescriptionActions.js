@@ -11,6 +11,7 @@ import {
 
 export const createPrescription = (prescriptionData) => async (dispatch) => {
     try {
+        console.log('Creating prescription with data:', prescriptionData);
         dispatch({ type: CREATE_PRESCRIPTION_REQUEST });
 
         const config = {
@@ -23,15 +24,18 @@ export const createPrescription = (prescriptionData) => async (dispatch) => {
             config
         );
 
+        console.log('Prescription created successfully:', data);
         dispatch({
             type: CREATE_PRESCRIPTION_SUCCESS,
             payload: data.prescription,
         });
     } catch (error) {
+        console.error('Error creating prescription:', error);
         dispatch({
             type: CREATE_PRESCRIPTION_FAIL,
             payload: error.response?.data?.message || 'Failed to create prescription',
         });
+        throw error; // Re-throw so the component can handle it
     }
 };
 

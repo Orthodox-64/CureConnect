@@ -13,7 +13,7 @@ const generateRoomId = () => {
 };
 
 exports.newAppointment = catchAsyncError(async (req, res, next) => {
-    const { doctor, description, symptoms, day, time } = req.body;
+    const { doctor, description, symptoms, day, time, audioTranscript } = req.body;
 
     if (!doctor || !description || !symptoms || !day || !time) {
         return next(new ErrorHander("Please provide all required fields including symptoms", 400));
@@ -40,6 +40,7 @@ exports.newAppointment = catchAsyncError(async (req, res, next) => {
         doctor,
         description,
         symptoms,
+        audioTranscript: audioTranscript || '', // Add audio transcript field
         day,
         time,
         roomId // Add the roomId to the appointment
@@ -191,6 +192,7 @@ exports.allAppointments = catchAsyncError(async (req, res, next) => {
         },
         description: appointment.description,
         symptoms: appointment.symptoms,
+        audioTranscript: appointment.audioTranscript, // Add audioTranscript to the response
         day: appointment.day,
         time: appointment.time,
         status: appointment.status,
@@ -394,6 +396,188 @@ exports.markAppointmentComplete = catchAsyncError(async (req, res, next) => {
             status: appointment.status,
             roomId: appointment.roomId,
             createdAt: appointment.createdAt
+        }
+    });
+});
+
+// Schedule follow-up appointment (Doctor only)
+exports.scheduleFollowUp = catchAsyncError(async (req, res, next) => {
+    const { appointmentId, followUpDate, followUpTime, followUpInstructions } = req.body;
+
+    if (!appointmentId || !followUpDate || !followUpTime) {
+        return next(new ErrorHander("Please provide appointment ID, follow-up date and time", 400));
+    }
+
+    // Find the original appointment
+    const originalAppointment = await Appointment.findById(appointmentId)
+        .populate('patient', 'name contact')
+        .populate('doctor', 'name speciality');
+
+    if (!originalAppointment) {
+        return next(new ErrorHander('Original appointment not found', 404));
+    }
+
+    // Check if the current user is the doctor for this appointment
+    if (originalAppointment.doctor._id.toString() !== req.user._id.toString()) {
+        return next(new ErrorHander('Only the assigned doctor can schedule follow-up', 403));
+    }
+
+    // Validate follow-up date is in the future
+    const followUpDateTime = new Date(`${followUpDate}T${followUpTime}`);
+    if (followUpDateTime <= new Date()) {
+        return next(new ErrorHander('Follow-up date must be in the future', 400));
+    }
+
+    // Check if the time slot is available
+    const existingAppointment = await Appointment.findOne({
+        doctor: originalAppointment.doctor._id,
+        day: followUpDate,
+        time: followUpTime
+    });
+
+    if (existingAppointment) {
+        return next(new ErrorHander('This time slot is already booked', 400));
+    }
+
+    // Generate a new room ID for follow-up appointment
+    const roomId = generateRoomId();
+
+    // Create follow-up appointment
+    const followUpAppointment = await Appointment.create({
+        patient: originalAppointment.patient._id,
+        doctor: originalAppointment.doctor._id,
+        description: `Follow-up appointment for: ${originalAppointment.description}`,
+        symptoms: originalAppointment.symptoms,
+        day: followUpDate,
+        time: followUpTime,
+        roomId,
+        followUpInstructions: followUpInstructions || '',
+        status: 'confirmed'
+    });
+
+    // Update original appointment with follow-up information
+    originalAppointment.followUpDate = followUpDate;
+    originalAppointment.followUpTime = followUpTime;
+    originalAppointment.followUpInstructions = followUpInstructions || '';
+    await originalAppointment.save();
+
+    // Send notification to patient about follow-up appointment
+    const isEmail = validator.isEmail(originalAppointment.patient.contact);
+    
+    const message = `
+    Dear ${originalAppointment.patient.name},
+    
+    Dr. ${originalAppointment.doctor.name} has scheduled a follow-up appointment for you.
+    
+    Follow-up Appointment Details:
+    -----------------------------
+    Date: ${followUpDate}
+    Time: ${followUpTime}
+    Doctor: Dr. ${originalAppointment.doctor.name}
+    Speciality: ${originalAppointment.doctor.speciality}
+    Room ID: https://video-call-final-git-main-orthodox-64s-projects.vercel.app/?roomID=${roomId}
+    
+    ${followUpInstructions ? `Special Instructions: ${followUpInstructions}` : ''}
+    
+    Please make sure to attend this follow-up appointment for your continued care.
+    
+    Best regards,
+    TeleConnect Team
+    `;
+
+    try {
+        if (isEmail) {
+            await sendEmail({
+                email: originalAppointment.patient.contact,
+                subject: `Follow-up Appointment Scheduled - Dr. ${originalAppointment.doctor.name}`,
+                message,
+            });
+        } else {
+            const smsMessage = `TeleConnect: Follow-up appointment with Dr. ${originalAppointment.doctor.name} scheduled for ${followUpDate} at ${followUpTime}. Room ID: https://video-call-final-git-main-orthodox-64s-projects.vercel.app/?roomID=${roomId}`;
+            await sendSMS({
+                phone: `+91${originalAppointment.patient.contact}`,
+                message: smsMessage,
+            });
+        }
+
+        // Schedule follow-up reminder 24 hours before appointment
+        const reminderTime = new Date(followUpDateTime.getTime() - 24 * 60 * 60 * 1000); // 24 hours before
+        const now = new Date();
+
+        if (reminderTime > now) {
+            const timeoutDuration = reminderTime.getTime() - now.getTime();
+            
+            setTimeout(async () => {
+                try {
+                    const reminderMessage = `
+                    Dear ${originalAppointment.patient.name},
+                    
+                    This is a reminder that you have a follow-up appointment tomorrow.
+                    
+                    Appointment Details:
+                    -------------------
+                    Date: ${followUpDate}
+                    Time: ${followUpTime}
+                    Doctor: Dr. ${originalAppointment.doctor.name}
+                    Room ID: https://video-call-final-git-main-orthodox-64s-projects.vercel.app/?roomID=${roomId}
+                    
+                    Please be ready 5 minutes before your scheduled time.
+                    
+                    Best regards,
+                    TeleConnect Team
+                    `;
+
+                    if (isEmail) {
+                        await sendEmail({
+                            email: originalAppointment.patient.contact,
+                            subject: `Reminder: Follow-up Appointment Tomorrow`,
+                            message: reminderMessage,
+                        });
+                    } else {
+                        await sendSMS({
+                            phone: `+91${originalAppointment.patient.contact}`,
+                            message: `TeleConnect Reminder: Follow-up appointment with Dr. ${originalAppointment.doctor.name} tomorrow at ${followUpTime}. Room: ${roomId}`,
+                        });
+                    }
+
+                    // Mark notification as sent
+                    await Appointment.findByIdAndUpdate(followUpAppointment._id, {
+                        followUpNotificationSent: true
+                    });
+                } catch (error) {
+                    console.error("Failed to send follow-up reminder:", error);
+                }
+            }, timeoutDuration);
+        }
+
+    } catch (error) {
+        console.error("Failed to send follow-up notification:", error);
+        // Don't fail the request if notification fails
+    }
+
+    res.status(201).json({
+        success: true,
+        message: 'Follow-up appointment scheduled successfully',
+        followUpAppointment: {
+            _id: followUpAppointment._id,
+            patient: {
+                _id: originalAppointment.patient._id,
+                name: originalAppointment.patient.name,
+                contact: originalAppointment.patient.contact
+            },
+            doctor: {
+                _id: originalAppointment.doctor._id,
+                name: originalAppointment.doctor.name,
+                speciality: originalAppointment.doctor.speciality
+            },
+            description: followUpAppointment.description,
+            symptoms: followUpAppointment.symptoms,
+            day: followUpAppointment.day,
+            time: followUpAppointment.time,
+            status: followUpAppointment.status,
+            roomId: followUpAppointment.roomId,
+            followUpInstructions: followUpAppointment.followUpInstructions,
+            createdAt: followUpAppointment.createdAt
         }
     });
 });

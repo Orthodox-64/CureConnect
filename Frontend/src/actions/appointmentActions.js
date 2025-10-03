@@ -1,14 +1,14 @@
 import { MY_APPOINTMENTS_REQUEST, MY_APPOINTMENTS_SUCCESS, MY_APPOINTMENTS_FAIL, CREATE_APPOINTMENT_REQUEST, CREATE_APPOINTMENT_SUCCESS, CREATE_APPOINTMENT_FAIL, ALL_DOCTORS_REQUEST, ALL_DOCTORS_SUCCESS, ALL_DOCTORS_FAIL, MARK_APPOINTMENT_COMPLETE_REQUEST, MARK_APPOINTMENT_COMPLETE_SUCCESS, MARK_APPOINTMENT_COMPLETE_FAIL, CLEAR_ERRORS } from "../constants/appointmentConstants";
 import axios from '../axios';
 
-export const createAppointment = (doctorId, day, time, description, symptoms) => async (dispatch) => {
+export const createAppointment = (doctorId, day, time, description, symptoms, audioTranscript = '') => async (dispatch) => {
     try {
         dispatch({ type: CREATE_APPOINTMENT_REQUEST });
         
         const config = {
             headers: { "Content-Type": "application/json" }
         };
-        console.log(doctorId, day, time, description, symptoms)
+        console.log(doctorId, day, time, description, symptoms, audioTranscript)
 
         const { data } = await axios.post(
             '/appointment/new',
@@ -17,7 +17,8 @@ export const createAppointment = (doctorId, day, time, description, symptoms) =>
                 description,
                 symptoms,
                 day,
-                time 
+                time,
+                audioTranscript
             },
             config
         );
@@ -128,6 +129,40 @@ export const markAppointmentComplete = (appointmentId) => async (dispatch) => {
         dispatch({
             type: MARK_APPOINTMENT_COMPLETE_FAIL,
             payload: error.response?.data?.message || "Failed to mark appointment as complete"
+        });
+        throw error;
+    }
+};
+
+export const scheduleFollowUp = (appointmentId, followUpDate, followUpTime, followUpInstructions) => async (dispatch) => {
+    try {
+        dispatch({ type: 'SCHEDULE_FOLLOWUP_REQUEST' });
+        
+        const config = {
+            headers: { "Content-Type": "application/json" }
+        };
+
+        const { data } = await axios.post(
+            '/appointment/followup',
+            {
+                appointmentId,
+                followUpDate,
+                followUpTime,
+                followUpInstructions
+            },
+            config
+        );
+
+        dispatch({ type: 'SCHEDULE_FOLLOWUP_SUCCESS', payload: data });
+        
+        // Refresh appointments after scheduling follow-up
+        dispatch(myAppointments());
+        
+        return data;
+    } catch (error) {
+        dispatch({
+            type: 'SCHEDULE_FOLLOWUP_FAIL',
+            payload: error.response?.data?.message || "Failed to schedule follow-up appointment"
         });
         throw error;
     }

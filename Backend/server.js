@@ -154,6 +154,7 @@ mongoose.connect(process.env.MONGODB_URI);
 const Appointment = require('./models/appointmentModel');
 const User = require('./models/userModel');
 const sendReminder = require('./utils/sendReminder');
+const { scheduleFollowUpReminders } = require('./utils/followUpReminder');
 
 // Schedule reminders for existing appointments on server start
 const scheduleReminders = async () => {
@@ -195,6 +196,7 @@ const scheduleReminders = async () => {
 
 mongoose.connect(process.env.MONGODB_URI).then(() => {
     scheduleReminders();
+    scheduleFollowUpReminders();
 });
 
 // Routes

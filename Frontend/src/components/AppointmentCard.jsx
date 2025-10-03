@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
-import { Calendar, Clock, User, Stethoscope, MessageSquare, AlertCircle, ChevronDown, ChevronUp, Brain, Mail, Phone, FileText, CheckCircle } from 'lucide-react';
+import { Calendar, Clock, User, Stethoscope, MessageSquare, AlertCircle, ChevronDown, ChevronUp, Brain, Mail, Phone, FileText, CheckCircle, CalendarPlus } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { markAppointmentComplete } from '../actions/appointmentActions';
+import FollowUpModal from './FollowUpModal';
 
 const AppointmentCard = ({ appointment, userRole }) => {
     const [showAISuggestions, setShowAISuggestions] = useState(false);
     const [showDetails, setShowDetails] = useState(false);
+    const [showFollowUpModal, setShowFollowUpModal] = useState(false);
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const { loading: completeLoading, success: completeSuccess, error: completeError } = useSelector(state => state.appointmentComplete);
@@ -134,12 +136,65 @@ const AppointmentCard = ({ appointment, userRole }) => {
                         <AlertCircle className="w-4 h-4 text-orange-400 mt-1" />
                         <div className="flex-1">
                             <h4 className="text-sm font-medium text-gray-700 mb-1">Symptoms</h4>
-                            <p className="text-sm text-gray-600">{appointment.symptoms}</p>
+                            {(() => {
+                                const symptoms = appointment.symptoms || '';
+                                const keywordMatch = symptoms.match(/\[Medical Keywords Extracted\]: (.+)$/);
+                                const mainSymptoms = keywordMatch ? symptoms.replace(/\n\n\[Medical Keywords Extracted\]: .+$/, '') : symptoms;
+                                const extractedKeywords = keywordMatch ? keywordMatch[1].split(', ').map(k => k.trim()) : [];
+
+                                return (
+                                    <div>
+                                        <p className="text-sm text-gray-600 mb-2">{mainSymptoms}</p>
+                                        {extractedKeywords.length > 0 && userRole === 'doctor' && (
+                                            <div className="mt-3 p-3 bg-purple-50 border border-purple-200 rounded-lg">
+                                                <h5 className="text-xs font-semibold text-purple-800 mb-2 flex items-center">
+                                                    <Brain className="w-3 h-3 mr-1" />
+                                                    Medical Keywords from Patient Audio ({extractedKeywords.length})
+                                                </h5>
+                                                <div className="flex flex-wrap gap-1">
+                                                    {extractedKeywords.map((keyword, index) => (
+                                                        <span
+                                                            key={index}
+                                                            className="px-2 py-1 bg-purple-100 text-purple-800 rounded-full text-xs font-medium border border-purple-300"
+                                                        >
+                                                            {keyword}
+                                                        </span>
+                                                    ))}
+                                                </div>
+                                                <p className="text-xs text-purple-600 mt-2">
+                                                    Auto-extracted from patient's voice recording
+                                                </p>
+                                            </div>
+                                        )}
+                                    </div>
+                                );
+                            })()}
                         </div>
                     </div>
                 </div>
 
-                {/* AI Suggestions - Note: AI suggestions are now generated client-side */}
+                {/* Audio Transcript Section (For Doctors Only) */}
+                {appointment.audioTranscript && userRole === 'doctor' && (
+                    <div className="mb-4">
+                        <div className="flex items-start space-x-2">
+                            <MessageSquare className="w-4 h-4 text-blue-400 mt-1" />
+                            <div className="flex-1">
+                                <h4 className="text-sm font-medium text-gray-700 mb-1">Patient's Voice Recording Transcript</h4>
+                                <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                                    <p className="text-sm text-blue-800 italic leading-relaxed">
+                                        "{appointment.audioTranscript}"
+                                    </p>
+                                    <div className="flex items-center mt-2 pt-2 border-t border-blue-200">
+                                        <div className="w-2 h-2 bg-blue-400 rounded-full mr-2"></div>
+                                        <p className="text-xs text-blue-600">
+                                            Original voice recording converted to text
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}                {/* AI Suggestions - Note: AI suggestions are now generated client-side */}
                 {false && appointment.aiSuggestions && (
                     <div className="mb-4">
                         <button
@@ -223,6 +278,34 @@ const AppointmentCard = ({ appointment, userRole }) => {
                                 <span className="ml-2 text-gray-700 capitalize">{appointment.status}</span>
                             </div>
                         </div>
+
+                        {/* Follow-up Information */}
+                        {(appointment.followUpDate && appointment.followUpTime) && (
+                            <div className="mt-4 pt-4 border-t border-gray-100">
+                                <h5 className="text-sm font-medium text-gray-700 mb-2 flex items-center">
+                                    <CalendarPlus className="w-4 h-4 mr-2 text-purple-600" />
+                                    Follow-up Appointment Scheduled
+                                </h5>
+                                <div className="bg-purple-50 border border-purple-200 rounded-lg p-3">
+                                    <div className="grid grid-cols-2 gap-4 text-sm">
+                                        <div>
+                                            <span className="text-purple-600 font-medium">Date:</span>
+                                            <span className="ml-2 text-purple-800">{formatDate(appointment.followUpDate)}</span>
+                                        </div>
+                                        <div>
+                                            <span className="text-purple-600 font-medium">Time:</span>
+                                            <span className="ml-2 text-purple-800">{formatTime(appointment.followUpTime)}</span>
+                                        </div>
+                                    </div>
+                                    {appointment.followUpInstructions && (
+                                        <div className="mt-2">
+                                            <span className="text-purple-600 font-medium text-sm">Instructions:</span>
+                                            <p className="text-purple-800 text-sm mt-1">{appointment.followUpInstructions}</p>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        )}
                     </div>
                 )}
 
@@ -264,11 +347,28 @@ const AppointmentCard = ({ appointment, userRole }) => {
                                         <span>{completeLoading ? 'Completing...' : 'Mark Complete'}</span>
                                     </button>
                                 )}
+                                
+                                {(appointment.status === 'completed' || appointment.status === 'confirmed') && (
+                                    <button
+                                        onClick={() => setShowFollowUpModal(true)}
+                                        className="flex items-center space-x-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-sm"
+                                    >
+                                        <CalendarPlus className="w-4 h-4" />
+                                        <span>Schedule Follow-up</span>
+                                    </button>
+                                )}
                             </>
                         )}
                     </div>
                 </div>
             </div>
+
+            {/* Follow-up Modal */}
+            <FollowUpModal
+                isOpen={showFollowUpModal}
+                onClose={() => setShowFollowUpModal(false)}
+                appointment={appointment}
+            />
         </div>
     );
 };

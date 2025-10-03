@@ -43,6 +43,7 @@ import OrderTracking from './pages/OrderTracking.jsx';
 import PharmacyAdminPanel from './pages/PharmacyAdminPanel.jsx';
 import PharmacistDashboard from './pages/PharmacistDashboard.jsx';
 import CreateMedicine from './pages/CreateMedicine.jsx';
+import GovernmentHealthSchemes from "./pages/GovernmentSchemes.jsx";
 
 function App() {
   const { user } = useSelector((state) => state.user);
@@ -94,6 +95,7 @@ function App() {
           <Route exact path='/admin/pharmacy' element={<PharmacyAdminPanel />} />
           <Route exact path='/pharmacist/dashboard' element={<PharmacistDashboard />} />
           <Route exact path='/pharmacist/create-medicine' element={<CreateMedicine />} />
+          <Route exact path='/schemes' element={<GovernmentHealthSchemes/>}></Route>
         </Routes>
         <Footer />
         <MedicalAssistant/>

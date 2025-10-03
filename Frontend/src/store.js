@@ -6,7 +6,7 @@ import storage from 'redux-persist/lib/storage';
 import { persistReducer } from 'redux-persist';  // redux-persist for storing data in state
 
 import { allUsersReducer, profileReducer, userDetailsReducer, userReducer } from './reducers/userReducer';
-import { allDoctorsReducer, newAppointmentReducer, myAppointmentReducer, availableSlotsReducer, appointmentCompleteReducer } from './reducers/appointmentReducer';
+import { allDoctorsReducer, newAppointmentReducer, myAppointmentReducer, availableSlotsReducer, appointmentCompleteReducer, followUpReducer } from './reducers/appointmentReducer';
 import { prescriptionReducer } from './reducers/prescriptionReducer';
 import { 
     pharmacyRegisterReducer, 
@@ -38,6 +38,7 @@ const persistCombineReducer = combineReducers({
     allDoctors: allDoctorsReducer,
     availableSlots: availableSlotsReducer,
     appointmentComplete: appointmentCompleteReducer,
+    followUp: followUpReducer,
     prescription: prescriptionReducer,
     // Pharmacy reducers
     pharmacyRegister: pharmacyRegisterReducer,

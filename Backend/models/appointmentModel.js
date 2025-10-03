@@ -23,6 +23,11 @@ const appointmentSchema = new mongoose.Schema({
         trim: true,
         maxLength: [1000, "Symptoms cannot exceed 1000 characters"]
     },
+    audioTranscript: {
+        type: String,
+        trim: true,
+        maxLength: [2000, "Audio transcript cannot exceed 2000 characters"]
+    },
     aiSuggestions: {
         type: String,
         trim: true,
@@ -59,6 +64,39 @@ const appointmentSchema = new mongoose.Schema({
         type: String,
         required: true,
         unique: true
+    },
+    followUpDate: {
+        type: String,
+        validate: {
+            validator: function(v) {
+                // Only validate if followUpDate is provided
+                if (!v) return true;
+                // Validate date format YYYY-MM-DD
+                return /^\d{4}-\d{2}-\d{2}$/.test(v);
+            },
+            message: props => `${props.value} is not a valid date format! Use YYYY-MM-DD`
+        }
+    },
+    followUpTime: {
+        type: String,
+        validate: {
+            validator: function(v) {
+                // Only validate if followUpTime is provided
+                if (!v) return true;
+                // Validate time format HH:MM
+                return /^([01]?[0-9]|2[0-3]):[0-5][0-9]$/.test(v);
+            },
+            message: props => `${props.value} is not a valid time format! Use HH:MM`
+        }
+    },
+    followUpInstructions: {
+        type: String,
+        trim: true,
+        maxLength: [1000, "Follow-up instructions cannot exceed 1000 characters"]
+    },
+    followUpNotificationSent: {
+        type: Boolean,
+        default: false
     },
     createdAt: {
         type: Date,

@@ -19,7 +19,10 @@ const PrescriptionModal = ({ isOpen, onClose, appointmentId, patientId, patientN
     symptoms: '',
     medications: [{ name: '', dosage: '', frequency: '', duration: '', instructions: '' }],
     notes: '',
-    followUpInstructions: ''
+    followUpInstructions: '',
+    scheduleFollowUp: false,
+    followUpDate: '',
+    followUpTime: ''
   });
 
   useEffect(() => {
@@ -38,7 +41,10 @@ const PrescriptionModal = ({ isOpen, onClose, appointmentId, patientId, patientN
         symptoms: '',
         medications: [{ name: '', dosage: '', frequency: '', duration: '', instructions: '' }],
         notes: '',
-        followUpInstructions: ''
+        followUpInstructions: '',
+        scheduleFollowUp: false,
+        followUpDate: '',
+        followUpTime: ''
       });
     }
   }, [isOpen, appointmentId, patientId, patientName]);
@@ -107,6 +113,24 @@ const PrescriptionModal = ({ isOpen, onClose, appointmentId, patientId, patientN
       return;
     }
 
+    // Validate follow-up appointment if enabled
+    if (formData.scheduleFollowUp) {
+      if (!formData.followUpDate) {
+        toast.error('Please select a follow-up date');
+        return;
+      }
+      if (!formData.followUpTime) {
+        toast.error('Please select a follow-up time');
+        return;
+      }
+      
+      const followUpDateTime = new Date(`${formData.followUpDate}T${formData.followUpTime}`);
+      if (followUpDateTime <= new Date()) {
+        toast.error('Follow-up date and time must be in the future');
+        return;
+      }
+    }
+
     const prescriptionData = {
       patientId: finalPatientId,
       appointmentId: finalAppointmentId,
@@ -119,7 +143,41 @@ const PrescriptionModal = ({ isOpen, onClose, appointmentId, patientId, patientN
 
     try {
       await dispatch(createPrescription(prescriptionData));
-      toast.success('Prescription created successfully!');
+      
+      // Handle follow-up appointment scheduling if enabled
+      if (formData.scheduleFollowUp && formData.followUpDate && formData.followUpTime) {
+        try {
+          const followUpResponse = await fetch('/api/v1/appointment/followup', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            credentials: 'include',
+            body: JSON.stringify({
+              appointmentId: finalAppointmentId,
+              followUpDate: formData.followUpDate,
+              followUpTime: formData.followUpTime,
+              followUpInstructions: formData.followUpInstructions
+            })
+          });
+
+          const followUpData = await followUpResponse.json();
+          
+          if (followUpData.success) {
+            toast.success('Prescription created and follow-up appointment scheduled successfully!');
+          } else {
+            toast.success('Prescription created successfully!');
+            toast.warning(`Follow-up scheduling failed: ${followUpData.message}`);
+          }
+        } catch (followUpError) {
+          console.error('Follow-up scheduling error:', followUpError);
+          toast.success('Prescription created successfully!');
+          toast.warning('Follow-up appointment could not be scheduled. Please schedule manually.');
+        }
+      } else {
+        toast.success('Prescription created successfully!');
+      }
+      
       onClose();
       setFormData({
         selectedAppointmentId: appointmentId || '',
@@ -129,7 +187,10 @@ const PrescriptionModal = ({ isOpen, onClose, appointmentId, patientId, patientN
         symptoms: '',
         medications: [{ name: '', dosage: '', frequency: '', duration: '', instructions: '' }],
         notes: '',
-        followUpInstructions: ''
+        followUpInstructions: '',
+        scheduleFollowUp: false,
+        followUpDate: '',
+        followUpTime: ''
       });
     } catch (error) {
       toast.error('Failed to create prescription');
@@ -433,6 +494,91 @@ const PrescriptionModal = ({ isOpen, onClose, appointmentId, patientId, patientN
               rows="3"
               placeholder="Follow-up appointment schedule, monitoring instructions..."
             />
+          </div>
+
+          {/* Follow-up Appointment Scheduling */}
+          <div className="mb-8 border-2 border-indigo-200 bg-gradient-to-r from-indigo-50/50 to-blue-50/50 rounded-xl p-6">
+            <div className="flex items-center space-x-3 mb-4">
+              <div className="p-2 bg-indigo-600 rounded-full">
+                <span className="text-white text-lg">📅</span>
+              </div>
+              <h3 className="prescription-header text-lg text-gray-900">
+                Schedule Follow-up Appointment
+              </h3>
+            </div>
+            
+            <div className="mb-4">
+              <label className="flex items-center space-x-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={formData.scheduleFollowUp}
+                  onChange={(e) => setFormData(prev => ({ 
+                    ...prev, 
+                    scheduleFollowUp: e.target.checked,
+                    followUpDate: e.target.checked ? prev.followUpDate : '',
+                    followUpTime: e.target.checked ? prev.followUpTime : ''
+                  }))}
+                  className="w-5 h-5 text-indigo-600 bg-gray-100 border-gray-300 rounded focus:ring-indigo-500 focus:ring-2"
+                />
+                <span className="text-sm font-semibold text-gray-700">
+                  Schedule a follow-up appointment for this patient
+                </span>
+              </label>
+            </div>
+
+            {formData.scheduleFollowUp && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 p-4 bg-white rounded-lg border border-indigo-200">
+                <div>
+                  <label className="block text-xs font-bold text-gray-700 mb-2 uppercase tracking-wide">
+                    Follow-up Date *
+                  </label>
+                  <input
+                    type="date"
+                    value={formData.followUpDate}
+                    onChange={(e) => setFormData(prev => ({ ...prev, followUpDate: e.target.value }))}
+                    min={new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().split('T')[0]} // Tomorrow minimum
+                    className="w-full px-3 py-2.5 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white text-gray-900 font-medium"
+                    required={formData.scheduleFollowUp}
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-gray-700 mb-2 uppercase tracking-wide">
+                    Follow-up Time *
+                  </label>
+                  <select
+                    value={formData.followUpTime}
+                    onChange={(e) => setFormData(prev => ({ ...prev, followUpTime: e.target.value }))}
+                    className="w-full px-3 py-2.5 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white text-gray-900 font-medium"
+                    required={formData.scheduleFollowUp}
+                  >
+                    <option value="">Select time</option>
+                    <option value="09:00">09:00 AM</option>
+                    <option value="09:30">09:30 AM</option>
+                    <option value="10:00">10:00 AM</option>
+                    <option value="10:30">10:30 AM</option>
+                    <option value="11:00">11:00 AM</option>
+                    <option value="11:30">11:30 AM</option>
+                    <option value="12:00">12:00 PM</option>
+                    <option value="12:30">12:30 PM</option>
+                    <option value="14:00">02:00 PM</option>
+                    <option value="14:30">02:30 PM</option>
+                    <option value="15:00">03:00 PM</option>
+                    <option value="15:30">03:30 PM</option>
+                    <option value="16:00">04:00 PM</option>
+                    <option value="16:30">04:30 PM</option>
+                    <option value="17:00">05:00 PM</option>
+                  </select>
+                </div>
+
+                <div className="md:col-span-2">
+                  <p className="text-xs text-indigo-600 bg-indigo-50 p-3 rounded-lg border border-indigo-200">
+                    <strong>Note:</strong> The patient will receive an email notification about the follow-up appointment immediately, 
+                    and a reminder will be sent 24 hours before the scheduled appointment.
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Doctor Signature Section */}

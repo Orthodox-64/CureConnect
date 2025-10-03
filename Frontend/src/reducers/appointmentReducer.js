@@ -188,6 +188,40 @@ export const appointmentCompleteReducer = (state = {}, action) => {
     }
 }
 
+export const followUpReducer = (state = {}, action) => {
+    switch (action.type) {
+        case 'SCHEDULE_FOLLOWUP_REQUEST':
+            return {
+                ...state,
+                loading: true
+            }
+
+        case 'SCHEDULE_FOLLOWUP_SUCCESS':
+            return {
+                loading: false,
+                success: true,
+                followUpAppointment: action.payload.followUpAppointment,
+                message: action.payload.message
+            }
+
+        case 'SCHEDULE_FOLLOWUP_FAIL':
+            return {
+                loading: false,
+                error: action.payload,
+                success: false
+            }
+
+        case CLEAR_ERRORS:
+            return {
+                ...state,
+                error: null
+            }
+
+        default:
+            return state;
+    }
+}
+
 // export const appointmentDetailsReducer = (state = { appointments: {} }, action) => {
 //     switch (action.type) {
 //         case APPOINTMENT_DETAILS_REQUEST:

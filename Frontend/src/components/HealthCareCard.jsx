@@ -221,6 +221,8 @@ const HealthcareCards = () => {
         navigate("/watch");
       } else if (transcript.includes("emergency")) {
         window.open('https://cureconnect-maps-client.vercel.app/', '_blank');
+      } else if (transcript.includes("government") || transcript.includes("schemes") || transcript.includes("govt")) {
+        navigate("/schemes");
       }
     };
 
@@ -367,7 +369,20 @@ const HealthcareCards = () => {
           </div>
         </div>
 
-        {/* Card 6 */}
+        {/* Card 6 - Government Schemes */}
+        <div
+          className="bg-green-50 shadow-lg rounded-xl text-center p-8 hover:shadow-xl transform transition-all duration-300 hover:-translate-y-1"
+          onClick={() => handleCardClick("/schemes")}
+          style={responsiveStyles.card}
+        >
+          <div className="mb-6 text-green-500 text-5xl">🏛️</div>
+          <h2 className="text-2xl font-bold mb-3">Govt Schemes</h2>
+          <p className="text-gray-600">
+            Find Government Health Schemes For You
+          </p>
+        </div>
+
+        {/* Card 7 */}
         <div
           className="bg-blue-100 shadow-lg rounded-xl text-center p-8 hover:shadow-xl transform transition-all duration-300 hover:-translate-y-1"
           onClick={() => handleCardClick("/watch")}

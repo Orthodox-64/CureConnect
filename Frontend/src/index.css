@@ -1,0 +1,51 @@
+@import "tailwindcss";
+
+*{
+    font-family: Georgia, 'Times New Roman', Times, serif;
+}
+
+body{
+    width: 100%;
+}
+
+/* Ensure proper styling for form elements */
+input, textarea, select {
+    background-color: white !important;
+    color: #111827 !important;
+}
+
+/* Override any dark mode styles */
+.dark input, .dark textarea, .dark select {
+    background-color: white !important;
+    color: #111827 !important;
+}
+
+/* Ensure appointment booking modal has proper styling */
+.appointment-modal {
+    background-color: white !important;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+.appointment-modal input,
+.appointment-modal textarea,
+.appointment-modal select {
+    background-color: white !important;
+    color: #111827 !important;
+}
+
+/* Ensure modal overlay is visible */
+.modal-overlay {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    z-index: 9999 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background-color: rgba(30, 58, 138, 0.3) !important;
+    backdrop-filter: blur(4px) !important;
+}

@@ -1,0 +1,35 @@
+.goog-te-combo {
+    padding: 8px 12px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 14px;
+    background-color: white;
+    color: #1e40af;  /* Changed to match the blue theme */
+    cursor: pointer;
+    outline: none;
+    min-width: 160px;
+    font-family: system-ui, -apple-system, sans-serif;
+    transition: all 0.2s ease;
+}
+
+.goog-te-combo:hover {
+    border-color: #1e40af;  /* Changed to match the blue theme */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.goog-te-combo:focus {
+    border-color: #1e40af;  /* Changed to match theme */
+    box-shadow: 0 0 0 2px rgba(30, 64, 175, 0.2);  /* Changed to match theme */
+}
+
+.goog-te-banner-frame {
+    display: none;
+}
+
+.goog-te-gadget {
+    color: transparent !important;
+}
+
+.goog-te-gadget span {
+    display: none;
+}

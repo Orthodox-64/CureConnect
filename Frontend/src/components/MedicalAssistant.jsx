@@ -15,24 +15,24 @@ const VOICE_LANG_CODES = {
   french: "fr-FR",
   german: "de-DE",
   hindi: "hi-IN",
-  marathi: "mr-IN",
-  gujarati: "gu-IN",
+  marathi: "mr-IN", // Proper Marathi locale
+  gujarati: "gu-IN", // Proper Gujarati locale
   bengali: "bn-IN",
   tamil: "ta-IN",
   japanese: "ja-JP"
 };
 
 const VOICE_NAMES = {
-  english: "en-US-Wavenet-D",
-  spanish: "es-ES-Wavenet-A",
-  french: "fr-FR-Wavenet-A",
-  german: "de-DE-Wavenet-A",
-  hindi: "hi-IN-Wavenet-A",
-  marathi: "mr-IN-Wavenet-A",
-  gujarati: "gu-IN-Wavenet-A",
-  bengali: "bn-IN-Wavenet-A",
-  tamil: "ta-IN-Wavenet-A",
-  japanese: "ja-JP-Wavenet-A"
+  english: "en-US-Neural2-D",
+  spanish: "es-ES-Neural2-A", 
+  french: "fr-FR-Neural2-A",
+  german: "de-DE-Neural2-A",
+  hindi: "hi-IN-Neural2-A",
+  marathi: "mr-IN-Wavenet-A", // Using Marathi Wavenet voice
+  gujarati: "gu-IN-Wavenet-A", // Using Gujarati Wavenet voice
+  bengali: "bn-IN-Neural2-A",
+  tamil: "ta-IN-Neural2-A",
+  japanese: "ja-JP-Neural2-B"
 };
 
 const STT_LANG_CODES = {
@@ -276,25 +276,110 @@ Remember: This is for general health guidance only. Always recommend consulting 
     }
   };
 
-  const speak = async (text) => {
+  // Fallback function for TTS
+  const speakWithFallback = async (text, fallbackLang) => {
     try {
-      setIsSpeaking(true);
+      const cleanText = text.replace(/[*#`]/g, '').trim();
+      const voiceLangCode = VOICE_LANG_CODES[fallbackLang];
+      const voiceName = VOICE_NAMES[fallbackLang];
+      
+      console.log(`TTS Fallback - Language: ${fallbackLang}, LangCode: ${voiceLangCode}, VoiceName: ${voiceName}`);
+      
       const ttsResponse = await fetch(
         "https://texttospeech.googleapis.com/v1/text:synthesize?key=AIzaSyCpu960hVq_cy_dZYf1DUVNrBaWJnpBCuk",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            input: { text },
+            input: { text: cleanText },
             voice: {
-              languageCode: VOICE_LANG_CODES[language],
-              name: VOICE_NAMES[language],
+              languageCode: voiceLangCode,
+              name: voiceName,
             },
-            audioConfig: { audioEncoding: "MP3" },
+            audioConfig: { 
+              audioEncoding: "MP3",
+              speakingRate: 0.9,
+              pitch: 0.0
+            },
           }),
         },
       );
+      
+      if (ttsResponse.ok) {
+        const ttsData = await ttsResponse.json();
+        if (ttsData?.audioContent) {
+          const audio = new Audio("data:audio/mp3;base64," + ttsData.audioContent);
+          setCurrentAudio(audio);
+          
+          audio.onended = () => {
+            setIsSpeaking(false);
+            setCurrentAudio(null);
+          };
+          
+          audio.onerror = () => {
+            setIsSpeaking(false);
+            setCurrentAudio(null);
+          };
+          
+          await audio.play();
+          return;
+        }
+      }
+      
+      throw new Error('Fallback TTS also failed');
+    } catch (error) {
+      console.error('Fallback TTS Error:', error);
+      setIsSpeaking(false);
+      setCurrentAudio(null);
+    }
+  };
+
+  const speak = async (text) => {
+    try {
+      setIsSpeaking(true);
+      
+      // Clean the text for better TTS processing
+      const cleanText = text.replace(/[*#`]/g, '').trim();
+      
+      const ttsResponse = await fetch(
+        "https://texttospeech.googleapis.com/v1/text:synthesize?key=AIzaSyCpu960hVq_cy_dZYf1DUVNrBaWJnpBCuk",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            input: { text: cleanText },
+            voice: {
+              languageCode: VOICE_LANG_CODES[language] || VOICE_LANG_CODES.english,
+              name: VOICE_NAMES[language] || VOICE_NAMES.english,
+            },
+            audioConfig: { 
+              audioEncoding: "MP3",
+              speakingRate: 1.0,
+              pitch: 0.0
+            },
+          }),
+        },
+      );
+      
+      console.log('TTS Response status:', ttsResponse.status);
+      console.log(`TTS Config - Language: ${language}, LangCode: ${VOICE_LANG_CODES[language] || VOICE_LANG_CODES.english}, VoiceName: ${VOICE_NAMES[language] || VOICE_NAMES.english}`);
+      
+      if (!ttsResponse.ok) {
+        const errorText = await ttsResponse.text();
+        console.error('TTS API Error:', errorText);
+        
+        // Try fallback with Hindi voice for Marathi/Gujarati if primary fails
+        if ((language === 'marathi' || language === 'gujarati')) {
+          console.log('Primary TTS failed, trying Hindi fallback...');
+          return await speakWithFallback(cleanText, 'hindi');
+        }
+        
+        throw new Error(`TTS HTTP error! status: ${ttsResponse.status}`);
+      }
+      
       const ttsData = await ttsResponse.json();
+      console.log('TTS Response received, has audioContent:', !!ttsData?.audioContent);
+      
       if (ttsData?.audioContent) {
         const audio = new Audio("data:audio/mp3;base64," + ttsData.audioContent);
         setCurrentAudio(audio);
@@ -304,17 +389,49 @@ Remember: This is for general health guidance only. Always recommend consulting 
           setCurrentAudio(null);
         };
         
-        audio.onerror = () => {
+        audio.onerror = (error) => {
+          console.error('Audio playback error:', error);
           setIsSpeaking(false);
           setCurrentAudio(null);
         };
         
         await audio.play();
+      } else {
+        console.error('No audio content received from TTS API');
+        // Try fallback for regional languages
+        if (language === 'marathi' || language === 'gujarati') {
+          console.log('No audio content, trying Hindi fallback...');
+          return await speakWithFallback(cleanText, 'hindi');
+        }
+        setIsSpeaking(false);
       }
     } catch (err) {
       console.error("TTS Error:", err);
+      
+      // Try fallback for regional languages
+      if ((language === 'marathi' || language === 'gujarati') && !err.message.includes('fallback')) {
+        console.log('Primary TTS failed, trying Hindi fallback...');
+        return await speakWithFallback(text, 'hindi');
+      }
+      
       setIsSpeaking(false);
       setCurrentAudio(null);
+      
+      // Show user-friendly error message
+      const errorMessages = {
+        english: "Speech synthesis failed. Please check your internet connection.",
+        hindi: "ध्वनि संश्लेषण विफल हुआ। कृपया अपना इंटरनेट कनेक्शन जांचें।",
+        marathi: "आवाज संश्लेषण अयशस्वी झाले. कृपया आपले इंटरनेट कनेक्शन तपासा.",
+        gujarati: "અવાજનું સંશ્લેષણ નિષ્ફળ થયું. કૃપા કરીને તમારું ઇન્ટરનેટ કનેક્શન તપાસો.",
+        bengali: "কণ্ঠ সংশ্লেষণ ব্যর্থ হয়েছে। অনুগ্রহ করে আপনার ইন্টারনেট সংযোগ পরীক্ষা করুন।",
+        tamil: "பேச்சு தொகுப்பு தோல்வியடைந்தது. தயவுசெய்து உங்கள் இணைய இணைப்பைச் சரிபார்க்கவும்।",
+        japanese: "音声合成に失敗しました。インターネット接続を確認してください。",
+        spanish: "La síntesis de voz falló. Por favor, verifique su conexión a internet.",
+        french: "La synthèse vocale a échoué. Veuillez vérifier votre connexion internet.",
+        german: "Sprachsynthese fehlgeschlagen. Bitte überprüfen Sie Ihre Internetverbindung."
+      };
+      
+      console.warn(errorMessages[language] || errorMessages.english);
     }
   };
 

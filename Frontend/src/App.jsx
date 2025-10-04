@@ -44,6 +44,9 @@ import PharmacyAdminPanel from './pages/PharmacyAdminPanel.jsx';
 import PharmacistDashboard from './pages/PharmacistDashboard.jsx';
 import CreateMedicine from './pages/CreateMedicine.jsx';
 import GovernmentHealthSchemes from "./pages/GovernmentSchemes.jsx";
+import AdminLogin from './pages/AdminLogin.jsx';
+import AdminRegister from './pages/AdminRegister.jsx';
+import AdminDashboard from './pages/AdminDashboard.jsx';
 
 function App() {
   const { user } = useSelector((state) => state.user);
@@ -96,6 +99,11 @@ function App() {
           <Route exact path='/pharmacist/dashboard' element={<PharmacistDashboard />} />
           <Route exact path='/pharmacist/create-medicine' element={<CreateMedicine />} />
           <Route exact path='/schemes' element={<GovernmentHealthSchemes/>}></Route>
+          
+          {/* Admin Routes */}
+          <Route exact path='/admin/login' element={<AdminLogin />} />
+          <Route exact path='/admin/register' element={<AdminRegister />} />
+          <Route exact path='/admin/dashboard' element={<AdminDashboard />} />
         </Routes>
         <Footer />
         <MedicalAssistant/>

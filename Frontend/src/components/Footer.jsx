@@ -119,8 +119,16 @@ function Footer() {
 
         {/* Copyright Bar */}
         <div className="bg-blue-800 py-3 md:py-4 text-white text-center text-xs md:text-sm">
-          <div className="container mx-auto px-4 md:px-6">
-            ©️ 2025 CureConnect
+          <div className="container mx-auto px-4 md:px-6 flex flex-col sm:flex-row justify-between items-center">
+            <div>©️ 2025 CureConnect</div>
+            <div className="mt-2 sm:mt-0">
+              <a 
+                href="/admin/login" 
+                className="text-blue-200 hover:text-white transition-colors text-xs underline"
+              >
+                Admin Portal
+              </a>
+            </div>
           </div>
         </div>
       </footer>

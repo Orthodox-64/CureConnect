@@ -20,6 +20,10 @@ const pharmacySchema = new mongoose.Schema({
         enum: ['pending', 'verified', 'rejected', 'suspended'],
         default: 'pending'
     },
+    isBlocked: {
+        type: Boolean,
+        default: false
+    },
     verificationDocuments: {
         pharmacyLicense: {
             public_id: String,

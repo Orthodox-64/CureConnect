@@ -208,6 +208,11 @@ app.use('/api/v1', appointment);
 
 const pharmacy = require('./routes/pharmacyRoutes');
 app.use('/api/v1', pharmacy);
+
+// Admin routes
+const admin = require('./routes/adminRoutes');
+app.use('/api/v1/admin', admin);
+
 // Analysis routes (image/video analysis)
 const analysis = require('./routes/analysisRoutes');
 app.use('/api/v1', analysis);

@@ -44,6 +44,10 @@ const userSchema = new mongoose.Schema({
         enum: ['patient', 'doctor', 'pharmacist', 'admin'],
         default: "patient",
     },
+    isBlocked: {
+        type: Boolean,
+        default: false,
+    },
     availablity: {
         type: String,
         default: "true",

@@ -41,6 +41,7 @@ export const userReducer = (state = { user: {} }, action) => {
         case LOGIN_SUCCESS:
         case REGISTER_USER_SUCCESS:
         case LOAD_USER_SUCCESS:
+        case 'LOGIN_ADMIN_SUCCESS':
             return {
                 ...state,
                 loading: false,

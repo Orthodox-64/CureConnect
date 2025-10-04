@@ -20,7 +20,7 @@ const getNavItems = (userRole) => {
   if (userRole === 'admin') {
     return [
       ...baseItems,
-      { path: '/admin/panel', label: 'Admin Panel' },
+      { path: '/admin/dashboard', label: 'Admin Dashboard' },
       { path: '/medicines', label: 'Medicines' },
       { path: '/orders', label: 'Orders' }
     ];
@@ -141,10 +141,10 @@ export default function Navbar() {
                     )}
                     {user?.role === 'admin' && (
                       <a
-                        href="/admin/panel"
+                        href="/admin/dashboard"
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                       >
-                        Admin Panel
+                        Admin Dashboard
                       </a>
                     )}
                   </div>
@@ -233,11 +233,11 @@ export default function Navbar() {
                 
                 {user?.role === 'admin' && (
                   <a
-                    href="/admin/panel"
+                    href="/admin/dashboard"
                     className="block w-full text-center bg-gray-100 text-gray-800 px-4 py-2 rounded-lg text-base font-medium hover:bg-gray-200 transition-colors duration-200"
                     onClick={() => setMobileMenuOpen(false)}
                   >
-                    Admin Panel
+                    Admin Dashboard
                   </a>
                 )}
                 

@@ -139,6 +139,86 @@ exports.updatePassword = catchAsyncError(async (req, res, next) => {}); // TODO 
 // Update User Details
 exports.updateUserProfile = catchAsyncError(async (req, res, next) => {}); // TODO : ADD IF POSSIBLE
 
+// Admin Registration
+exports.registerAdmin = catchAsyncError(async (req, res, next) => {
+    const { name, contact, password, adminKey } = req.body;
+
+    // Verify admin key for security
+    if (adminKey !== process.env.ADMIN_SECRET_KEY) {
+        return next(new ErrorHander("Invalid admin key", 401));
+    }
+
+    // Check if admin already exists
+    const existingAdmin = await User.findOne({ role: 'admin' });
+    if (existingAdmin) {
+        return next(new ErrorHander("Admin already exists", 400));
+    }
+
+    const userData = {
+        name,
+        contact,
+        password,
+        role: 'admin',
+        avatar: {
+            public_id: "",
+            url: "",
+        },
+    };
+
+    const admin = await User.create(userData);
+
+    sendToken(admin, 201, res);
+});
+
+// Admin Login
+exports.loginAdmin = catchAsyncError(async (req, res, next) => {
+    const { contact, password } = req.body;
+    
+    if (!contact || !password) {
+        return next(new ErrorHander("Please Enter Contact & Password", 400));
+    }
+
+    const admin = await User.findOne({ contact, role: 'admin' }).select("+password");
+    if (!admin) {
+        return next(new ErrorHander("Invalid admin credentials", 401));
+    }
+
+    const isPasswordMatched = await admin.comparePassword(password);
+    if (!isPasswordMatched) {
+        return next(new ErrorHander("Invalid admin credentials", 401));
+    }
+
+    sendToken(admin, 200, res);
+});
+
+// Get all Users (Admin only)
+exports.getAllUsers = catchAsyncError(async (req, res, next) => {
+    const { page = 1, limit = 20, role } = req.query;
+    const query = {};
+    
+    if (role && ['patient', 'doctor', 'pharmacist'].includes(role)) {
+        query.role = role;
+    } else {
+        query.role = { $in: ['patient', 'doctor', 'pharmacist'] }; // Exclude admin from list
+    }
+
+    const users = await User.find(query)
+        .select('-password')
+        .sort({ createdAt: -1 })
+        .limit(limit * 1)
+        .skip((page - 1) * limit);
+
+    const total = await User.countDocuments(query);
+
+    res.status(200).json({
+        success: true,
+        users,
+        totalPages: Math.ceil(total / limit),
+        currentPage: parseInt(page),
+        total
+    });
+});
+
 // Get all Doctors
 exports.getAllDoctors = catchAsyncError(async (req, res, next) => {
     const doctors = await User.find({ role: "doctor" }).select("-password");
@@ -166,6 +246,39 @@ exports.getAllDoctors = catchAsyncError(async (req, res, next) => {
         doctors: formattedDoctors
     });
 })
+
+// Get Admin Dashboard Stats
+exports.getAdminStats = catchAsyncError(async (req, res, next) => {
+    const totalUsers = await User.countDocuments({ role: 'patient' });
+    const totalDoctors = await User.countDocuments({ role: 'doctor' });
+    const totalPharmacists = await User.countDocuments({ role: 'pharmacist' });
+    
+    // Get recent registrations (last 30 days)
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    
+    const recentUsers = await User.countDocuments({ 
+        createdAt: { $gte: thirtyDaysAgo },
+        role: 'patient'
+    });
+    
+    const recentDoctors = await User.countDocuments({ 
+        createdAt: { $gte: thirtyDaysAgo },
+        role: 'doctor'
+    });
+
+    res.status(200).json({
+        success: true,
+        stats: {
+            totalUsers,
+            totalDoctors,
+            totalPharmacists,
+            recentUsers,
+            recentDoctors,
+            total: totalUsers + totalDoctors + totalPharmacists
+        }
+    });
+});
 
 // Get single users --> Admin
 exports.getSingleUser = catchAsyncError(async (req, res, next) => {

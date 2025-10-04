@@ -213,6 +213,10 @@ app.use('/api/v1', pharmacy);
 const admin = require('./routes/adminRoutes');
 app.use('/api/v1/admin', admin);
 
+// Ticket routes
+const ticket = require('./routes/ticketRoutes');
+app.use('/api/v1/ticket', ticket);
+
 // Analysis routes (image/video analysis)
 const analysis = require('./routes/analysisRoutes');
 app.use('/api/v1', analysis);

@@ -19,12 +19,25 @@ import {
     Clock,
     Trash2,
     Ban,
-    CheckCircle
+    CheckCircle,
+    Headphones,
+    AlertCircle,
+    Tag,
+    MessageSquare,
+    XCircle,
+    User
 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import axios from '../axios';
+import { useDispatch, useSelector } from 'react-redux';
+import { getAllTickets, updateTicketStatus, deleteTicket, clearTicketErrors, clearTicketMessages } from '../actions/ticketActions';
 
 const AdminDashboard = () => {
+    const dispatch = useDispatch();
+    const { loading: ticketsLoading, tickets, error: ticketsError, totalTickets, stats: ticketStats } = useSelector(state => state.allTickets);
+    const { loading: updateLoading, success: updateSuccess, error: updateError } = useSelector(state => state.updateTicket);
+    const { loading: deleteLoading, success: deleteSuccess, error: deleteError } = useSelector(state => state.deleteTicket);
+
     const [stats, setStats] = useState({
         totalUsers: 15,
         totalDoctors: 8,
@@ -103,6 +116,16 @@ const AdminDashboard = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     
+    // Ticket filters
+    const [ticketFilters, setTicketFilters] = useState({
+        status: 'all',
+        priority: 'all',
+        category: 'all',
+        search: '',
+        page: 1,
+        limit: 10
+    });
+    
     const navigate = useNavigate();
 
     // Load dashboard data directly without authentication check
@@ -110,6 +133,39 @@ const AdminDashboard = () => {
         console.log('Admin Dashboard - Loading data directly');
         fetchDashboardData();
     }, [currentPage, filterRole]);
+
+    // Load tickets when tickets tab is active
+    useEffect(() => {
+        if (activeTab === 'tickets') {
+            dispatch(getAllTickets(ticketFilters));
+        }
+    }, [dispatch, activeTab, ticketFilters]);
+
+    // Handle ticket-related success/error messages
+    useEffect(() => {
+        if (updateSuccess) {
+            toast.success('Ticket updated successfully');
+            dispatch(clearTicketMessages());
+            dispatch(getAllTickets(ticketFilters)); // Refresh tickets
+        }
+        if (deleteSuccess) {
+            toast.success('Ticket deleted successfully');
+            dispatch(clearTicketMessages());
+            dispatch(getAllTickets(ticketFilters)); // Refresh tickets
+        }
+        if (ticketsError) {
+            toast.error(ticketsError);
+            dispatch(clearTicketErrors());
+        }
+        if (updateError) {
+            toast.error(updateError);
+            dispatch(clearTicketErrors());
+        }
+        if (deleteError) {
+            toast.error(deleteError);
+            dispatch(clearTicketErrors());
+        }
+    }, [dispatch, updateSuccess, deleteSuccess, ticketsError, updateError, deleteError, ticketFilters]);
 
     const fetchDashboardData = async () => {
         setLoading(true);
@@ -304,6 +360,71 @@ const AdminDashboard = () => {
         }
     };
 
+    // Ticket handlers
+    const handleTicketFilterChange = (key, value) => {
+        setTicketFilters(prev => ({
+            ...prev,
+            [key]: value,
+            page: 1 // Reset to first page when filtering
+        }));
+    };
+
+    const handleTicketPageChange = (newPage) => {
+        setTicketFilters(prev => ({
+            ...prev,
+            page: newPage
+        }));
+    };
+
+    const handleUpdateTicketStatus = async (ticketId, currentStatus) => {
+        const statusMap = {
+            'Open': 'In Progress',
+            'In Progress': 'Resolved',
+            'Resolved': 'Closed'
+        };
+        
+        const newStatus = statusMap[currentStatus] || 'Open';
+        dispatch(updateTicketStatus(ticketId, { status: newStatus }));
+    };
+
+    const handleDeleteTicket = async (ticketId) => {
+        if (window.confirm('Are you sure you want to delete this ticket? This action cannot be undone.')) {
+            dispatch(deleteTicket(ticketId));
+        }
+    };
+
+    const getTicketStatusBadge = (status) => {
+        const baseClasses = "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium";
+        switch (status) {
+            case 'Open':
+                return `${baseClasses} bg-orange-100 text-orange-800`;
+            case 'In Progress':
+                return `${baseClasses} bg-blue-100 text-blue-800`;
+            case 'Resolved':
+                return `${baseClasses} bg-green-100 text-green-800`;
+            case 'Closed':
+                return `${baseClasses} bg-gray-100 text-gray-800`;
+            default:
+                return `${baseClasses} bg-gray-100 text-gray-800`;
+        }
+    };
+
+    const getTicketPriorityBadge = (priority) => {
+        const baseClasses = "inline-flex items-center px-2 py-1 rounded text-xs font-medium";
+        switch (priority) {
+            case 'Critical':
+                return `${baseClasses} bg-red-100 text-red-800`;
+            case 'High':
+                return `${baseClasses} bg-orange-100 text-orange-800`;
+            case 'Medium':
+                return `${baseClasses} bg-yellow-100 text-yellow-800`;
+            case 'Low':
+                return `${baseClasses} bg-green-100 text-green-800`;
+            default:
+                return `${baseClasses} bg-gray-100 text-gray-800`;
+        }
+    };
+
     // Function to get filtered data based on role and search
     const getFilteredData = () => {
         let dataToFilter = [];
@@ -442,7 +563,8 @@ const AdminDashboard = () => {
                             { id: 'overview', label: 'Overview', icon: TrendingUp },
                             { id: 'patients', label: 'Patients', icon: Users },
                             { id: 'doctors', label: 'Doctors', icon: UserCheck },
-                            { id: 'pharmacies', label: 'Pharmacies', icon: Building2 }
+                            { id: 'pharmacies', label: 'Pharmacies', icon: Building2 },
+                            { id: 'tickets', label: 'Support Tickets', icon: Headphones }
                         ].map(({ id, label, icon: Icon }) => (
                             <button
                                 key={id}
@@ -912,6 +1034,241 @@ const AdminDashboard = () => {
                                     </tbody>
                                 </table>
                             </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* Support Tickets Tab */}
+                {activeTab === 'tickets' && (
+                    <div className="space-y-6">
+                        {/* Tickets Stats */}
+                        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                            <div className="bg-white rounded-xl shadow-lg p-6">
+                                <div className="flex items-center">
+                                    <div className="p-3 bg-orange-100 rounded-full">
+                                        <AlertCircle className="w-6 h-6 text-orange-600" />
+                                    </div>
+                                    <div className="ml-4">
+                                        <p className="text-sm font-medium text-gray-600">Open Tickets</p>
+                                        <p className="text-2xl font-bold text-gray-900">{ticketStats?.open || 0}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="bg-white rounded-xl shadow-lg p-6">
+                                <div className="flex items-center">
+                                    <div className="p-3 bg-blue-100 rounded-full">
+                                        <Clock className="w-6 h-6 text-blue-600" />
+                                    </div>
+                                    <div className="ml-4">
+                                        <p className="text-sm font-medium text-gray-600">In Progress</p>
+                                        <p className="text-2xl font-bold text-gray-900">{ticketStats?.inProgress || 0}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="bg-white rounded-xl shadow-lg p-6">
+                                <div className="flex items-center">
+                                    <div className="p-3 bg-green-100 rounded-full">
+                                        <CheckCircle className="w-6 h-6 text-green-600" />
+                                    </div>
+                                    <div className="ml-4">
+                                        <p className="text-sm font-medium text-gray-600">Resolved</p>
+                                        <p className="text-2xl font-bold text-gray-900">{ticketStats?.resolved || 0}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="bg-white rounded-xl shadow-lg p-6">
+                                <div className="flex items-center">
+                                    <div className="p-3 bg-gray-100 rounded-full">
+                                        <XCircle className="w-6 h-6 text-gray-600" />
+                                    </div>
+                                    <div className="ml-4">
+                                        <p className="text-sm font-medium text-gray-600">Closed</p>
+                                        <p className="text-2xl font-bold text-gray-900">{ticketStats?.closed || 0}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Ticket Filters */}
+                        <div className="bg-white rounded-xl shadow-lg p-6">
+                            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                                <div className="relative">
+                                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                                    <input
+                                        type="text"
+                                        placeholder="Search tickets..."
+                                        value={ticketFilters.search}
+                                        onChange={(e) => handleTicketFilterChange('search', e.target.value)}
+                                        className="pl-10 pr-4 py-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                    />
+                                </div>
+                                <select
+                                    value={ticketFilters.status}
+                                    onChange={(e) => handleTicketFilterChange('status', e.target.value)}
+                                    className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                >
+                                    <option value="all">All Status</option>
+                                    <option value="Open">Open</option>
+                                    <option value="In Progress">In Progress</option>
+                                    <option value="Resolved">Resolved</option>
+                                    <option value="Closed">Closed</option>
+                                </select>
+                                <select
+                                    value={ticketFilters.priority}
+                                    onChange={(e) => handleTicketFilterChange('priority', e.target.value)}
+                                    className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                >
+                                    <option value="all">All Priority</option>
+                                    <option value="Critical">Critical</option>
+                                    <option value="High">High</option>
+                                    <option value="Medium">Medium</option>
+                                    <option value="Low">Low</option>
+                                </select>
+                                <select
+                                    value={ticketFilters.category}
+                                    onChange={(e) => handleTicketFilterChange('category', e.target.value)}
+                                    className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                >
+                                    <option value="all">All Categories</option>
+                                    <option value="Technical Issue">Technical Issue</option>
+                                    <option value="Account Problem">Account Problem</option>
+                                    <option value="Appointment Issue">Appointment Issue</option>
+                                    <option value="Payment Issue">Payment Issue</option>
+                                    <option value="Medical Records">Medical Records</option>
+                                    <option value="Prescription Issue">Prescription Issue</option>
+                                    <option value="General Inquiry">General Inquiry</option>
+                                    <option value="Bug Report">Bug Report</option>
+                                    <option value="Feature Request">Feature Request</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        {/* Tickets Table */}
+                        <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+                            <div className="px-6 py-4 border-b border-gray-200">
+                                <h3 className="text-lg font-semibold text-gray-900">Support Tickets</h3>
+                            </div>
+                            
+                            {ticketsLoading ? (
+                                <div className="flex items-center justify-center py-12">
+                                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                                    <span className="ml-3 text-gray-600">Loading tickets...</span>
+                                </div>
+                            ) : tickets && tickets.length > 0 ? (
+                                <div className="overflow-x-auto">
+                                    <table className="w-full">
+                                        <thead className="bg-gray-50">
+                                            <tr>
+                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ticket ID</th>
+                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Subject</th>
+                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User</th>
+                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
+                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Priority</th>
+                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created</th>
+                                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="bg-white divide-y divide-gray-200">
+                                            {tickets.map((ticket) => (
+                                                <tr key={ticket._id} className="hover:bg-gray-50">
+                                                    <td className="px-6 py-4 whitespace-nowrap">
+                                                        <div className="text-sm font-medium text-blue-600">
+                                                            {ticket.ticketId}
+                                                        </div>
+                                                    </td>
+                                                    <td className="px-6 py-4">
+                                                        <div className="text-sm font-medium text-gray-900 max-w-xs truncate">
+                                                            {ticket.subject}
+                                                        </div>
+                                                        <div className="text-sm text-gray-500 max-w-xs truncate">
+                                                            {ticket.description}
+                                                        </div>
+                                                    </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap">
+                                                        <div className="flex items-center">
+                                                            <div className="flex-shrink-0 h-8 w-8">
+                                                                {ticket.userId?.avatar?.url ? (
+                                                                    <img className="h-8 w-8 rounded-full object-cover" src={ticket.userId.avatar.url} alt="" />
+                                                                ) : (
+                                                                    <div className="h-8 w-8 rounded-full bg-blue-300 flex items-center justify-center">
+                                                                        <User className="w-4 h-4 text-blue-600" />
+                                                                    </div>
+                                                                )}
+                                                            </div>
+                                                            <div className="ml-3">
+                                                                <div className="text-sm font-medium text-gray-900">
+                                                                    {ticket.userId?.name || 'Unknown User'}
+                                                                </div>
+                                                                <div className="text-sm text-gray-500">
+                                                                    {ticket.userId?.email || 'No email'}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap">
+                                                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                                            {ticket.category}
+                                                        </span>
+                                                    </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap">
+                                                        <span className={getTicketPriorityBadge(ticket.priority)}>
+                                                            {ticket.priority}
+                                                        </span>
+                                                    </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap">
+                                                        <span className={getTicketStatusBadge(ticket.status)}>
+                                                            {ticket.status}
+                                                        </span>
+                                                    </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                        {formatDate(ticket.createdAt)}
+                                                    </td>
+                                                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                                        <div className="flex items-center gap-2">
+                                                            <button 
+                                                                className="text-blue-600 hover:text-blue-900 p-1 rounded hover:bg-blue-50"
+                                                                title="View Details"
+                                                            >
+                                                                <Eye className="w-4 h-4" />
+                                                            </button>
+                                                            {ticket.status !== 'Closed' && (
+                                                                <button 
+                                                                    onClick={() => handleUpdateTicketStatus(ticket._id, ticket.status)}
+                                                                    className="text-green-600 hover:text-green-900 p-1 rounded hover:bg-green-50"
+                                                                    title="Update Status"
+                                                                    disabled={updateLoading}
+                                                                >
+                                                                    <CheckCircle className="w-4 h-4" />
+                                                                </button>
+                                                            )}
+                                                            <button 
+                                                                onClick={() => handleDeleteTicket(ticket._id)}
+                                                                className="text-red-600 hover:text-red-900 p-1 rounded hover:bg-red-50"
+                                                                title="Delete Ticket"
+                                                                disabled={deleteLoading}
+                                                            >
+                                                                <Trash2 className="w-4 h-4" />
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            ) : (
+                                <div className="text-center py-12">
+                                    <Headphones className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                                    <h3 className="text-lg font-medium text-gray-900 mb-2">No support tickets found</h3>
+                                    <p className="text-gray-500">
+                                        {ticketFilters.status !== 'all' || ticketFilters.search
+                                            ? 'No tickets match your current filters.'
+                                            : 'No support tickets have been created yet.'}
+                                    </p>
+                                </div>
+                            )}
                         </div>
                     </div>
                 )}

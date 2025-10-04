@@ -47,6 +47,9 @@ import GovernmentHealthSchemes from "./pages/GovernmentSchemes.jsx";
 import AdminLogin from './pages/AdminLogin.jsx';
 import AdminRegister from './pages/AdminRegister.jsx';
 import AdminDashboard from './pages/AdminDashboard.jsx';
+import RaiseTicket from './pages/RaiseTicket.jsx';
+import MyTickets from './pages/MyTickets.jsx';
+import TicketDetails from './pages/TicketDetails.jsx';
 
 function App() {
   const { user } = useSelector((state) => state.user);
@@ -99,6 +102,11 @@ function App() {
           <Route exact path='/pharmacist/dashboard' element={<PharmacistDashboard />} />
           <Route exact path='/pharmacist/create-medicine' element={<CreateMedicine />} />
           <Route exact path='/schemes' element={<GovernmentHealthSchemes/>}></Route>
+          
+          {/* Support Ticket Routes */}
+          <Route exact path='/raise-ticket' element={<RaiseTicket />} />
+          <Route exact path='/my-tickets' element={<MyTickets />} />
+          <Route exact path='/ticket/:id' element={<TicketDetails />} />
           
           {/* Admin Routes */}
           <Route exact path='/admin/login' element={<AdminLogin />} />

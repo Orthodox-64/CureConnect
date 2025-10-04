@@ -20,6 +20,15 @@ import {
     expiringMedicinesReducer,
     pharmacyOrdersReducer
 } from './reducers/pharmacyReducers';
+import {
+    createTicketReducer,
+    userTicketsReducer,
+    ticketDetailsReducer,
+    allTicketsReducer,
+    updateTicketReducer,
+    deleteTicketReducer,
+    ticketStatsReducer
+} from './reducers/ticketReducers';
 
 const persistConfig = {
     key: 'root',
@@ -51,6 +60,14 @@ const persistCombineReducer = combineReducers({
     lowStockMedicines: lowStockMedicinesReducer,
     expiringMedicines: expiringMedicinesReducer,
     pharmacyOrders: pharmacyOrdersReducer,
+    // Ticket reducers
+    createTicket: createTicketReducer,
+    userTickets: userTicketsReducer,
+    ticketDetails: ticketDetailsReducer,
+    allTickets: allTicketsReducer,
+    updateTicket: updateTicketReducer,
+    deleteTicket: deleteTicketReducer,
+    ticketStats: ticketStatsReducer,
 }); // To combine multiple reducers in one
 
 const persistedReducer = persistReducer(persistConfig, persistCombineReducer)

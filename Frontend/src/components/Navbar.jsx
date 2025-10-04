@@ -20,9 +20,7 @@ const getNavItems = (userRole) => {
   if (userRole === 'admin') {
     return [
       ...baseItems,
-      { path: '/admin/dashboard', label: 'Admin Dashboard' },
-      { path: '/medicines', label: 'Medicines' },
-      { path: '/orders', label: 'Orders' }
+      { path: '/admin/dashboard', label: 'Admin Dashboard' }
     ];
   }
   
@@ -34,7 +32,8 @@ const getNavItems = (userRole) => {
     { path: '/analysis', label: 'Analysis' },
     { path: '/appointments', label: 'Appointments' },
     { path: '/prescriptions', label: 'Prescriptions' },
-    { path: '/medicines', label: 'Medicines' }
+    { path: '/medicines', label: 'Medicines' },
+    { path: '/my-tickets', label: 'Support' }
   ];
 };
 

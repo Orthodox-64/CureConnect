@@ -208,7 +208,7 @@ const healthTipsData = [
     icon: "Brain",
     color: "bg-indigo-400",
     category: "Mental Health",
-    link:"https://youtu.be/oJSpQHcJfKs?si=j7L_08T0QlK8uaDh"
+    link:"https://youtu.be/SEfs5TJZ6Nk" // Example: "5-Minute Mindful Breathing Meditation" by Headspace
   },
   {
     id: 24,

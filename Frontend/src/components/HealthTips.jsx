@@ -182,6 +182,24 @@ const healthTipsData = [
     color: "bg-blue-800",
     category: "Rest",
     link:"https://youtu.be/oJSpQHcJfKs?si=j7L_08T0QlK8uaDh"
+  },
+  {
+    id: 21,
+    title: "Social Connections",
+    description: "Maintain strong social relationships and engage with community to boost mental health and longevity.",
+    icon: "Smile",
+    color: "bg-rose-500",
+    category: "Mental Health",
+    link:"https://youtu.be/oJSpQHcJfKs?si=j7L_08T0QlK8uaDh"
+  },
+  {
+    id: 22,
+    title: "Active Breaks",
+    description: "Take short movement breaks every hour if you sit for long periods to improve circulation and energy.",
+    icon: "Zap",
+    color: "bg-sky-500",
+    category: "Daily Habits",
+    link:"https://youtu.be/oJSpQHcJfKs?si=j7L_08T0QlK8uaDh"
   }
 ];
 

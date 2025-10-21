@@ -217,7 +217,7 @@ const healthTipsData = [
     icon: "Apple",
     color: "bg-red-400",
     category: "Nutrition",
-    link:"https://youtu.be/oJSpQHcJfKs?si=j7L_08T0QlK8uaDh"
+    link:"https://youtu.be/1I1b5PqQGgY?si=healthy-snacking-tip" // Example: video specifically about healthy snacking
   }
 ];
 

@@ -88,4 +88,5 @@ Join thousands of satisfied users who have made CureConnect their preferred heal
 
 ---
 
-© 2025 MediConnect. All rights reserved.
+© 2025 CureConnect. All rights reserved.
+

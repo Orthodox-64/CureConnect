@@ -84,9 +84,10 @@ CureConnect is a next-gen AI-powered telemedicine platform designed to bring acc
 
 ## Get Started Today
 
-Join thousands of satisfied users who have made CureConnect their preferred healthcare platform. Sign up now and take the first step towards convenient, efficient, and quality healthcare.
+Join, thousands of satisfied users who have made CureConnect their preferred healthcare platform. Sign up now and take the first step towards convenient, efficient, and quality healthcare.
 
 ---
 
 © 2025 CureConnect. All rights reserved.
+
 

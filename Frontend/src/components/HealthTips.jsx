@@ -200,6 +200,24 @@ const healthTipsData = [
     color: "bg-sky-500",
     category: "Daily Habits",
     link:"https://youtu.be/oJSpQHcJfKs?si=j7L_08T0QlK8uaDh"
+  },
+  {
+    id: 23,
+    title: "Mindful Breathing",
+    description: "Practice deep breathing exercises for 5-10 minutes daily to reduce anxiety and improve oxygen flow.",
+    icon: "Brain",
+    color: "bg-indigo-400",
+    category: "Mental Health",
+    link:"https://youtu.be/oJSpQHcJfKs?si=j7L_08T0QlK8uaDh"
+  },
+  {
+    id: 24,
+    title: "Healthy Snacking",
+    description: "Choose nutritious snacks like nuts, fruits, and vegetables to maintain energy levels throughout the day.",
+    icon: "Apple",
+    color: "bg-red-400",
+    category: "Nutrition",
+    link:"https://youtu.be/oJSpQHcJfKs?si=j7L_08T0QlK8uaDh"
   }
 ];
 

@@ -178,6 +178,76 @@
  * - Medical history and records
  * - QR code patient identification
  * 
+ * HEALTH TIPS & EDUCATION
+ * ------------------------
+ * HealthTips Component (Main):
+ *   - Purpose: Interactive health education platform with searchable content
+ *   - Features:
+ *     • 24 curated health tips covering 5 categories
+ *     • Real-time search functionality (title, description, category)
+ *     • Category-based filtering (Daily Habits, Nutrition, Fitness, Rest, Mental Health)
+ *     • Pagination system (9 tips per page)
+ *     • Sequential animation on page load
+ *     • External YouTube video links for detailed guidance
+ *     • Responsive grid layout (1-3 columns)
+ *     • Color-coded category badges
+ *   - Categories Covered:
+ *     1. Daily Habits: Hydration, posture, active breaks, morning sunlight
+ *     2. Nutrition: Mindful eating, balanced diet, protein intake, healthy snacking
+ *     3. Fitness: Regular exercise, strength training, cardio, flexibility
+ *     4. Rest: Quality sleep, sleep environment optimization
+ *     5. Mental Health: Stress management, gratitude, nature time, digital detox
+ *   - Interactive Elements:
+ *     • Search bar with clear functionality
+ *     • Category filter buttons with active state
+ *     • Hover effects on tip cards
+ *     • Arrow icon for external links
+ *     • Pagination controls (Previous/Next + page numbers)
+ *   - Animation System:
+ *     • Staggered entrance (150ms delay between cards)
+ *     • Fade-in and scale transformations
+ *     • Smooth transitions on category/search changes
+ *     • 300ms initial delay before animation sequence
+ *   - Data Structure:
+ *     Each tip contains: id, title, description, icon (Lucide), 
+ *     color class, category, and YouTube link
+ *   - User Flow:
+ *     1. View all tips or filter by category
+ *     2. Search specific health topics
+ *     3. Read tip summaries with visual icons
+ *     4. Click "Learn More" to watch educational videos
+ *     5. Navigate through pages for more content
+ *   - Tech Stack: React, Lucide Icons, Tailwind CSS, YouTube integration
+ * 
+ * CancerHealthTips Component (Specialized):
+ *   - Purpose: Cancer prevention education and awareness
+ *   - Features:
+ *     • 5 essential cancer prevention tips
+ *     • Card-based layout with hover effects
+ *     • Icon-driven visual communication
+ *     • Gradient background (rose to pink)
+ *     • Shadow effects on card hover
+ *     • Centered responsive design
+ *   - Prevention Topics:
+ *     1. Healthy Diet: Fruits, vegetables, whole grains, lean proteins
+ *     2. Physical Activity: 30 minutes daily exercise
+ *     3. Avoid Tobacco & Limit Alcohol: Leading cancer cause prevention
+ *     4. Sun Protection: Sunscreen, protective clothing, avoid tanning
+ *     5. Regular Screenings: Early detection (mammograms, colonoscopies)
+ *   - Design Elements:
+ *     • Color-coded icons (green, blue, teal, yellow, pink)
+ *     • Rounded card corners (2xl)
+ *     • Shadow transitions on hover
+ *     • Motivational footer message
+ *     • Full-screen gradient background
+ *   - UI/UX:
+ *     • Mobile-responsive grid (1-3 columns)
+ *     • Emoji-enhanced headings for engagement
+ *     • Clean, minimal card design
+ *     • Centered text alignment for readability
+ *   - Tech Stack: React, Lucide Icons, shadcn/ui Card component, 
+ *                 Tailwind CSS
+ * 
  * ============================================================================
  * STATE MANAGEMENT
  * ============================================================================

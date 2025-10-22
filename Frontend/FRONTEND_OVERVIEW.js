@@ -148,8 +148,69 @@
  *   - Design Philosophy: Medical trust (rose/pink), approachable UI, 
  *                       smooth animations for reduced anxiety
  * 
+ * ECGAnalysisModal Component:
+ *   - Purpose: Entry point for electrocardiogram heart rhythm analysis
+ *   - Features:
+ *     • Dual analysis modes: Image-based and Video-based ECG monitoring
+ *     • Advanced Framer Motion animations with cardiac-inspired effects
+ *     • Emerald/Red gradient theme for cardiology focus (heart health colors)
+ *     • Glassmorphism effects with backdrop blur
+ *     • Interactive hover states with scale and lift transformations
+ *     • Floating decorative medical icons (Zap, Heart)
+ *     • Unique heartbeat animation variant for medical authenticity
+ *   - Animation Variants:
+ *     • backdropVariants: Fade in/out with 50% opacity black overlay + blur
+ *     • modalVariants: 3D rotateX transform (-15deg) with spring animation
+ *     • cardVariants: Horizontal slide-in (-30px) with staggered delay (0.15s)
+ *     • iconVariants: Rotate from -180deg with scale-up effect
+ *     • pulseVariants: Infinite breathing animation (1-1.05 scale, 2s duration)
+ *     • heartbeatVariants: ECG-inspired animation [1, 1.2, 1, 1.1, 1] (1.5s, infinite)
+ *     • floatingVariants: Vertical oscillation (-2px to 2px, 3s duration)
+ *   - Color Scheme:
+ *     • Primary: Emerald (emerald-500, emerald-600, emerald-800) - healthy heart
+ *     • Secondary: Red (red-500, red-600, red-800) - heart alert/monitoring
+ *     • Accent: Green for image card, Rose for video card
+ *     • Backgrounds: Gradient from white to gray-50 (f8fafc)
+ *   - User Flow:
+ *     1. User clicks ECG analysis option from dashboard
+ *     2. Modal presents two cardiology analysis options
+ *     3. Image route: /analysis/ecg (static ECG graph upload)
+ *     4. Video route: /analysis/ecg-video (dynamic heart monitoring)
+ *   - Card Design:
+ *     • Image Card: Emerald gradient (emerald-50 to green-50) with emerald borders
+ *     • Video Card: Red gradient (red-50 to rose-50) with red borders
+ *     • Border animations: Transitions from 50% to 80% opacity on hover
+ *     • Background overlay: Animated gradient fill on hover (0 to 100% opacity)
+ *   - Special Animation Features:
+ *     • Heartbeat Icon: Custom heartbeat pattern animation in background
+ *     • Zap Icon: Floating animation representing electrical cardiac activity
+ *     • Activity Icon: Main header icon with pulse animation
+ *     • Gradient header: Emerald to red representing cardiac spectrum
+ *   - Interactive Elements:
+ *     • Close button: 90deg rotation + 1.1x scale on hover
+ *     • Card lift: -5px vertical translation on hover
+ *     • Arrow indicator: Slides from -10px to 0, fades in on hover
+ *     • Tap animation: 0.98 scale for tactile feedback
+ *   - Layout & Spacing:
+ *     • Modal: max-w-md (28rem), p-8 padding, rounded-3xl corners
+ *     • Cards: p-6 padding, rounded-2xl corners, space-y-4 gap
+ *     • Icons: w-6 h-6 (24px), w-8 h-8 for header (32px)
+ *     • Footer divider: w-12 h-1, emerald-to-red gradient, animated width
+ *   - Medical Context:
+ *     • ECG = Electrocardiogram: Records electrical signals from the heart
+ *     • Image analysis: Static ECG graphs/printouts from medical devices
+ *     • Video analysis: Real-time or recorded ECG monitor screens
+ *     • Color psychology: Green (healthy), Red (alert/monitoring)
+ *   - Accessibility:
+ *     • Click-to-close backdrop with stopPropagation on modal
+ *     • Keyboard-accessible buttons
+ *     • Clear visual hierarchy with size and color
+ *     • Descriptive text: "Cardiology Heart Monitoring"
+ *   - Tech Stack: React, Framer Motion, React Router, Lucide Icons
+ *   - Design Philosophy: Medical urgency (red), vitality (emerald), 
+ *                       heartbeat animations for emotional connection
+ * 
  * Other Analysis Modals (Similar Architecture):
- *   - ECGAnalysisModal: Electrocardiogram heart rhythm analysis (blue/cyan theme)
  *   - XRayAnalysisModal: X-ray image interpretation (gray/slate theme)
  *   - RetinopathyAnalysisModal: Diabetic eye disease screening (amber/orange theme)
  *   - PETAnalysisModal: Positron Emission Tomography scan analysis (purple/violet theme)

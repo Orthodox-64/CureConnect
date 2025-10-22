@@ -106,9 +106,59 @@
  * 
  * APPOINTMENT SYSTEM
  * ------------------
- * - Booking, scheduling, and management
- * - Doctor discovery and profile viewing
- * - Real-time availability checking
+ * AppointmentBooking Component:
+ *   - Purpose: Comprehensive appointment scheduling system with AI integration
+ *   - Features:
+ *     • Intelligent doctor search and filtering by name/specialty
+ *     • Real-time slot availability checking
+ *     • AI-powered symptom analysis using Gemini AI
+ *     • Dynamic form validation with detailed error messages
+ *     • Date range restrictions (30 days advance booking)
+ *     • Past date/time prevention with validation
+ *     • Grid-based doctor card display with selection states
+ *     • Time slot formatting (12-hour format with AM/PM)
+ *     • Responsive modal overlay with backdrop blur
+ *     • Loading states for doctors, slots, and AI generation
+ *   - Redux Integration:
+ *     • allDoctors: Fetches and displays available doctors
+ *     • newAppointment: Handles appointment creation
+ *     • availableSlots: Dynamic slot fetching based on doctor/date
+ *     • clearErrors: Error handling and toast notifications
+ *   - AI Symptom Analysis:
+ *     • Triggers on symptoms input (minimum 20 characters)
+ *     • Generates health suggestions using Gemini AI
+ *     • Markdown rendering with ReactMarkdown + remark-gfm
+ *     • Styled output with gradient backgrounds and prose styling
+ *     • Loading indicator during AI processing
+ *   - Form Fields:
+ *     1. Doctor Selection: Searchable grid with DoctorCard components
+ *     2. Date Selection: Calendar input with min/max validation
+ *     3. Time Slot Selection: Grid of available slots (3 columns)
+ *     4. Description: Textarea for appointment reason (min 10 chars)
+ *     5. Symptoms: Textarea triggering AI analysis (min 10 chars)
+ *   - User Flow:
+ *     1. Search and select doctor from grid
+ *     2. Choose date (validates future dates only)
+ *     3. System fetches available time slots
+ *     4. Select time from available slots
+ *     5. Describe appointment reason and symptoms
+ *     6. AI analyzes symptoms and provides suggestions
+ *     7. Submit booking with comprehensive validation
+ *   - Validation Rules:
+ *     • Doctor must be selected
+ *     • Date must be within 30 days and not in past
+ *     • Time must be available and not in past (for today)
+ *     • Description minimum 10 characters
+ *     • Symptoms minimum 10 characters for AI analysis
+ *   - UI/UX Features:
+ *     • Lucide icons for visual clarity (Calendar, Clock, User, etc.)
+ *     • Color-coded states (selected, hover, disabled)
+ *     • Gradient backgrounds for AI suggestions section
+ *     • Smooth transitions and hover effects
+ *     • Max height scrollable sections with overflow handling
+ *     • Toast notifications for errors and success
+ *   - Tech Stack: React, Redux, Lucide Icons, ReactMarkdown, 
+ *                 Gemini AI, React Toastify
  * 
  * VIDEO CALL & TELEMEDICINE
  * -------------------------

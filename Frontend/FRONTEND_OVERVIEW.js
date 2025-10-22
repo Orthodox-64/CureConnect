@@ -97,12 +97,62 @@
  *   - Tech Stack: React, Framer Motion, React Router, Lucide Icons
  *   - Design: Gradient colors (indigo/teal), rounded corners, hover effects
  * 
+ * SkinAnalysisModal Component:
+ *   - Purpose: Entry point for dermatological condition detection and analysis
+ *   - Features:
+ *     • Dual analysis modes: Image-based and Video-based skin assessment
+ *     • Advanced Framer Motion animations with spring physics
+ *     • Rose/Pink gradient theme for dermatology focus
+ *     • Glassmorphism effects with backdrop blur
+ *     • Interactive hover states with scale and lift transformations
+ *     • Floating decorative medical icons (Sparkles, Scan)
+ *     • 3D rotation effects on modal entrance
+ *   - Animation Variants:
+ *     • backdropVariants: Fade in/out with 50% opacity black overlay + blur
+ *     • modalVariants: 3D rotateX transform (-15deg) with spring animation
+ *     • cardVariants: Horizontal slide-in (-30px) with staggered delay (0.15s)
+ *     • iconVariants: Rotate from -180deg with scale-up effect
+ *     • pulseVariants: Infinite breathing animation (1-1.05 scale, 2s duration)
+ *     • floatingVariants: Vertical oscillation (-2px to 2px, 3s duration)
+ *   - Color Scheme:
+ *     • Primary: Rose (rose-500, rose-600, rose-800)
+ *     • Secondary: Pink (pink-500, pink-600, pink-800)
+ *     • Accents: Fuchsia for video card variation
+ *     • Backgrounds: Gradient from white to gray-50 (f8fafc)
+ *   - User Flow:
+ *     1. User clicks skin analysis option from dashboard
+ *     2. Modal presents two dermatology analysis options
+ *     3. Image route: /analysis/skin (static skin condition photos)
+ *     4. Video route: /analysis/skin-video (dynamic skin assessment)
+ *   - Card Design:
+ *     • Image Card: Rose gradient (rose-50 to pink-50) with rose borders
+ *     • Video Card: Pink gradient (pink-50 to fuchsia-50) with pink borders
+ *     • Border animations: Transitions from 50% to 80% opacity on hover
+ *     • Background overlay: Animated gradient fill on hover (0 to 100% opacity)
+ *   - Interactive Elements:
+ *     • Close button: 90deg rotation + 1.1x scale on hover
+ *     • Card lift: -5px vertical translation on hover
+ *     • Arrow indicator: Slides from -10px to 0, fades in on hover
+ *     • Tap animation: 0.98 scale for tactile feedback
+ *   - Layout & Spacing:
+ *     • Modal: max-w-md (28rem), p-8 padding, rounded-3xl corners
+ *     • Cards: p-6 padding, rounded-2xl corners, space-y-4 gap
+ *     • Icons: w-6 h-6 (24px), w-8 h-8 for header (32px)
+ *     • Footer divider: w-12 h-1, animated width expansion
+ *   - Accessibility:
+ *     • Click-to-close backdrop with stopPropagation on modal
+ *     • Keyboard-accessible buttons
+ *     • Clear visual hierarchy with size and color
+ *     • Descriptive text for screen readers
+ *   - Tech Stack: React, Framer Motion, React Router, Lucide Icons
+ *   - Design Philosophy: Medical trust (rose/pink), approachable UI, 
+ *                       smooth animations for reduced anxiety
+ * 
  * Other Analysis Modals (Similar Architecture):
- *   - ECGAnalysisModal: Electrocardiogram heart rhythm analysis
- *   - XRayAnalysisModal: X-ray image interpretation
- *   - SkinAnalysisModal: Dermatological condition detection
- *   - RetinopathyAnalysisModal: Diabetic eye disease screening
- *   - PETAnalysisModal: Positron Emission Tomography scan analysis
+ *   - ECGAnalysisModal: Electrocardiogram heart rhythm analysis (blue/cyan theme)
+ *   - XRayAnalysisModal: X-ray image interpretation (gray/slate theme)
+ *   - RetinopathyAnalysisModal: Diabetic eye disease screening (amber/orange theme)
+ *   - PETAnalysisModal: Positron Emission Tomography scan analysis (purple/violet theme)
  * 
  * APPOINTMENT SYSTEM
  * ------------------

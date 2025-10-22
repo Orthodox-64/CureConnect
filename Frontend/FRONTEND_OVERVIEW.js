@@ -70,11 +70,63 @@
  * ============================================================================
  * KEY COMPONENTS
  * ============================================================================
- * - Analysis Modals: AI-powered medical analysis interfaces
- * - Appointment System: Booking, scheduling, and management
- * - Video Call: Real-time telemedicine consultations
- * - Pharmacy Components: Medicine management and ordering
- * - User Components: Authentication and profile management
+ * 
+ * ANALYSIS MODALS (AI-POWERED MEDICAL ANALYSIS)
+ * ----------------------------------------------
+ * AlzheimerAnalysisModal Component:
+ *   - Purpose: Entry point for Alzheimer's disease detection and analysis
+ *   - Features:
+ *     • Dual analysis modes: Image-based and Video-based detection
+ *     • Advanced Framer Motion animations (backdrop, modal, cards, icons)
+ *     • Gradient-based UI with glassmorphism effects
+ *     • Interactive hover states with scale and position transformations
+ *     • Floating background medical icons for visual appeal
+ *     • Navigation integration for seamless routing
+ *   - Animation Variants:
+ *     • backdropVariants: Fade in/out with blur effect
+ *     • modalVariants: 3D transform with spring physics
+ *     • cardVariants: Staggered entrance with hover/tap interactions
+ *     • iconVariants: Rotate and scale on appearance
+ *     • pulseVariants: Continuous breathing animation
+ *     • floatingVariants: Infinite floating motion
+ *   - User Flow:
+ *     1. User clicks brain analysis option from main dashboard
+ *     2. Modal presents two options: Image or Video analysis
+ *     3. Image route: /analysis/alzheimer (static brain scan upload)
+ *     4. Video route: /analysis/alzheimer-video (dynamic scan analysis)
+ *   - Tech Stack: React, Framer Motion, React Router, Lucide Icons
+ *   - Design: Gradient colors (indigo/teal), rounded corners, hover effects
+ * 
+ * Other Analysis Modals (Similar Architecture):
+ *   - ECGAnalysisModal: Electrocardiogram heart rhythm analysis
+ *   - XRayAnalysisModal: X-ray image interpretation
+ *   - SkinAnalysisModal: Dermatological condition detection
+ *   - RetinopathyAnalysisModal: Diabetic eye disease screening
+ *   - PETAnalysisModal: Positron Emission Tomography scan analysis
+ * 
+ * APPOINTMENT SYSTEM
+ * ------------------
+ * - Booking, scheduling, and management
+ * - Doctor discovery and profile viewing
+ * - Real-time availability checking
+ * 
+ * VIDEO CALL & TELEMEDICINE
+ * -------------------------
+ * - Real-time video consultations
+ * - WebRTC integration for peer-to-peer connections
+ * - Screen sharing and chat functionality
+ * 
+ * PHARMACY COMPONENTS
+ * -------------------
+ * - Medicine catalog and search
+ * - Shopping cart and checkout
+ * - Order tracking and management
+ * 
+ * USER MANAGEMENT
+ * ---------------
+ * - Authentication and profile management
+ * - Medical history and records
+ * - QR code patient identification
  * 
  * ============================================================================
  * STATE MANAGEMENT

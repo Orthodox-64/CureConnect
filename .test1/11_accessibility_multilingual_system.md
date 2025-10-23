@@ -52,3 +52,16 @@ End-to-end pharmacy integration connects patients with verified pharmacies for a
 
 ---
 
+## 5. Multilingual & Voice-Assisted Accessibility
+
+Breaking language and disability barriers, CureConnect supports 12 regional Indian languages plus English, with comprehensive voice assistance for visually impaired users.
+
+*Language Support:* Hindi, Bengali, Telugu, Marathi, Tamil, Gujarati, Urdu, Kannada, Malayalam, Odia, Punjabi, Assamese, and English. Implementation via i18next with 100% coverage for UI labels, error messages, email/SMS templates, and 80% coverage for medical terms (complex terms remain in English with transliteration).
+
+*Voice Navigation:* Browser Speech Recognition API enables voice commands—"Book appointment" navigates to booking page, "Find doctors" opens search, "My prescriptions" shows history, "Emergency" triggers SOS, and "Read prescription" uses Text-to-Speech to read aloud latest prescription with adjustable speed (slow/normal/fast).
+
+*Screen Reader Compatibility:* All interactive elements have ARIA labels, semantic HTML (nav/main/article tags), proper heading hierarchy (h1→h2→h3), and alt text for all images. High contrast mode (yellow on black) with large fonts (16px minimum, 24px headings) and 44×44px minimum button sizes for touch targets.
+
+*Offline Capabilities:* Progressive Web App (PWA) with service worker caches static assets (HTML/CSS/JS/images/fonts), enables offline viewing of cached appointments and prescriptions, allows writing messages queued until online, and uses IndexedDB to store last 100 prescriptions locally with 7-day expiry for cached doctor profiles.
+
+--- 

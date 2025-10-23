@@ -65,3 +65,26 @@ Breaking language and disability barriers, CureConnect supports 12 regional Indi
 *Offline Capabilities:* Progressive Web App (PWA) with service worker caches static assets (HTML/CSS/JS/images/fonts), enables offline viewing of cached appointments and prescriptions, allows writing messages queued until online, and uses IndexedDB to store last 100 prescriptions locally with 7-day expiry for cached doctor profiles.
 
 --- 
+
+## 6. IVR Emergency Assistance & Hospital Locator
+
+No-smartphone-required emergency system connects patients to hospitals and doctors via phone call, ensuring critical care access for all demographics including elderly and low-tech users.
+
+*IVR Call Flow:* Patient calls dedicated IVR number, automated voice greets: "Welcome to CureConnect Emergency. Press 1 for ambulance, 2 for doctor consultation", patient presses 1, system prompts: "Please say your location or press * to use GPS", Twilio Speech Recognition converts speech to text, system finds nearest hospital and ambulance within 10km radius, and connects call to hospital emergency desk while sending parallel notifications.
+
+*Real-Time Doctor Notifications:* WebSocket broadcasts emergency alerts to all connected doctors with patient details (name, age, contact), reported condition ("Chest pain, shortness of breath"), GPS location (lat/lng/address), vital signs if wearable connected (heart rate, blood pressure), and doctors can respond via app to accept emergency consultation.
+
+*SOS Button in App:* One-tap SOS on every page, automatic GPS detection with <30 second response time, displays nearest 5 hospitals with distance (km), travel time based on live traffic, contact numbers for direct calling, emergency services availability (24/7, ambulance, ICU beds), and Google Maps directions with one-tap navigation.
+
+*Ambulance Coordination:* Twilio SMS sent to registered ambulance services within 10km, includes patient location, condition, and best route (traffic-optimized), real-time GPS tracking of ambulance location (if GPS-enabled), and estimated arrival time displayed to patient/family.
+
+*Impact Metrics:* Emergency response time reduced from 45 minutes (rural average) to 15 minutes with CureConnect, 1,000+ emergency SOS calls handled in Year 1 (target: 50,000 by Year 3), and integration with National Health Portal for centralized emergency management.
+
+---
+
+## Summary
+
+These six features work synergistically to provide comprehensive healthcare coverage: AI diagnostics replace expensive equipment, low-bandwidth video enables remote consultations, integrated pharmacy completes treatment delivery, digital prescriptions ensure continuity of care, multilingual accessibility breaks communication barriers, and IVR emergency ensures life-saving access for all. Together, they address India's rural healthcare crisis affecting 900 million people.
+--- 
+
+

@@ -35,3 +35,20 @@ CureConnect's WebRTC-based video calling adapts to network conditions from 4G to
 *Bandwidth Optimization:* Progressive JPEG loading for images, Cloudinary auto-quality (q_auto:low on slow networks), code-split routes reduce page load to <200KB per page, and service worker caching enables offline page access. Target: full page load <3 seconds on 2G.
 
 ---
+
+## 3. Integrated Pharmacy & Medicine Delivery Ecosystem
+
+End-to-end pharmacy integration connects patients with verified pharmacies for affordable medicine delivery, completing the care cycle from diagnosis to treatment.
+
+*Pharmacy Registration:* Pharmacists register with license verification, configure delivery radius (5-50km), set operating hours, and upload inventory. System validates unique license numbers to prevent fraud, and user role automatically upgrades to 'pharmacist' upon approval.
+
+*Medicine Inventory Management:* Add medicines with name, generic name, manufacturer, category, price, stock, expiry date, and up to 5 images. Bulk upload supports 100+ medicines via CSV, low-stock alerts trigger at <10 units, expiring medicines dashboard warns 3 months in advance, and search functionality filters by category/manufacturer.
+
+*Patient Ordering Flow:* Browse pharmacies by location/distance, search medicines by name/generic name, compare prices across pharmacies, add to cart with prescription upload (optional verification), checkout with Stripe (online) or COD payment, and track orders with real-time status updates (Pending→Processing→Shipped→Delivered).
+
+*Pharmacist Order Management:* Real-time WebSocket notifications on new orders, view customer details and shipping addresses, update order status with timestamps, generate monthly sales reports with revenue analytics, and handle cancellations/returns with reason tracking.
+
+*Commission Model:* Platform charges 15-20% commission on medicine orders (avg ₹100-150 per order), with subscription plans offering reduced commissions—Basic (₹2,999/month), Pro (₹5,999/month), and Enterprise (₹9,999/month) for multi-location support.
+
+---
+

@@ -22,3 +22,16 @@ CureConnect integrates six advanced AI/ML models that provide instant diagnostic
 
 *Emergency Level System:* Each AI analysis assigns emergency levels 1-5 (routine to critical), with Level 5 triggering automatic hospital referral notifications and alerting all online doctors via WebSocket.
 
+## 2. Low-Bandwidth Optimized Video Consultations
+
+CureConnect's WebRTC-based video calling adapts to network conditions from 4G to 2G, ensuring uninterrupted doctor-patient communication in areas with poor connectivity.
+
+*Adaptive Bitrate Technology:* System measures network speed on connection and automatically adjusts video quality—1080p@30fps on 4G/WiFi, 720p@24fps on 3G, 480p@15fps on 2G, and audio-only on slow 2G. Seamless downgrade/upgrade during calls maintains connection stability.
+
+*Peer-to-Peer Architecture:* WebRTC establishes direct media connections between patient and doctor devices, bypassing server bandwidth limitations. Server handles only signaling (offer/answer/ICE candidates) via Socket.IO, enabling 10,000+ concurrent calls with minimal infrastructure.
+
+*Fallback Mechanisms:* If video fails, system automatically falls back to audio-only; if audio fails, switches to text-based chat. Connection quality indicator (green/yellow/red) provides real-time feedback, and call recording option (with consent) saves consultations to medical records.
+
+*Bandwidth Optimization:* Progressive JPEG loading for images, Cloudinary auto-quality (q_auto:low on slow networks), code-split routes reduce page load to <200KB per page, and service worker caching enables offline page access. Target: full page load <3 seconds on 2G.
+
+---

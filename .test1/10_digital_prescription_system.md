@@ -51,3 +51,4 @@ End-to-end pharmacy integration connects patients with verified pharmacies for a
 *Commission Model:* Platform charges 15-20% commission on medicine orders (avg ₹100-150 per order), with subscription plans offering reduced commissions—Basic (₹2,999/month), Pro (₹5,999/month), and Enterprise (₹9,999/month) for multi-location support.
 
 ---
+
